@@ -2,8 +2,6 @@
 
 Android Development final project · Flutter + SQLite · Team of 6 · Plan date 11/17/2026 · Feature freeze 11/25 · Presentation 11/28/2026
 
-Issues live in `docs/ISSUES.md`. Open decisions live in the Decisions backlog at the bottom of that file (D-1 to D-6).
-
 ## 0. Locked decisions
 
 - App: **Maak Metro (معاك)**, offline metro planner for Cairo Metro Lines 1, 2 and 3.
