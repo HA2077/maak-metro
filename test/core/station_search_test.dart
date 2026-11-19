@@ -35,6 +35,16 @@ void main() {
     expect(_search('sadat').first.id, 'sadat');
   });
 
+  test('one typo still finds the station', () {
+    expect(_search('الكيت كت').map((s) => s.id), contains('kit_kat'));
+    expect(_search('السادت').map((s) => s.id), contains('sadat'));
+  });
+
+  test('an exact match still ranks first', () {
+    expect(_search('السادات').first.id, 'sadat');
+    expect(_search('الشهداء').first.id, 'shohadaa');
+  });
+
   test('no match returns an empty list', () {
     expect(_search('zzz'), isEmpty);
   });
