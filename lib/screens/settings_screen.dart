@@ -5,6 +5,7 @@ import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/utils/dates.dart';
+import 'package:maak_metro/core/utils/digits.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/providers/settings_provider.dart';
 import 'package:maak_metro/widgets/date_text.dart';
@@ -147,7 +148,9 @@ class SettingsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              l10n.versionLabel(appVersion),
+                              l10n.versionLabel(
+                                localizedDigits(context, appVersion),
+                              ),
                               textAlign: TextAlign.center,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
