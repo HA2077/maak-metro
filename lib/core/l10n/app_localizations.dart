@@ -661,18 +661,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ديسمبر'**
   String get monthDec;
-
-  /// No description provided for @mapTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'خريطة المترو'**
-  String get mapTitle;
-
-  /// No description provided for @mapHint.
-  ///
-  /// In ar, this message translates to:
-  /// **'اضغط على خط عشان ينوّر، واضغط عليه تاني عشان ترجع للكل.'**
-  String get mapHint;
 }
 
 class _AppLocalizationsDelegate

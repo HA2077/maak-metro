@@ -159,7 +159,5 @@
   "monthSep": "September",
   "monthOct": "October",
   "monthNov": "November",
-  "monthDec": "December",
-  "mapTitle": "Metro map",
-  "mapHint": "Tap a line to light it up. Tap it again to show them all."
+  "monthDec": "December"
 }

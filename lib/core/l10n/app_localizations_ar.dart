@@ -339,11 +339,4 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get monthDec => 'ديسمبر';
-
-  @override
-  String get mapTitle => 'خريطة المترو';
-
-  @override
-  String get mapHint =>
-      'اضغط على خط عشان ينوّر، واضغط عليه تاني عشان ترجع للكل.';
 }

@@ -334,11 +334,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monthDec => 'December';
-
-  @override
-  String get mapTitle => 'Metro map';
-
-  @override
-  String get mapHint =>
-      'Tap a line to light it up. Tap it again to show them all.';
 }
