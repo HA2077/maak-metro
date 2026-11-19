@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/motion/app_haptics.dart';
+import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
@@ -40,19 +41,22 @@ class RouteResultScreen extends StatelessWidget {
               tooltip: isFavorite ? l10n.removeFavorite : l10n.addFavorite,
               isSelected: isFavorite,
               icon: const Icon(Icons.star_border),
-              selectedIcon: const Icon(Icons.star),
+              selectedIcon: Icon(
+                Icons.star,
+                color: theme.colorScheme.primary,
+              ),
             ),
         ],
       ),
       body: result == null
           ? const SizedBox.shrink()
           : ListView(
-              padding: const EdgeInsetsDirectional.all(AppSpace.lg),
+              padding: const EdgeInsetsDirectional.all(18),
               children: [
                 FadeSlideIn(
                   child: Card(
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.all(AppSpace.lg),
+                      padding: const EdgeInsetsDirectional.all(18),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -63,6 +67,7 @@ class RouteResultScreen extends StatelessWidget {
                             child: ExcludeSemantics(
                               child: CountUp(
                                 value: result.estimatedMinutes,
+                                duration: AppMotion.counter,
                                 text: (value) =>
                                     l10n.estimatedTime(_minutes(value)),
                                 style: theme.textTheme.headlineSmall,

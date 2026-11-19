@@ -13,8 +13,8 @@ abstract final class AppSpace {
 }
 
 abstract final class AppRadius {
-  static const double field = 14;
-  static const double card = 16;
+  static const double field = 16;
+  static const double card = 20;
   static const double sheet = 28;
 }
 
@@ -184,6 +184,10 @@ abstract final class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           minimumSize: const Size.fromHeight(52),
+          padding: const EdgeInsetsDirectional.symmetric(
+            horizontal: 24,
+            vertical: 16,
+          ),
           disabledBackgroundColor: scheme.surfaceContainerHighest,
           disabledForegroundColor: scheme.onSurfaceVariant,
           shape: RoundedRectangleBorder(
@@ -223,18 +227,16 @@ abstract final class AppTheme {
         fillColor: scheme.surfaceContainerHigh,
         hintStyle: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
         contentPadding: const EdgeInsetsDirectional.symmetric(
-          horizontal: AppSpace.lg,
-          vertical: AppSpace.md,
+          horizontal: 18,
+          vertical: 16,
         ),
         border: border(Colors.transparent),
         enabledBorder: border(Colors.transparent),
         focusedBorder: border(scheme.primary, 1.6),
       ),
       listTileTheme: ListTileThemeData(
-        contentPadding: const EdgeInsetsDirectional.symmetric(
-          horizontal: AppSpace.lg,
-        ),
-        minVerticalPadding: AppSpace.md,
+        contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 18),
+        minVerticalPadding: 14,
         iconColor: scheme.onSurfaceVariant,
         textColor: scheme.onSurface,
       ),
@@ -259,8 +261,8 @@ abstract final class AppTheme {
         labelStyle: text.labelLarge?.copyWith(color: scheme.onSurface),
         shape: const StadiumBorder(),
         padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: AppSpace.md,
-          vertical: AppSpace.sm,
+          horizontal: 14,
+          vertical: 10,
         ),
       ),
       expansionTileTheme: ExpansionTileThemeData(
@@ -326,18 +328,18 @@ abstract final class AppTheme {
     );
 
     return base.copyWith(
-      displaySmall: at(base.displaySmall, 36, 46, FontWeight.w700),
-      headlineMedium: at(base.headlineMedium, 28, 38, FontWeight.w700),
-      headlineSmall: at(base.headlineSmall, 24, 32, FontWeight.w700),
-      titleLarge: at(base.titleLarge, 20, 28, FontWeight.w700),
-      titleMedium: at(base.titleMedium, 16, 24, FontWeight.w600),
-      titleSmall: at(base.titleSmall, 14, 22, FontWeight.w600),
-      bodyLarge: at(base.bodyLarge, 16, 26),
-      bodyMedium: at(base.bodyMedium, 14, 24),
-      bodySmall: at(base.bodySmall, 12, 20),
-      labelLarge: at(base.labelLarge, 14, 20, FontWeight.w600),
-      labelMedium: at(base.labelMedium, 12, 18, FontWeight.w600),
-      labelSmall: at(base.labelSmall, 11, 16, FontWeight.w600),
+      displaySmall: at(base.displaySmall, 36, 48, FontWeight.w700),
+      headlineMedium: at(base.headlineMedium, 30, 40, FontWeight.w700),
+      headlineSmall: at(base.headlineSmall, 26, 34, FontWeight.w700),
+      titleLarge: at(base.titleLarge, 21, 30, FontWeight.w700),
+      titleMedium: at(base.titleMedium, 17, 26, FontWeight.w600),
+      titleSmall: at(base.titleSmall, 15, 23, FontWeight.w600),
+      bodyLarge: at(base.bodyLarge, 17, 28),
+      bodyMedium: at(base.bodyMedium, 15, 25),
+      bodySmall: at(base.bodySmall, 13, 21),
+      labelLarge: at(base.labelLarge, 15, 22, FontWeight.w600),
+      labelMedium: at(base.labelMedium, 13, 19, FontWeight.w600),
+      labelSmall: at(base.labelSmall, 12, 17, FontWeight.w600),
     );
   }
 }

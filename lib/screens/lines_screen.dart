@@ -147,7 +147,7 @@ class LinesScreen extends StatelessWidget {
       body: network.lines.isEmpty
           ? const SizedBox.shrink()
           : ListView.separated(
-              padding: const EdgeInsetsDirectional.all(AppSpace.lg),
+              padding: const EdgeInsetsDirectional.all(18),
               itemCount: network.lines.length,
               separatorBuilder: (_, _) => const SizedBox(height: AppSpace.md),
               itemBuilder: (context, index) {
@@ -185,9 +185,9 @@ class LinesScreen extends StatelessWidget {
                           if (branch != 'main')
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(
+                                18,
                                 AppSpace.lg,
-                                AppSpace.md,
-                                AppSpace.lg,
+                                18,
                                 AppSpace.xs,
                               ),
                               child: Align(
@@ -206,8 +206,8 @@ class LinesScreen extends StatelessWidget {
                           ))
                             ListTile(
                               contentPadding: const EdgeInsetsDirectional.only(
-                                start: AppSpace.lg,
-                                end: AppSpace.lg,
+                                start: 18,
+                                end: 18,
                               ),
                               minLeadingWidth: 10,
                               leading: Container(

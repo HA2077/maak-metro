@@ -36,20 +36,27 @@ class LibraryScreen extends StatelessWidget {
   ) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.clearHistory),
-        content: Text(l10n.clearHistoryConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(l10n.confirm),
-          ),
-        ],
-      ),
+      builder: (dialogContext) {
+        final scheme = Theme.of(dialogContext).colorScheme;
+        return AlertDialog(
+          title: Text(l10n.clearHistory),
+          content: Text(l10n.clearHistoryConfirm),
+          titlePadding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 8),
+          contentPadding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 20),
+          actionsPadding: const EdgeInsetsDirectional.fromSTEB(12, 0, 12, 10),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(l10n.cancel),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(foregroundColor: scheme.error),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(l10n.confirm),
+            ),
+          ],
+        );
+      },
     );
     if (confirmed ?? false) {
       AppHaptics.action();
@@ -97,7 +104,7 @@ class LibraryScreen extends StatelessWidget {
                     onAction: () => shell.select(0),
                   )
                 : ListView.separated(
-                    padding: const EdgeInsetsDirectional.all(AppSpace.lg),
+                    padding: const EdgeInsetsDirectional.all(18),
                     itemCount: favorites.length,
                     separatorBuilder: (_, _) =>
                         const SizedBox(height: AppSpace.sm),
@@ -140,7 +147,7 @@ class LibraryScreen extends StatelessWidget {
                     onAction: () => shell.select(0),
                   )
                 : ListView.separated(
-                    padding: const EdgeInsetsDirectional.all(AppSpace.lg),
+                    padding: const EdgeInsetsDirectional.all(18),
                     itemCount: history.length,
                     separatorBuilder: (_, _) =>
                         const SizedBox(height: AppSpace.sm),
@@ -198,12 +205,7 @@ class _RouteTile extends StatelessWidget {
             child: InkWell(
               onTap: onTap,
               child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(
-                  AppSpace.lg,
-                  AppSpace.lg,
-                  AppSpace.lg,
-                  AppSpace.lg,
-                ),
+                padding: const EdgeInsetsDirectional.fromSTEB(18, 18, 18, 18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

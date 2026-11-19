@@ -76,14 +76,14 @@ class _PlannerScreenState extends State<PlannerScreen> {
       appBar: AppBar(title: Text(l10n.plannerTitle)),
       body: ListView(
         padding: const EdgeInsetsDirectional.fromSTEB(
-          AppSpace.lg,
+          18,
           AppSpace.sm,
-          AppSpace.lg,
+          18,
           AppSpace.xl,
         ),
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.only(bottom: AppSpace.lg),
+            padding: const EdgeInsetsDirectional.only(bottom: 20),
             child: Text(
               l10n.plannerHint,
               style: theme.textTheme.bodyLarge?.copyWith(
@@ -226,7 +226,7 @@ class _TripCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Card(
       child: Padding(
-        padding: const EdgeInsetsDirectional.all(AppSpace.lg),
+        padding: const EdgeInsetsDirectional.all(18),
         child: Row(
           children: [
             Padding(
@@ -317,9 +317,7 @@ class _StationField extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(AppRadius.field),
           child: Padding(
-            padding: const EdgeInsetsDirectional.symmetric(
-              vertical: AppSpace.md,
-            ),
+            padding: const EdgeInsetsDirectional.symmetric(vertical: 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

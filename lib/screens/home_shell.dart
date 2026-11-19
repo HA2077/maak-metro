@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/motion/app_haptics.dart';
-import 'package:maak_metro/core/motion/app_motion.dart';
+import 'package:maak_metro/core/motion/fade_indexed_stack.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/providers/library_provider.dart';
 import 'package:maak_metro/providers/route_provider.dart';
@@ -11,8 +11,8 @@ import 'package:maak_metro/screens/planner_screen.dart';
 import 'package:maak_metro/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
 
-/// Bottom bar on phones, side rail on tablets. The four tabs live in an
-/// [IndexedStack], so switching keeps their scroll position and state.
+/// Bottom bar on phones, side rail on tablets. The four tabs live in a
+/// [FadeIndexedStack], so switching keeps their scroll position and state.
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
@@ -28,29 +28,13 @@ class HomeShell extends StatefulWidget {
   State<HomeShell> createState() => HomeShellState();
 }
 
-class HomeShellState extends State<HomeShell>
-    with SingleTickerProviderStateMixin {
+class HomeShellState extends State<HomeShell> {
   int _index = 0;
-
-  late final AnimationController _entrance = AnimationController(
-    vsync: this,
-    duration: AppMotion.base,
-    value: 1,
-  );
 
   void select(int index) {
     if (index == _index) return;
     AppHaptics.tap();
     setState(() => _index = index);
-    if (!AppMotion.reduced(context)) {
-      _entrance.forward(from: 0);
-    }
-  }
-
-  @override
-  void dispose() {
-    _entrance.dispose();
-    super.dispose();
   }
 
   @override
@@ -61,17 +45,7 @@ class HomeShellState extends State<HomeShell>
     return LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= AppLayout.railBreakpoint;
-        final content = AnimatedBuilder(
-          animation: _entrance,
-          child: loadFailed ? const _LoadFailure() : _tabs(),
-          builder: (context, child) => Opacity(
-            opacity: 0.7 + 0.3 * _entrance.value,
-            child: Transform.translate(
-              offset: Offset(0, 6 * (1 - _entrance.value)),
-              child: child,
-            ),
-          ),
-        );
+        final content = loadFailed ? const _LoadFailure() : _tabs();
 
         if (wide) {
           return Scaffold(
@@ -110,7 +84,7 @@ class HomeShellState extends State<HomeShell>
   Widget _tabs() => Center(
     child: ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: AppLayout.maxContentWidth),
-      child: IndexedStack(
+      child: FadeIndexedStack(
         index: _index,
         children: const [
           PlannerScreen(),

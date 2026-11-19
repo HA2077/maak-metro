@@ -11,6 +11,7 @@ class CountUp extends StatelessWidget {
     required this.text,
     this.style,
     this.textAlign,
+    this.duration = AppMotion.slow,
   });
 
   final double value;
@@ -19,12 +20,13 @@ class CountUp extends StatelessWidget {
   final String Function(double value) text;
   final TextStyle? style;
   final TextAlign? textAlign;
+  final Duration duration;
 
   @override
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0, end: value),
-      duration: AppMotion.of(context, AppMotion.slow),
+      duration: AppMotion.of(context, duration),
       curve: AppMotion.decelerate,
       builder: (context, animated, _) =>
           Text(text(animated), style: style, textAlign: textAlign),
