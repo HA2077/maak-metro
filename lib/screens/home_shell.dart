@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/providers/library_provider.dart';
@@ -39,6 +40,7 @@ class HomeShellState extends State<HomeShell>
 
   void select(int index) {
     if (index == _index) return;
+    AppHaptics.tap();
     setState(() => _index = index);
     if (!AppMotion.reduced(context)) {
       _entrance.forward(from: 0);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/theme/line_colors.dart';
@@ -105,6 +106,7 @@ class LinesScreen extends StatelessWidget {
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () {
+                              AppHaptics.confirm();
                               route.setFrom(station.id);
                               goToPlanner();
                             },
@@ -115,6 +117,7 @@ class LinesScreen extends StatelessWidget {
                         Expanded(
                           child: FilledButton(
                             onPressed: () {
+                              AppHaptics.confirm();
                               route.setTo(station.id);
                               goToPlanner();
                             },

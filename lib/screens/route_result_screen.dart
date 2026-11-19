@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
@@ -32,7 +33,10 @@ class RouteResultScreen extends StatelessWidget {
         actions: [
           if (result != null)
             IconButton(
-              onPressed: route.toggleFavorite,
+              onPressed: () {
+                AppHaptics.action();
+                route.toggleFavorite();
+              },
               tooltip: isFavorite ? l10n.removeFavorite : l10n.addFavorite,
               isSelected: isFavorite,
               icon: const Icon(Icons.star_border),

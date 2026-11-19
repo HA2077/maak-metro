@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/constants.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/providers/route_provider.dart';
@@ -38,8 +39,10 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ],
                 selected: {settings.locale},
-                onSelectionChanged: (selection) =>
-                    settings.setLocale(selection.first),
+                onSelectionChanged: (selection) {
+                  AppHaptics.tap();
+                  settings.setLocale(selection.first);
+                },
               ),
             ),
           ),
@@ -65,8 +68,10 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ],
                 selected: {settings.themeMode},
-                onSelectionChanged: (selection) =>
-                    settings.setThemeMode(selection.first),
+                onSelectionChanged: (selection) {
+                  AppHaptics.tap();
+                  settings.setThemeMode(selection.first);
+                },
               ),
             ),
           ),

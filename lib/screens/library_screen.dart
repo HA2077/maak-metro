@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
@@ -51,6 +52,7 @@ class LibraryScreen extends StatelessWidget {
       ),
     );
     if (confirmed ?? false) {
+      AppHaptics.action();
       await library.clearHistory();
     }
   }
@@ -107,8 +109,10 @@ class LibraryScreen extends StatelessWidget {
                           key: ValueKey('favorite-${favorite.id}'),
                           direction: DismissDirection.horizontal,
                           background: const _DismissBackground(),
-                          onDismissed: (_) =>
-                              library.removeFavorite(favorite.id),
+                          onDismissed: (_) {
+                            AppHaptics.action();
+                            library.removeFavorite(favorite.id);
+                          },
                           child: _RouteTile(
                             network: network,
                             fromId: favorite.fromId,
@@ -119,7 +123,10 @@ class LibraryScreen extends StatelessWidget {
                               toId: favorite.toId,
                             ),
                             deleteTooltip: l10n.removeFavorite,
-                            onDelete: () => library.removeFavorite(favorite.id),
+                            onDelete: () {
+                              AppHaptics.action();
+                              library.removeFavorite(favorite.id);
+                            },
                           ),
                         ),
                       );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
@@ -41,6 +42,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
     final route = context.read<RouteProvider>();
     await route.calculate();
     if (!context.mounted || route.result == null) return;
+    AppHaptics.confirm();
     await Navigator.of(
       context,
     ).push(MaterialPageRoute<void>(builder: (_) => const RouteResultScreen()));
@@ -48,6 +50,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
 
   void _swap(RouteProvider route) {
     route.swap();
+    AppHaptics.action();
     if (!AppMotion.reduced(context)) {
       setState(() => _swapTurns += 0.5);
     }

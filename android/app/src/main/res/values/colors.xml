@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The launch window uses the same canvas colour as the first Flutter frame,
+     so launching does not flash white before the app appears. -->
+<resources>
+    <color name="canvas">#F6F8FC</color>
+</resources>

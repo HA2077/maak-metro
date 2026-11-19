@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/core/utils/station_search.dart';
@@ -136,7 +137,10 @@ class _StationPickerSheetState extends State<_StationPickerSheet> {
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
-                          onTap: () => Navigator.of(context).pop(station),
+                          onTap: () {
+                            AppHaptics.tap();
+                            Navigator.of(context).pop(station);
+                          },
                         );
                       },
                     ),
