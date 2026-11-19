@@ -114,22 +114,8 @@
   "arabic": "العربية",
   "english": "English",
   "about": "عن التطبيق",
-  "dataSnapshot": "تاريخ البيانات {date}",
-  "@dataSnapshot": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "fareEffective": "سريان الأجرة {date}",
-  "@fareEffective": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
+  "dataSnapshot": "تاريخ البيانات",
+  "fareEffective": "سريان الأجرة",
   "loadError": "تعذّر تحميل البيانات",
   "retry": "إعادة المحاولة"
 }

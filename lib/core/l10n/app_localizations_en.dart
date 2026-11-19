@@ -214,14 +214,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About';
 
   @override
-  String dataSnapshot(String date) {
-    return 'Data snapshot $date';
-  }
+  String get dataSnapshot => 'Data snapshot';
 
   @override
-  String fareEffective(String date) {
-    return 'Fare effective $date';
-  }
+  String get fareEffective => 'Fare effective';
 
   @override
   String get loadError => 'Couldn\'t load the network data';

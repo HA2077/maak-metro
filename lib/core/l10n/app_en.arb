@@ -114,22 +114,8 @@
   "arabic": "العربية",
   "english": "English",
   "about": "About",
-  "dataSnapshot": "Data snapshot {date}",
-  "@dataSnapshot": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "fareEffective": "Fare effective {date}",
-  "@fareEffective": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
+  "dataSnapshot": "Data snapshot",
+  "fareEffective": "Fare effective",
   "loadError": "Couldn't load the network data",
   "retry": "Try again"
 }

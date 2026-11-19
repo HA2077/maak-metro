@@ -221,14 +221,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get about => 'عن التطبيق';
 
   @override
-  String dataSnapshot(String date) {
-    return 'تاريخ البيانات $date';
-  }
+  String get dataSnapshot => 'تاريخ البيانات';
 
   @override
-  String fareEffective(String date) {
-    return 'سريان الأجرة $date';
-  }
+  String get fareEffective => 'سريان الأجرة';
 
   @override
   String get loadError => 'تعذّر تحميل البيانات';

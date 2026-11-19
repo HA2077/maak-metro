@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:maak_metro/core/utils/digits.dart';
 import 'package:maak_metro/screens/route_result_screen.dart';
+import 'package:maak_metro/screens/settings_screen.dart';
 
 import '../support/pump_screen.dart';
 import '../support/sample_network.dart';
@@ -32,6 +33,22 @@ void main() {
       const MaterialApp(home: _Localized(Locale('en'), '27.5 minutes')),
     );
     expect(find.text('27.5 minutes'), findsOneWidget);
+  });
+
+  testWidgets('the about card reads dates day first in Arabic figures', (
+    tester,
+  ) async {
+    await pumpScreen(tester, screen: const SettingsScreen());
+
+    expect(find.text('معاك'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
+    expect(find.text('تاريخ البيانات'), findsOneWidget);
+    expect(find.text('سريان الأجرة'), findsOneWidget);
+    // Day, month, year as separate runs: bidi would flip them in one string.
+    for (final part in ['١٨', '١١', '٢٧', '٠٣']) {
+      expect(find.text(part), findsOneWidget, reason: part);
+    }
+    expect(find.text('٢٠٢٦'), findsNWidgets(2));
   });
 
   testWidgets('the result screen reads in Arabic figures', (tester) async {

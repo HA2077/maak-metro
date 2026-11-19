@@ -48,4 +48,55 @@ void main() {
   test('no match returns an empty list', () {
     expect(_search('zzz'), isEmpty);
   });
+
+  group('common spellings of hard station names', () {
+    const stations = [
+      Station(id: 'shohadaa', nameAr: 'الشهداء', nameEn: 'Al-Shohadaa'),
+      Station(id: 'imbaba', nameAr: 'إمبابة', nameEn: 'Imbaba'),
+      Station(id: 'kit_kat', nameAr: 'الكيت كات', nameEn: 'Kit Kat'),
+      Station(id: 'uni', nameAr: 'جامعة القاهرة', nameEn: 'Cairo University'),
+      Station(
+        id: 'arab_league',
+        nameAr: 'جامعة الدول العربية',
+        nameEn: 'Arab League',
+      ),
+      Station(id: 'naguib', nameAr: 'محمد نجيب', nameEn: 'Mohamed Naguib'),
+      Station(id: 'attaba', nameAr: 'العتبة', nameEn: 'Attaba'),
+    ];
+
+    List<Station> search(String query) => searchStations(
+      stations,
+      query,
+      name: (station) => station.nameAr,
+      otherName: (station) => station.nameEn,
+    );
+
+    const variants = {
+      // dropped final hamza
+      'الشهدا': 'shohadaa',
+      // alef without hamza, ta marbuta written as ha
+      'امبابه': 'imbaba',
+      // missing space
+      'الكيتكات': 'kit_kat',
+      // both words respelled
+      'جامعه القاهره': 'uni',
+      // one wrong letter
+      'محمد نحيب': 'naguib',
+    };
+
+    for (final entry in variants.entries) {
+      test('"${entry.key}" finds ${entry.value}', () {
+        expect(search(entry.key).first.id, entry.value);
+      });
+    }
+
+    test('the exact name still comes first', () {
+      expect(search('الشهداء').first.id, 'shohadaa');
+      expect(search('جامعة القاهرة').map((s) => s.id), ['uni']);
+      expect(
+        search('جامعة').map((s) => s.id),
+        containsAll(<String>['uni', 'arab_league']),
+      );
+    });
+  });
 }

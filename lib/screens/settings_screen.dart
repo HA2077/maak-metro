@@ -4,6 +4,7 @@ import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
+import 'package:maak_metro/core/utils/dates.dart';
 import 'package:maak_metro/core/utils/digits.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/providers/settings_provider.dart';
@@ -95,30 +96,44 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 Card(
+                  clipBehavior: Clip.antiAlias,
                   child: Column(
                     children: [
-                      ListTile(
-                        leading: const Icon(Icons.subway_outlined),
-                        title: Text(l10n.appName),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(
+                          top: AppSpace.xl,
+                          bottom: AppSpace.lg,
+                        ),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/logo.webp',
+                              width: 104,
+                              height: 104,
+                              excludeFromSemantics: true,
+                            ),
+                            const SizedBox(height: AppSpace.md),
+                            Text(
+                              l10n.appName,
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const Divider(),
+                      const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.event_outlined),
-                        title: Text(
-                          l10n.dataSnapshot(
-                            snapshot.isEmpty ? '\u2014' : snapshot,
-                          ),
-                        ),
+                        title: Text(l10n.dataSnapshot),
+                        trailing: _date(context, snapshot),
                       ),
-                      const Divider(),
+                      const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.payments_outlined),
-                        title: Text(
-                          localizedDigits(
-                            context,
-                            l10n.fareEffective(fareEffectiveDate),
-                          ),
-                        ),
+                        title: Text(l10n.fareEffective),
+                        trailing: _date(context, fareEffectiveDate),
                       ),
                     ],
                   ),
@@ -130,6 +145,31 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Day first, in the reader's figures. The fields are separate texts on an LTR
+/// row because Arabic-Indic numbers are right-to-left runs: inside one string
+/// bidi reorders "18-11-2026" to 2026-11-18 and the year reads first.
+Widget _date(BuildContext context, String isoDate) {
+  final theme = Theme.of(context);
+  final style = theme.textTheme.bodyMedium?.copyWith(
+    color: theme.colorScheme.onSurfaceVariant,
+    fontWeight: FontWeight.w600,
+  );
+  final parts = localizedDigits(
+    context,
+    isoDate.isEmpty ? '\u2014' : dayFirstDate(isoDate),
+  ).split('-');
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    textDirection: TextDirection.ltr,
+    children: [
+      for (var i = 0; i < parts.length; i++) ...[
+        if (i > 0) Text('-', style: style),
+        Text(parts[i], style: style),
+      ],
+    ],
+  );
 }
 
 class _Section extends StatelessWidget {

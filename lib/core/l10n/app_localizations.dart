@@ -431,14 +431,14 @@ abstract class AppLocalizations {
   /// No description provided for @dataSnapshot.
   ///
   /// In ar, this message translates to:
-  /// **'تاريخ البيانات {date}'**
-  String dataSnapshot(String date);
+  /// **'تاريخ البيانات'**
+  String get dataSnapshot;
 
   /// No description provided for @fareEffective.
   ///
   /// In ar, this message translates to:
-  /// **'سريان الأجرة {date}'**
-  String fareEffective(String date);
+  /// **'سريان الأجرة'**
+  String get fareEffective;
 
   /// No description provided for @loadError.
   ///

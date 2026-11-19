@@ -68,6 +68,7 @@ flutter:
   generate: true
   assets:
     - assets/metro_seed.json
+    - assets/images/logo.webp
   fonts:
     - family: IBM Plex Sans Arabic
       fonts:
