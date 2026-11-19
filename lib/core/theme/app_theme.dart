@@ -102,6 +102,11 @@ abstract final class AppTheme {
 
   static ThemeData get dark => _build(darkScheme, dark: true);
 
+  /// Figures that keep their width while they animate, so a count-up does not
+  /// shuffle the text left and right.
+  static TextStyle? numeric(TextStyle? style) =>
+      style?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
+
   static ThemeData _build(ColorScheme scheme, {required bool dark}) {
     final base = ThemeData(
       colorScheme: scheme,

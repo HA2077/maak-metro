@@ -9,6 +9,7 @@ import 'package:maak_metro/domain/models/metro_models.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/widgets/count_up.dart';
 import 'package:maak_metro/widgets/leg_card.dart';
+import 'package:maak_metro/widgets/line_chip.dart';
 import 'package:maak_metro/widgets/summary_stat.dart';
 import 'package:provider/provider.dart';
 
@@ -41,10 +42,7 @@ class RouteResultScreen extends StatelessWidget {
               tooltip: isFavorite ? l10n.removeFavorite : l10n.addFavorite,
               isSelected: isFavorite,
               icon: const Icon(Icons.star_border),
-              selectedIcon: Icon(
-                Icons.star,
-                color: theme.colorScheme.primary,
-              ),
+              selectedIcon: Icon(Icons.star, color: theme.colorScheme.primary),
             ),
         ],
       ),
@@ -70,7 +68,9 @@ class RouteResultScreen extends StatelessWidget {
                                 duration: AppMotion.counter,
                                 text: (value) =>
                                     l10n.estimatedTime(_minutes(value)),
-                                style: theme.textTheme.headlineSmall,
+                                style: AppTheme.numeric(
+                                  theme.textTheme.headlineSmall,
+                                ),
                               ),
                             ),
                           ),
@@ -146,7 +146,6 @@ class _TransferRow extends StatelessWidget {
     final station = previousStops.isEmpty
         ? ''
         : stationNameById(context, network, previousStops.last);
-    final name = line == null ? '' : lineName(context, line);
 
     return Padding(
       padding: const EdgeInsetsDirectional.symmetric(vertical: AppSpace.sm),
@@ -154,9 +153,13 @@ class _TransferRow extends StatelessWidget {
         children: [
           Icon(Icons.alt_route, size: 18, color: theme.colorScheme.primary),
           const SizedBox(width: AppSpace.sm),
+          if (line != null) ...[
+            LineChip(line: line),
+            const SizedBox(width: AppSpace.sm),
+          ],
           Expanded(
             child: Text(
-              l10n.changeTo(name, station),
+              l10n.changeAt(station),
               style: theme.textTheme.bodyMedium,
             ),
           ),

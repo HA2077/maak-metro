@@ -200,6 +200,18 @@ abstract class AppLocalizations {
   /// **'آخر عمليات البحث'**
   String get recentSearches;
 
+  /// No description provided for @interchanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'محطات التبديل'**
+  String get interchanges;
+
+  /// No description provided for @noData.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات الشبكة لم تُحمَّل بعد'**
+  String get noData;
+
   /// No description provided for @routeTitle.
   ///
   /// In ar, this message translates to:
@@ -230,11 +242,11 @@ abstract class AppLocalizations {
   /// **'{price} جنيه'**
   String fareEgp(String price);
 
-  /// No description provided for @changeTo.
+  /// No description provided for @changeAt.
   ///
   /// In ar, this message translates to:
-  /// **'غيّر إلى {line} في {station}'**
-  String changeTo(String line, String station);
+  /// **'غيّر الخط في {station}'**
+  String changeAt(String station);
 
   /// No description provided for @legFromTo.
   ///

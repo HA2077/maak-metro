@@ -14,18 +14,31 @@ Widget _app(int index) => MaterialApp(
   ),
 );
 
+double _opacityOf(WidgetTester tester, String label) {
+  final transition = tester.widget<FadeTransition>(
+    find
+        .ancestor(of: find.text(label), matching: find.byType(FadeTransition))
+        .first,
+  );
+  return transition.opacity.value;
+}
+
 void main() {
-  testWidgets('both tabs paint during the fade, only the new one after', (
-    tester,
-  ) async {
+  testWidgets('the old tab is gone before the new one appears', (tester) async {
     await tester.pumpWidget(_app(0));
     expect(find.text('planner'), findsOneWidget);
     expect(find.text('lines'), findsNothing);
 
     await tester.pumpWidget(_app(1));
-    await tester.pump(const Duration(milliseconds: 80));
-    expect(find.text('planner'), findsOneWidget);
-    expect(find.text('lines'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 60));
+
+    // Leaving tab is fading out, incoming is still fully transparent: the two
+    // are never visibly composited on top of each other.
+    expect(_opacityOf(tester, 'planner'), lessThan(1));
+    expect(_opacityOf(tester, 'lines'), 0);
+
+    await tester.pump(const Duration(milliseconds: 120));
+    expect(_opacityOf(tester, 'lines'), greaterThan(0));
 
     await tester.pumpAndSettle();
     expect(find.text('planner'), findsNothing);

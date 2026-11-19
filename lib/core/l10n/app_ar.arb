@@ -17,6 +17,8 @@
   "sameStationError": "محطة البداية والنهاية واحدة",
   "noRouteError": "لا يوجد مسار بين المحطتين",
   "recentSearches": "آخر عمليات البحث",
+  "interchanges": "محطات التبديل",
+  "noData": "بيانات الشبكة لم تُحمَّل بعد",
   "routeTitle": "المسار",
   "estimatedTime": "الوقت التقديري {minutes} دقيقة",
   "@estimatedTime": {
@@ -50,12 +52,9 @@
       }
     }
   },
-  "changeTo": "غيّر إلى {line} في {station}",
-  "@changeTo": {
+  "changeAt": "غيّر الخط في {station}",
+  "@changeAt": {
     "placeholders": {
-      "line": {
-        "type": "String"
-      },
       "station": {
         "type": "String"
       }

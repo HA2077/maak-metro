@@ -62,6 +62,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recentSearches => 'Recent searches';
 
   @override
+  String get interchanges => 'Interchanges';
+
+  @override
+  String get noData => 'The network data hasn\'t loaded yet';
+
+  @override
   String get routeTitle => 'Route';
 
   @override
@@ -99,8 +105,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String changeTo(String line, String station) {
-    return 'Change to $line at $station';
+  String changeAt(String station) {
+    return 'Change lines at $station';
   }
 
   @override

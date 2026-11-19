@@ -29,59 +29,69 @@ class LegCard extends StatelessWidget {
         ? ids.sublist(1, ids.length - 1)
         : const <String>[];
 
+    // The strip sits in a Stack instead of a stretched Row: a stretched Row
+    // needs IntrinsicHeight, which cannot measure an ExpansionTile and
+    // overflowed at 360dp with large text.
     return Card(
+      margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
-      child: Container(
-        decoration: BoxDecoration(
-          border: BorderDirectional(start: BorderSide(color: color, width: 6)),
-        ),
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(
-            18,
-            AppSpace.lg,
-            18,
-            AppSpace.sm,
+      child: Stack(
+        children: [
+          PositionedDirectional(
+            start: 0,
+            top: 0,
+            bottom: 0,
+            width: 6,
+            child: ColoredBox(color: color),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (line != null) LineChip(line: line),
-              const SizedBox(height: AppSpace.sm),
-              Text(
-                l10n.legFromTo(
-                  stationNameById(context, network, ids.first),
-                  stationNameById(context, network, ids.last),
-                ),
-                style: theme.textTheme.titleMedium,
-              ),
-              if (middle.isNotEmpty)
-                Theme(
-                  data: theme.copyWith(dividerColor: Colors.transparent),
-                  child: ExpansionTile(
-                    tilePadding: EdgeInsets.zero,
-                    childrenPadding: const EdgeInsetsDirectional.only(
-                      bottom: AppSpace.sm,
-                    ),
-                    title: Text(
-                      l10n.intermediateStations(middle.length),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    children: [
-                      for (final id in middle)
-                        _StationDot(
-                          stationId: id,
-                          color: color,
-                          network: network,
-                        ),
-                    ],
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              18,
+              AppSpace.lg,
+              18,
+              AppSpace.sm,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (line != null) LineChip(line: line),
+                const SizedBox(height: AppSpace.sm),
+                Text(
+                  l10n.legFromTo(
+                    stationNameById(context, network, ids.first),
+                    stationNameById(context, network, ids.last),
                   ),
+                  style: theme.textTheme.titleMedium,
                 ),
-            ],
+                if (middle.isNotEmpty)
+                  Theme(
+                    data: theme.copyWith(dividerColor: Colors.transparent),
+                    child: ExpansionTile(
+                      tilePadding: EdgeInsets.zero,
+                      childrenPadding: const EdgeInsetsDirectional.only(
+                        bottom: AppSpace.sm,
+                      ),
+                      title: Text(
+                        l10n.intermediateStations(middle.length),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      children: [
+                        for (final id in middle)
+                          _StationDot(
+                            stationId: id,
+                            color: color,
+                            network: network,
+                          ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

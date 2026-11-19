@@ -71,87 +71,179 @@ class _PlannerScreenState extends State<PlannerScreen> {
     final library = context.watch<LibraryProvider>();
     final errorText = _errorText(l10n, route.error);
     final recent = library.history.take(3).toList();
+    final interchanges = _interchanges(context, route.network);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.plannerTitle)),
-      body: ListView(
-        padding: const EdgeInsetsDirectional.fromSTEB(
-          18,
-          AppSpace.sm,
-          18,
-          AppSpace.xl,
-        ),
-        children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.only(bottom: 20),
-            child: Text(
-              l10n.plannerHint,
+      body: route.network.isEmpty
+          ? const _NoData()
+          : ListView(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                18,
+                AppSpace.sm,
+                18,
+                AppSpace.xl,
+              ),
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(bottom: 20),
+                  child: Text(
+                    l10n.plannerHint,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                _TripCard(
+                  from: route.fromStation,
+                  to: route.toStation,
+                  l10n: l10n,
+                  swapTurns: _swapTurns,
+                  onPickFrom: () => _pick(context, from: true),
+                  onPickTo: () => _pick(context, from: false),
+                  onSwap: () => _swap(route),
+                ),
+                const SizedBox(height: AppSpace.lg),
+                FilledButton(
+                  onPressed: route.canSearch ? () => _search(context) : null,
+                  child: AnimatedSwitcher(
+                    duration: AppMotion.of(context, AppMotion.base),
+                    transitionBuilder: (child, animation) =>
+                        FadeTransition(opacity: animation, child: child),
+                    child: route.loading
+                        ? const SizedBox(
+                            key: ValueKey('loading'),
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(l10n.findRoute, key: const ValueKey('label')),
+                  ),
+                ),
+                AnimatedSize(
+                  duration: AppMotion.of(context, AppMotion.base),
+                  curve: AppMotion.decelerate,
+                  alignment: AlignmentDirectional.topStart,
+                  child: errorText == null
+                      ? const SizedBox(width: double.infinity)
+                      : Padding(
+                          padding: const EdgeInsetsDirectional.only(
+                            top: AppSpace.md,
+                          ),
+                          child: _ErrorText(text: errorText),
+                        ),
+                ),
+                if (recent.isEmpty && interchanges.isNotEmpty) ...[
+                  const SizedBox(height: AppSpace.xl),
+                  Text(l10n.interchanges, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: AppSpace.md),
+                  Wrap(
+                    spacing: AppSpace.sm,
+                    runSpacing: AppSpace.sm,
+                    children: [
+                      for (var index = 0; index < interchanges.length; index++)
+                        FadeSlideIn(
+                          index: index,
+                          child: ActionChip(
+                            onPressed: () =>
+                                _quickPick(route, interchanges[index]),
+                            label: Text(
+                              stationName(context, interchanges[index]),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+                if (recent.isNotEmpty) ...[
+                  const SizedBox(height: AppSpace.xl),
+                  Text(l10n.recentSearches, style: theme.textTheme.titleSmall),
+                  const SizedBox(height: AppSpace.md),
+                  Wrap(
+                    spacing: AppSpace.sm,
+                    runSpacing: AppSpace.sm,
+                    children: [
+                      for (var index = 0; index < recent.length; index++)
+                        FadeSlideIn(
+                          index: index,
+                          child: _RecentChip(
+                            entry: recent[index],
+                            network: route.network,
+                            onTap: () {
+                              route.setFrom(recent[index].fromId);
+                              route.setTo(recent[index].toId);
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+    );
+  }
+
+  /// Interchange stations come straight from the data: any station served by
+  /// more than one line. Shown until there is history to show instead.
+  List<Station> _interchanges(BuildContext context, NetworkData network) {
+    final stations = [
+      for (final station in network.stations)
+        if (network.linesServing(station.id).length > 1) station,
+    ];
+    stations.sort(
+      (a, b) => stationName(context, a).compareTo(stationName(context, b)),
+    );
+    return stations.take(4).toList();
+  }
+
+  void _quickPick(RouteProvider route, Station station) {
+    AppHaptics.tap();
+    if (route.fromId == null) {
+      route.setFrom(station.id);
+    } else if (route.toId == null) {
+      route.setTo(station.id);
+    } else {
+      route.setFrom(station.id);
+    }
+  }
+}
+
+class _NoData extends StatelessWidget {
+  const _NoData();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsetsDirectional.all(AppSpace.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.cloud_off_outlined,
+              size: 40,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: AppSpace.md),
+            Text(
+              l10n.noData,
+              textAlign: TextAlign.center,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-          ),
-          _TripCard(
-            from: route.fromStation,
-            to: route.toStation,
-            l10n: l10n,
-            swapTurns: _swapTurns,
-            onPickFrom: () => _pick(context, from: true),
-            onPickTo: () => _pick(context, from: false),
-            onSwap: () => _swap(route),
-          ),
-          const SizedBox(height: AppSpace.lg),
-          FilledButton(
-            onPressed: route.canSearch ? () => _search(context) : null,
-            child: AnimatedSwitcher(
-              duration: AppMotion.of(context, AppMotion.base),
-              transitionBuilder: (child, animation) =>
-                  FadeTransition(opacity: animation, child: child),
-              child: route.loading
-                  ? const SizedBox(
-                      key: ValueKey('loading'),
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(l10n.findRoute, key: const ValueKey('label')),
-            ),
-          ),
-          AnimatedSize(
-            duration: AppMotion.of(context, AppMotion.base),
-            curve: AppMotion.decelerate,
-            alignment: AlignmentDirectional.topStart,
-            child: errorText == null
-                ? const SizedBox(width: double.infinity)
-                : Padding(
-                    padding: const EdgeInsetsDirectional.only(top: AppSpace.md),
-                    child: _ErrorText(text: errorText),
-                  ),
-          ),
-          if (recent.isNotEmpty) ...[
-            const SizedBox(height: AppSpace.xl),
-            Text(l10n.recentSearches, style: theme.textTheme.titleSmall),
-            const SizedBox(height: AppSpace.md),
-            Wrap(
-              spacing: AppSpace.sm,
-              runSpacing: AppSpace.sm,
-              children: [
-                for (var index = 0; index < recent.length; index++)
-                  FadeSlideIn(
-                    index: index,
-                    child: _RecentChip(
-                      entry: recent[index],
-                      network: route.network,
-                      onTap: () {
-                        route.setFrom(recent[index].fromId);
-                        route.setTo(recent[index].toId);
-                      },
-                    ),
-                  ),
-              ],
+            const SizedBox(height: AppSpace.lg),
+            FilledButton(
+              onPressed: () {
+                context.read<RouteProvider>().load();
+                context.read<LibraryProvider>().refresh();
+              },
+              child: Text(l10n.retry),
             ),
           ],
-        ],
+        ),
       ),
     );
   }
@@ -318,32 +410,44 @@ class _StationField extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.field),
           child: Padding(
             padding: const EdgeInsetsDirectional.symmetric(vertical: 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Text(
-                  label,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      AnimatedSwitcher(
+                        duration: AppMotion.of(context, AppMotion.base),
+                        switchInCurve: AppMotion.decelerate,
+                        transitionBuilder: (child, animation) =>
+                            FadeTransition(opacity: animation, child: child),
+                        child: Text(
+                          text,
+                          key: ValueKey(text),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: value == null
+                                ? theme.colorScheme.onSurfaceVariant
+                                : theme.colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 2),
-                AnimatedSwitcher(
-                  duration: AppMotion.of(context, AppMotion.base),
-                  switchInCurve: AppMotion.decelerate,
-                  transitionBuilder: (child, animation) =>
-                      FadeTransition(opacity: animation, child: child),
-                  child: Text(
-                    text,
-                    key: ValueKey(text),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: value == null
-                          ? theme.colorScheme.onSurfaceVariant
-                          : theme.colorScheme.onSurface,
-                    ),
-                  ),
+                const SizedBox(width: AppSpace.sm),
+                Icon(
+                  Icons.expand_more,
+                  size: 20,
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
               ],
             ),

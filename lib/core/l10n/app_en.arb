@@ -17,6 +17,8 @@
   "sameStationError": "Start and destination are the same station",
   "noRouteError": "No route between these stations",
   "recentSearches": "Recent searches",
+  "interchanges": "Interchanges",
+  "noData": "The network data hasn't loaded yet",
   "routeTitle": "Route",
   "estimatedTime": "About {minutes} min",
   "@estimatedTime": {
@@ -50,12 +52,9 @@
       }
     }
   },
-  "changeTo": "Change to {line} at {station}",
-  "@changeTo": {
+  "changeAt": "Change lines at {station}",
+  "@changeAt": {
     "placeholders": {
-      "line": {
-        "type": "String"
-      },
       "station": {
         "type": "String"
       }

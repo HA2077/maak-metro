@@ -61,6 +61,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get recentSearches => 'آخر عمليات البحث';
 
   @override
+  String get interchanges => 'محطات التبديل';
+
+  @override
+  String get noData => 'بيانات الشبكة لم تُحمَّل بعد';
+
+  @override
   String get routeTitle => 'المسار';
 
   @override
@@ -104,8 +110,8 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String changeTo(String line, String station) {
-    return 'غيّر إلى $line في $station';
+  String changeAt(String station) {
+    return 'غيّر الخط في $station';
   }
 
   @override

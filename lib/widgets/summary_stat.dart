@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maak_metro/core/theme/app_theme.dart';
 
 /// One figure in the route summary: icon on top, value under it.
 class SummaryStat extends StatelessWidget {
@@ -17,8 +18,8 @@ class SummaryStat extends StatelessWidget {
         Text(
           text,
           textAlign: TextAlign.center,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+          style: AppTheme.numeric(
+            theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
       ],

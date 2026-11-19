@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/motion/app_motion.dart';
 
-/// [IndexedStack] with a Material 3 fade-through between tabs: the outgoing tab
-/// fades out quickly while the incoming one fades in and settles from 97%.
-/// Children stay alive (scroll and state survive), and reduced motion swaps
-/// instantly.
+/// [IndexedStack] with a Material 3 fade-through between tabs: the current tab
+/// fades out completely first, then the next one fades in and settles from 98%.
+/// The two are never visible together, so no old content lingers under the new
+/// tab. Children stay alive; reduced motion swaps instantly.
 class FadeIndexedStack extends StatefulWidget {
   const FadeIndexedStack({
     super.key,
@@ -52,13 +52,15 @@ class _FadeIndexedStackState extends State<FadeIndexedStack>
   @override
   Widget build(BuildContext context) {
     final previous = _previousIndex;
-    final incoming = CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.2, 1, curve: AppMotion.decelerate),
+    final leaving = ReverseAnimation(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0, 0.38, curve: AppMotion.accelerate),
+      ),
     );
-    final outgoing = CurvedAnimation(
+    final arriving = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0, 0.45, curve: AppMotion.accelerate),
+      curve: const Interval(0.38, 1, curve: AppMotion.decelerate),
     );
 
     final stack = <Widget>[
@@ -68,17 +70,17 @@ class _FadeIndexedStackState extends State<FadeIndexedStack>
       if (previous != null && previous != widget.index)
         IgnorePointer(
           child: FadeTransition(
-            opacity: outgoing,
+            opacity: leaving,
             child: widget.children[previous],
           ),
         ),
       FadeTransition(
-        opacity: previous == null ? kAlwaysCompleteAnimation : incoming,
+        opacity: previous == null ? kAlwaysCompleteAnimation : arriving,
         child: ScaleTransition(
           scale: Tween<double>(
-            begin: 0.97,
+            begin: 0.98,
             end: 1,
-          ).animate(previous == null ? kAlwaysCompleteAnimation : incoming),
+          ).animate(previous == null ? kAlwaysCompleteAnimation : arriving),
           child: widget.children[widget.index],
         ),
       ),
