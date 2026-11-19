@@ -13,6 +13,14 @@ import 'package:provider/provider.dart';
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
+  /// Screens that move the user to another tab (the station sheet, opening a
+  /// saved route) reach the shell through this.
+  static HomeShellState of(BuildContext context) {
+    final shell = context.findAncestorStateOfType<HomeShellState>();
+    assert(shell != null, 'HomeShell is not an ancestor of this context');
+    return shell!;
+  }
+
   @override
   State<HomeShell> createState() => HomeShellState();
 }
