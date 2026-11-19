@@ -289,4 +289,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get greetingNight4 => 'Late night, your trip still needs a plan';
+
+  @override
+  String get dateFormat => 'Date format';
+
+  @override
+  String get dateNumeric => 'Numeric';
+
+  @override
+  String get dateWritten => 'Written';
+
+  @override
+  String get monthJan => 'January';
+
+  @override
+  String get monthFeb => 'February';
+
+  @override
+  String get monthMar => 'March';
+
+  @override
+  String get monthApr => 'April';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJun => 'June';
+
+  @override
+  String get monthJul => 'July';
+
+  @override
+  String get monthAug => 'August';
+
+  @override
+  String get monthSep => 'September';
+
+  @override
+  String get monthOct => 'October';
+
+  @override
+  String get monthNov => 'November';
+
+  @override
+  String get monthDec => 'December';
+
+  @override
+  String get mapTitle => 'Metro map';
+
+  @override
+  String get mapHint =>
+      'Tap a line to light it up. Tap it again to show them all.';
 }

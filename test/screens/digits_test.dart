@@ -53,6 +53,16 @@ void main() {
     expect(find.text('٢٠٢٦'), findsNWidgets(2));
   });
 
+  testWidgets('dates can be written out instead', (tester) async {
+    await pumpScreen(tester, screen: const SettingsScreen());
+
+    await tester.tap(find.text('مكتوب'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('١٨ نوفمبر ٢٠٢٦'), findsOneWidget);
+    expect(find.text('٢٧ مارس ٢٠٢٦'), findsOneWidget);
+  });
+
   testWidgets('the result screen reads in Arabic figures', (tester) async {
     await pumpScreen(
       tester,

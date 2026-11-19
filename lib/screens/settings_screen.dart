@@ -4,9 +4,10 @@ import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
-import 'package:maak_metro/core/utils/digits.dart';
+import 'package:maak_metro/core/utils/dates.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/providers/settings_provider.dart';
+import 'package:maak_metro/widgets/date_text.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -79,6 +80,31 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: AppSpace.xl),
           FadeSlideIn(
             index: 2,
+            child: _Section(
+              title: l10n.dateFormat,
+              child: SegmentedButton<DateStyle>(
+                showSelectedIcon: false,
+                segments: [
+                  ButtonSegment(
+                    value: DateStyle.numeric,
+                    label: Text(l10n.dateNumeric),
+                  ),
+                  ButtonSegment(
+                    value: DateStyle.written,
+                    label: Text(l10n.dateWritten),
+                  ),
+                ],
+                selected: {settings.dateStyle},
+                onSelectionChanged: (selection) {
+                  AppHaptics.tap();
+                  settings.setDateStyle(selection.first);
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpace.xl),
+          FadeSlideIn(
+            index: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -134,13 +160,13 @@ class SettingsScreen extends StatelessWidget {
                       ListTile(
                         leading: const Icon(Icons.event_outlined),
                         title: Text(l10n.dataSnapshot),
-                        trailing: _date(context, snapshot),
+                        trailing: DateText(snapshot),
                       ),
                       const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.payments_outlined),
                         title: Text(l10n.fareEffective),
-                        trailing: _date(context, fareEffectiveDate),
+                        trailing: DateText(fareEffectiveDate),
                       ),
                     ],
                   ),
@@ -152,41 +178,6 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Drops a leading zero: an Arabic-Indic zero is a dot, and ٠٣ reads as a
-/// decimal point next to the ٣.
-String _plain(String value) => int.tryParse(value)?.toString() ?? value;
-
-/// Day first in the reading order: in Arabic the day sits at the right, so the
-/// row runs right-to-left as day, month, year. Each field is its own text
-/// because Arabic-Indic numbers are one right-to-left run and bidi would
-/// reorder the three fields inside a single string.
-Widget _date(BuildContext context, String isoDate) {
-  final theme = Theme.of(context);
-  final style = theme.textTheme.bodyLarge?.copyWith(
-    fontWeight: FontWeight.w600,
-  );
-  final parts = isoDate.split('-');
-  if (parts.length != 3) {
-    return Text(isoDate.isEmpty ? '\u2014' : isoDate, style: style);
-  }
-  final day = localizedDigits(context, _plain(parts[2]));
-  final month = localizedDigits(context, _plain(parts[1]));
-  final year = localizedDigits(context, _plain(parts[0]));
-  final arabic = Localizations.localeOf(context).languageCode == 'ar';
-
-  return Row(
-    mainAxisSize: MainAxisSize.min,
-    textDirection: arabic ? TextDirection.rtl : TextDirection.ltr,
-    children: [
-      Text(day, style: style),
-      Text('-', style: style),
-      Text(month, style: style),
-      Text('-', style: style),
-      Text(year, style: style),
-    ],
-  );
 }
 
 class _Section extends StatelessWidget {

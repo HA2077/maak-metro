@@ -204,6 +204,10 @@ abstract final class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           minimumSize: const Size.fromHeight(52),
+          padding: const EdgeInsetsDirectional.symmetric(
+            horizontal: 24,
+            vertical: 16,
+          ),
           side: BorderSide(color: scheme.outline),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.field),
@@ -241,7 +245,7 @@ abstract final class AppTheme {
       ),
       listTileTheme: ListTileThemeData(
         contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 18),
-        minVerticalPadding: 14,
+        minVerticalPadding: 16,
         iconColor: scheme.onSurfaceVariant,
         textColor: scheme.onSurface,
       ),
@@ -265,9 +269,10 @@ abstract final class AppTheme {
         side: BorderSide(color: scheme.outlineVariant),
         labelStyle: text.labelLarge?.copyWith(color: scheme.onSurface),
         shape: const StadiumBorder(),
+        labelPadding: const EdgeInsetsDirectional.symmetric(horizontal: 4),
         padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: 14,
-          vertical: 10,
+          horizontal: 16,
+          vertical: 11,
         ),
       ),
       expansionTileTheme: ExpansionTileThemeData(

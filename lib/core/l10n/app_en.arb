@@ -144,5 +144,22 @@
   "greetingEvening3": "Good evening, where to after work?",
   "greetingEvening4": "Evening, plan your trip in a second",
   "greetingNight3": "Quiet night — where are you off to?",
-  "greetingNight4": "Late night, your trip still needs a plan"
+  "greetingNight4": "Late night, your trip still needs a plan",
+  "dateFormat": "Date format",
+  "dateNumeric": "Numeric",
+  "dateWritten": "Written",
+  "monthJan": "January",
+  "monthFeb": "February",
+  "monthMar": "March",
+  "monthApr": "April",
+  "monthMay": "May",
+  "monthJun": "June",
+  "monthJul": "July",
+  "monthAug": "August",
+  "monthSep": "September",
+  "monthOct": "October",
+  "monthNov": "November",
+  "monthDec": "December",
+  "mapTitle": "Metro map",
+  "mapHint": "Tap a line to light it up. Tap it again to show them all."
 }

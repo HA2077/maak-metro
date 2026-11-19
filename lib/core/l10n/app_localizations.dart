@@ -571,6 +571,108 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'آخر الليل، مشوارك لسه محتاج تخطيط'**
   String get greetingNight4;
+
+  /// No description provided for @dateFormat.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنسيق التاريخ'**
+  String get dateFormat;
+
+  /// No description provided for @dateNumeric.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقمي'**
+  String get dateNumeric;
+
+  /// No description provided for @dateWritten.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتوب'**
+  String get dateWritten;
+
+  /// No description provided for @monthJan.
+  ///
+  /// In ar, this message translates to:
+  /// **'يناير'**
+  String get monthJan;
+
+  /// No description provided for @monthFeb.
+  ///
+  /// In ar, this message translates to:
+  /// **'فبراير'**
+  String get monthFeb;
+
+  /// No description provided for @monthMar.
+  ///
+  /// In ar, this message translates to:
+  /// **'مارس'**
+  String get monthMar;
+
+  /// No description provided for @monthApr.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبريل'**
+  String get monthApr;
+
+  /// No description provided for @monthMay.
+  ///
+  /// In ar, this message translates to:
+  /// **'مايو'**
+  String get monthMay;
+
+  /// No description provided for @monthJun.
+  ///
+  /// In ar, this message translates to:
+  /// **'يونيو'**
+  String get monthJun;
+
+  /// No description provided for @monthJul.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوليو'**
+  String get monthJul;
+
+  /// No description provided for @monthAug.
+  ///
+  /// In ar, this message translates to:
+  /// **'أغسطس'**
+  String get monthAug;
+
+  /// No description provided for @monthSep.
+  ///
+  /// In ar, this message translates to:
+  /// **'سبتمبر'**
+  String get monthSep;
+
+  /// No description provided for @monthOct.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكتوبر'**
+  String get monthOct;
+
+  /// No description provided for @monthNov.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوفمبر'**
+  String get monthNov;
+
+  /// No description provided for @monthDec.
+  ///
+  /// In ar, this message translates to:
+  /// **'ديسمبر'**
+  String get monthDec;
+
+  /// No description provided for @mapTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خريطة المترو'**
+  String get mapTitle;
+
+  /// No description provided for @mapHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اضغط على خط عشان ينوّر، واضغط عليه تاني عشان ترجع للكل.'**
+  String get mapHint;
 }
 
 class _AppLocalizationsDelegate

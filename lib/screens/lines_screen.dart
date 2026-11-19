@@ -9,6 +9,7 @@ import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/models/metro_models.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/screens/home_shell.dart';
+import 'package:maak_metro/screens/metro_map_screen.dart';
 import 'package:maak_metro/widgets/line_chip.dart';
 import 'package:provider/provider.dart';
 
@@ -144,7 +145,18 @@ class LinesScreen extends StatelessWidget {
     final network = context.watch<RouteProvider>().network;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.linesTitle)),
+      appBar: AppBar(
+        title: Text(l10n.linesTitle),
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const MetroMapScreen()),
+            ),
+            tooltip: l10n.mapTitle,
+            icon: const Icon(Icons.map_outlined),
+          ),
+        ],
+      ),
       body: network.lines.isEmpty
           ? const SizedBox.shrink()
           : ListView.separated(

@@ -440,7 +440,7 @@ class _StationField extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(AppRadius.field),
           child: Padding(
-            padding: const EdgeInsetsDirectional.symmetric(vertical: 14),
+            padding: const EdgeInsetsDirectional.symmetric(vertical: 16),
             child: Row(
               children: [
                 Expanded(

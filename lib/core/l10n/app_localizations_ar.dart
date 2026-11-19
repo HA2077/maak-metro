@@ -294,4 +294,56 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get greetingNight4 => 'آخر الليل، مشوارك لسه محتاج تخطيط';
+
+  @override
+  String get dateFormat => 'تنسيق التاريخ';
+
+  @override
+  String get dateNumeric => 'رقمي';
+
+  @override
+  String get dateWritten => 'مكتوب';
+
+  @override
+  String get monthJan => 'يناير';
+
+  @override
+  String get monthFeb => 'فبراير';
+
+  @override
+  String get monthMar => 'مارس';
+
+  @override
+  String get monthApr => 'أبريل';
+
+  @override
+  String get monthMay => 'مايو';
+
+  @override
+  String get monthJun => 'يونيو';
+
+  @override
+  String get monthJul => 'يوليو';
+
+  @override
+  String get monthAug => 'أغسطس';
+
+  @override
+  String get monthSep => 'سبتمبر';
+
+  @override
+  String get monthOct => 'أكتوبر';
+
+  @override
+  String get monthNov => 'نوفمبر';
+
+  @override
+  String get monthDec => 'ديسمبر';
+
+  @override
+  String get mapTitle => 'خريطة المترو';
+
+  @override
+  String get mapHint =>
+      'اضغط على خط عشان ينوّر، واضغط عليه تاني عشان ترجع للكل.';
 }
