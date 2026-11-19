@@ -9,7 +9,6 @@ import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/models/metro_models.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/screens/home_shell.dart';
-import 'package:maak_metro/screens/metro_map_screen.dart';
 import 'package:maak_metro/widgets/line_chip.dart';
 import 'package:provider/provider.dart';
 
@@ -145,44 +144,11 @@ class LinesScreen extends StatelessWidget {
     final network = context.watch<RouteProvider>().network;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.linesTitle),
-        actions: [
-          IconButton(
-            onPressed: () => _openMap(context),
-            tooltip: l10n.mapTitle,
-            icon: const Icon(Icons.map_outlined),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text(l10n.linesTitle)),
       body: network.lines.isEmpty
           ? const SizedBox.shrink()
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                    18,
-                    AppSpace.md,
-                    18,
-                    0,
-                  ),
-                  child: FilledButton.tonalIcon(
-                    onPressed: () => _openMap(context),
-                    icon: const Icon(Icons.map_outlined),
-                    label: Text(l10n.mapTitle),
-                  ),
-                ),
-                Expanded(child: _lineList(context, network, theme)),
-              ],
-            ),
+          : _lineList(context, network, theme),
     );
-  }
-
-  void _openMap(BuildContext context) {
-    AppHaptics.tap();
-    Navigator.of(context)
-        .push(MaterialPageRoute<void>(builder: (_) => const MetroMapScreen()));
   }
 
   Widget _lineList(BuildContext context, NetworkData network, ThemeData theme) {

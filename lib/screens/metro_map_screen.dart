@@ -14,6 +14,9 @@ import 'package:provider/provider.dart';
 
 /// The whole network as a schematic: tap a line to light it up and fade the
 /// others, and the current route is drawn over the top when there is one.
+///
+/// Nothing opens this screen yet: the map waits for sign-off. To bring it back,
+/// add an entry on the lines tab (a button or an app-bar icon) that pushes it.
 class MetroMapScreen extends StatefulWidget {
   const MetroMapScreen({super.key});
 
