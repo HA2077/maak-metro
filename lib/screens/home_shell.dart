@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/providers/library_provider.dart';
+import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/screens/library_screen.dart';
 import 'package:maak_metro/screens/lines_screen.dart';
 import 'package:maak_metro/screens/planner_screen.dart';
 import 'package:maak_metro/screens/settings_screen.dart';
+import 'package:provider/provider.dart';
 
 /// Bottom-bar host. The four tabs live in an [IndexedStack], so switching tabs
 /// keeps their scroll position and state.
@@ -25,16 +28,19 @@ class HomeShellState extends State<HomeShell> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final loadFailed = context.watch<RouteProvider>().loadFailed;
     return Scaffold(
-      body: IndexedStack(
-        index: _index,
-        children: const [
-          PlannerScreen(),
-          LinesScreen(),
-          LibraryScreen(),
-          SettingsScreen(),
-        ],
-      ),
+      body: loadFailed
+          ? const _LoadFailure()
+          : IndexedStack(
+              index: _index,
+              children: const [
+                PlannerScreen(),
+                LinesScreen(),
+                LibraryScreen(),
+                SettingsScreen(),
+              ],
+            ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: select,
@@ -59,6 +65,45 @@ class HomeShellState extends State<HomeShell> {
             label: l10n.tabSettings,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _LoadFailure extends StatelessWidget {
+  const _LoadFailure();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsetsDirectional.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 40,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.loadError,
+              style: theme.textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () {
+                context.read<RouteProvider>().load();
+                context.read<LibraryProvider>().refresh();
+              },
+              child: Text(l10n.retry),
+            ),
+          ],
+        ),
       ),
     );
   }
