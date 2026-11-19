@@ -4,6 +4,7 @@ import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
+import 'package:maak_metro/core/utils/digits.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
@@ -112,7 +113,12 @@ class SettingsScreen extends StatelessWidget {
                       const Divider(),
                       ListTile(
                         leading: const Icon(Icons.payments_outlined),
-                        title: Text(l10n.fareEffective(fareEffectiveDate)),
+                        title: Text(
+                          localizedDigits(
+                            context,
+                            l10n.fareEffective(fareEffectiveDate),
+                          ),
+                        ),
                       ),
                     ],
                   ),

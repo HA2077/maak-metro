@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/theme/line_colors.dart';
+import 'package:maak_metro/core/utils/digits.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/models/metro_models.dart';
 import 'package:maak_metro/widgets/line_chip.dart';
@@ -72,7 +73,10 @@ class LegCard extends StatelessWidget {
                         bottom: AppSpace.sm,
                       ),
                       title: Text(
-                        l10n.intermediateStations(middle.length),
+                        localizedDigits(
+                          context,
+                          l10n.intermediateStations(middle.length),
+                        ),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,

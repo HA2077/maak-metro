@@ -4,6 +4,7 @@ import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
+import 'package:maak_metro/core/utils/digits.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/models/metro_models.dart';
 import 'package:maak_metro/providers/route_provider.dart';
@@ -59,15 +60,20 @@ class RouteResultScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Semantics(
-                            label: l10n.estimatedTime(
-                              _minutes(result.estimatedMinutes),
+                            label: localizedDigits(
+                              context,
+                              l10n.estimatedTime(
+                                _minutes(result.estimatedMinutes),
+                              ),
                             ),
                             child: ExcludeSemantics(
                               child: CountUp(
                                 value: result.estimatedMinutes,
                                 duration: AppMotion.counter,
-                                text: (value) =>
-                                    l10n.estimatedTime(_minutes(value)),
+                                text: (value) => localizedDigits(
+                                  context,
+                                  l10n.estimatedTime(_minutes(value)),
+                                ),
                                 style: AppTheme.numeric(
                                   theme.textTheme.headlineSmall,
                                 ),
@@ -80,19 +86,28 @@ class RouteResultScreen extends StatelessWidget {
                               Expanded(
                                 child: SummaryStat(
                                   icon: Icons.pin_drop_outlined,
-                                  text: l10n.stationsCount(result.stationCount),
+                                  text: localizedDigits(
+                                    context,
+                                    l10n.stationsCount(result.stationCount),
+                                  ),
                                 ),
                               ),
                               Expanded(
                                 child: SummaryStat(
                                   icon: Icons.alt_route,
-                                  text: l10n.transfersCount(result.transfers),
+                                  text: localizedDigits(
+                                    context,
+                                    l10n.transfersCount(result.transfers),
+                                  ),
                                 ),
                               ),
                               Expanded(
                                 child: SummaryStat(
                                   icon: Icons.payments_outlined,
-                                  text: l10n.fareEgp(result.fareEgp.toString()),
+                                  text: localizedDigits(
+                                    context,
+                                    l10n.fareEgp(result.fareEgp.toString()),
+                                  ),
                                 ),
                               ),
                             ],

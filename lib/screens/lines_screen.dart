@@ -4,6 +4,7 @@ import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/theme/line_colors.dart';
+import 'package:maak_metro/core/utils/digits.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/models/metro_models.dart';
 import 'package:maak_metro/providers/route_provider.dart';
@@ -173,8 +174,11 @@ class LinesScreen extends StatelessWidget {
                         style: theme.textTheme.titleMedium,
                       ),
                       subtitle: Text(
-                        l10n.stationsCount(
-                          network.lineStationsOf(line.id).length,
+                        localizedDigits(
+                          context,
+                          l10n.stationsCount(
+                            network.lineStationsOf(line.id).length,
+                          ),
                         ),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
