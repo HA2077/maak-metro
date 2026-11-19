@@ -154,6 +154,10 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
+/// Drops a leading zero: an Arabic-Indic zero is a dot, and ٠٣ reads as a
+/// decimal point next to the ٣.
+String _plain(String value) => int.tryParse(value)?.toString() ?? value;
+
 /// Day first in the reading order: in Arabic the day sits at the right, so the
 /// row runs right-to-left as day, month, year. Each field is its own text
 /// because Arabic-Indic numbers are one right-to-left run and bidi would
@@ -167,9 +171,9 @@ Widget _date(BuildContext context, String isoDate) {
   if (parts.length != 3) {
     return Text(isoDate.isEmpty ? '\u2014' : isoDate, style: style);
   }
-  final day = localizedDigits(context, parts[2]);
-  final month = localizedDigits(context, parts[1]);
-  final year = localizedDigits(context, parts[0]);
+  final day = localizedDigits(context, _plain(parts[2]));
+  final month = localizedDigits(context, _plain(parts[1]));
+  final year = localizedDigits(context, _plain(parts[0]));
   final arabic = Localizations.localeOf(context).languageCode == 'ar';
 
   return Row(

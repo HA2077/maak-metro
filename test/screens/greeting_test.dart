@@ -19,6 +19,21 @@ void main() {
     expect(dayPartFor(4), DayPart.night);
   });
 
+  testWidgets('each part of the day offers four different greetings', (
+    tester,
+  ) async {
+    await pumpScreen(tester, screen: const PlannerScreen());
+
+    final l10n = AppLocalizations.of(
+      tester.element(find.byType(PlannerScreen)),
+    );
+    for (final part in DayPart.values) {
+      final options = greetingsFor(l10n, part);
+      expect(options.length, 4, reason: '$part');
+      expect(options.toSet().length, 4, reason: '$part has no repeats');
+    }
+  });
+
   testWidgets('the planner greets with one of the greetings for this hour', (
     tester,
   ) async {

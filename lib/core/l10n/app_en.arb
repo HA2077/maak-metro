@@ -136,5 +136,13 @@
         "type": "String"
       }
     }
-  }
+  },
+  "greetingMorning3": "Morning! Your trip starts right here",
+  "greetingMorning4": "Good morning, pick two stations and we handle the rest",
+  "greetingAfternoon3": "Good afternoon, where's your station today?",
+  "greetingAfternoon4": "Hi there, let's make this trip easier",
+  "greetingEvening3": "Good evening, where to after work?",
+  "greetingEvening4": "Evening, plan your trip in a second",
+  "greetingNight3": "Quiet night — where are you off to?",
+  "greetingNight4": "Late night, your trip still needs a plan"
 }

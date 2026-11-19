@@ -224,7 +224,7 @@ class _Greeting extends StatefulWidget {
 }
 
 class _GreetingState extends State<_Greeting> {
-  final int _variant = Random().nextInt(2);
+  final int _variant = Random().nextInt(4);
 
   @override
   Widget build(BuildContext context) {

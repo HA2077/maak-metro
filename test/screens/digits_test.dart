@@ -46,7 +46,8 @@ void main() {
     expect(find.text('تاريخ البيانات'), findsOneWidget);
     expect(find.text('سريان الأجرة'), findsOneWidget);
     // Day, month, year as separate runs: bidi would flip them in one string.
-    for (final part in ['١٨', '١١', '٢٧', '٠٣']) {
+    // No zero padding, so March is ٣ rather than ٠٣.
+    for (final part in ['١٨', '١١', '٢٧', '٣']) {
       expect(find.text(part), findsOneWidget, reason: part);
     }
     expect(find.text('٢٠٢٦'), findsNWidgets(2));

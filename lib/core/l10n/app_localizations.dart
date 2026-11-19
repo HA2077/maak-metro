@@ -523,6 +523,54 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لسه صاحي؟ اختار محطتك بسرعة'**
   String get greetingNight2;
+
+  /// No description provided for @greetingMorning3.
+  ///
+  /// In ar, this message translates to:
+  /// **'صباح الفل، مشوارك النهاردة يبدأ من هنا'**
+  String get greetingMorning3;
+
+  /// No description provided for @greetingMorning4.
+  ///
+  /// In ar, this message translates to:
+  /// **'صباح الخير، اختار محطتين والباقي علينا'**
+  String get greetingMorning4;
+
+  /// No description provided for @greetingAfternoon3.
+  ///
+  /// In ar, this message translates to:
+  /// **'نهارك فل، فين محطتك النهاردة؟'**
+  String get greetingAfternoon3;
+
+  /// No description provided for @greetingAfternoon4.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهلاً بيك، خلّي المشوار أسهل من كده'**
+  String get greetingAfternoon4;
+
+  /// No description provided for @greetingEvening3.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساء الخير، رايح فين بعد الشغل؟'**
+  String get greetingEvening3;
+
+  /// No description provided for @greetingEvening4.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساء النور، خطّط مشوارك في ثانية'**
+  String get greetingEvening4;
+
+  /// No description provided for @greetingNight3.
+  ///
+  /// In ar, this message translates to:
+  /// **'سهرة هادية، فين رايح دلوقتي؟'**
+  String get greetingNight3;
+
+  /// No description provided for @greetingNight4.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر الليل، مشوارك لسه محتاج تخطيط'**
+  String get greetingNight4;
 }
 
 class _AppLocalizationsDelegate

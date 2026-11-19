@@ -263,4 +263,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get greetingNight2 => 'Still up? Pick your station quickly';
+
+  @override
+  String get greetingMorning3 => 'Morning! Your trip starts right here';
+
+  @override
+  String get greetingMorning4 =>
+      'Good morning, pick two stations and we handle the rest';
+
+  @override
+  String get greetingAfternoon3 =>
+      'Good afternoon, where\'s your station today?';
+
+  @override
+  String get greetingAfternoon4 => 'Hi there, let\'s make this trip easier';
+
+  @override
+  String get greetingEvening3 => 'Good evening, where to after work?';
+
+  @override
+  String get greetingEvening4 => 'Evening, plan your trip in a second';
+
+  @override
+  String get greetingNight3 => 'Quiet night — where are you off to?';
+
+  @override
+  String get greetingNight4 => 'Late night, your trip still needs a plan';
 }

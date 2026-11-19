@@ -270,4 +270,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get greetingNight2 => 'لسه صاحي؟ اختار محطتك بسرعة';
+
+  @override
+  String get greetingMorning3 => 'صباح الفل، مشوارك النهاردة يبدأ من هنا';
+
+  @override
+  String get greetingMorning4 => 'صباح الخير، اختار محطتين والباقي علينا';
+
+  @override
+  String get greetingAfternoon3 => 'نهارك فل، فين محطتك النهاردة؟';
+
+  @override
+  String get greetingAfternoon4 => 'أهلاً بيك، خلّي المشوار أسهل من كده';
+
+  @override
+  String get greetingEvening3 => 'مساء الخير، رايح فين بعد الشغل؟';
+
+  @override
+  String get greetingEvening4 => 'مساء النور، خطّط مشوارك في ثانية';
+
+  @override
+  String get greetingNight3 => 'سهرة هادية، فين رايح دلوقتي؟';
+
+  @override
+  String get greetingNight4 => 'آخر الليل، مشوارك لسه محتاج تخطيط';
 }
