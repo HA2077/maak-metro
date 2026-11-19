@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
+import 'package:maak_metro/core/utils/greeting.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/models/metro_models.dart';
 import 'package:maak_metro/providers/library_provider.dart';
@@ -85,6 +88,10 @@ class _PlannerScreenState extends State<PlannerScreen> {
                 AppSpace.xl,
               ),
               children: [
+                const Padding(
+                  padding: EdgeInsetsDirectional.only(bottom: AppSpace.sm),
+                  child: _Greeting(),
+                ),
                 Padding(
                   padding: const EdgeInsetsDirectional.only(bottom: 20),
                   child: Text(
@@ -205,6 +212,30 @@ class _PlannerScreenState extends State<PlannerScreen> {
     } else {
       route.setFrom(station.id);
     }
+  }
+}
+
+/// Greets by time of day, in one of two wordings picked at random per launch.
+class _Greeting extends StatefulWidget {
+  const _Greeting();
+
+  @override
+  State<_Greeting> createState() => _GreetingState();
+}
+
+class _GreetingState extends State<_Greeting> {
+  final int _variant = Random().nextInt(2);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final options = greetingsFor(l10n, dayPartFor(DateTime.now().hour));
+    return Text(
+      options[_variant % options.length],
+      key: const Key('plannerGreeting'),
+      style: Theme.of(context).textTheme.titleLarge
+          ?.copyWith(fontWeight: FontWeight.w700),
+    );
   }
 }
 

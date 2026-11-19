@@ -84,7 +84,8 @@ class LibraryScreen extends StatelessWidget {
                   ? null
                   : () => _confirmClear(context, library, l10n),
               tooltip: l10n.clearHistory,
-              icon: const Icon(Icons.delete_sweep_outlined),
+              iconSize: 30,
+              icon: const Icon(Icons.delete_sweep),
             ),
           ],
           bottom: TabBar(

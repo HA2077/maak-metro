@@ -4,7 +4,6 @@ import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
-import 'package:maak_metro/core/utils/dates.dart';
 import 'package:maak_metro/core/utils/digits.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/providers/settings_provider.dart';
@@ -120,6 +119,14 @@ class SettingsScreen extends StatelessWidget {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
+                            const SizedBox(height: 2),
+                            Text(
+                              l10n.versionLabel(appVersion),
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -147,27 +154,33 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-/// Day first, in the reader's figures. The fields are separate texts on an LTR
-/// row because Arabic-Indic numbers are right-to-left runs: inside one string
-/// bidi reorders "18-11-2026" to 2026-11-18 and the year reads first.
+/// Day first in the reading order: in Arabic the day sits at the right, so the
+/// row runs right-to-left as day, month, year. Each field is its own text
+/// because Arabic-Indic numbers are one right-to-left run and bidi would
+/// reorder the three fields inside a single string.
 Widget _date(BuildContext context, String isoDate) {
   final theme = Theme.of(context);
-  final style = theme.textTheme.bodyMedium?.copyWith(
-    color: theme.colorScheme.onSurfaceVariant,
+  final style = theme.textTheme.bodyLarge?.copyWith(
     fontWeight: FontWeight.w600,
   );
-  final parts = localizedDigits(
-    context,
-    isoDate.isEmpty ? '\u2014' : dayFirstDate(isoDate),
-  ).split('-');
+  final parts = isoDate.split('-');
+  if (parts.length != 3) {
+    return Text(isoDate.isEmpty ? '\u2014' : isoDate, style: style);
+  }
+  final day = localizedDigits(context, parts[2]);
+  final month = localizedDigits(context, parts[1]);
+  final year = localizedDigits(context, parts[0]);
+  final arabic = Localizations.localeOf(context).languageCode == 'ar';
+
   return Row(
     mainAxisSize: MainAxisSize.min,
-    textDirection: TextDirection.ltr,
+    textDirection: arabic ? TextDirection.rtl : TextDirection.ltr,
     children: [
-      for (var i = 0; i < parts.length; i++) ...[
-        if (i > 0) Text('-', style: style),
-        Text(parts[i], style: style),
-      ],
+      Text(day, style: style),
+      Text('-', style: style),
+      Text(month, style: style),
+      Text('-', style: style),
+      Text(year, style: style),
     ],
   );
 }

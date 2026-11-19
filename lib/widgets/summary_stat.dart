@@ -19,7 +19,7 @@ class SummaryStat extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: AppTheme.numeric(
-            theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
         ),
       ],

@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appName": "Maak Metro",
+  "appName": "Maak",
   "tabPlanner": "Planner",
   "tabLines": "Lines",
   "tabLibrary": "Saved",
@@ -117,5 +117,24 @@
   "dataSnapshot": "Data snapshot",
   "fareEffective": "Fare effective",
   "loadError": "Couldn't load the network data",
-  "retry": "Try again"
+  "retry": "Try again",
+  "versionLabel": "Version {version}",
+  "onboardingTitle": "Welcome to Maak",
+  "onboardingBody": "Pick your language and theme. You can change them any time in Settings.",
+  "onboardingStart": "Get started",
+  "greetingMorning1": "Good morning, ready for the trip?",
+  "greetingMorning2": "Morning! Where are you headed today?",
+  "greetingAfternoon1": "Good afternoon, where shall we start?",
+  "greetingAfternoon2": "Welcome back, your trip is two taps away",
+  "greetingEvening1": "Good evening, your trip is in your hands",
+  "greetingEvening2": "Evening! Pick a station and let's go",
+  "greetingNight1": "Late night? The last train is waiting",
+  "greetingNight2": "Still up? Pick your station quickly",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  }
 }

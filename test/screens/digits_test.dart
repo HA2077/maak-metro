@@ -41,6 +41,7 @@ void main() {
     await pumpScreen(tester, screen: const SettingsScreen());
 
     expect(find.text('معاك'), findsOneWidget);
+    expect(find.text('الإصدار 1.0.0'), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);
     expect(find.text('تاريخ البيانات'), findsOneWidget);
     expect(find.text('سريان الأجرة'), findsOneWidget);

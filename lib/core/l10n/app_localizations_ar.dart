@@ -231,4 +231,43 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get retry => 'إعادة المحاولة';
+
+  @override
+  String versionLabel(String version) {
+    return 'الإصدار $version';
+  }
+
+  @override
+  String get onboardingTitle => 'أهلاً بيك في معاك';
+
+  @override
+  String get onboardingBody =>
+      'اختار اللغة والمظهر، وتقدر تغيّرهم في أي وقت من الإعدادات.';
+
+  @override
+  String get onboardingStart => 'يلا نبدأ';
+
+  @override
+  String get greetingMorning1 => 'صباح الخير، جاهز للمشوار؟';
+
+  @override
+  String get greetingMorning2 => 'صباح النور، فين رايح النهاردة؟';
+
+  @override
+  String get greetingAfternoon1 => 'نهارك سعيد، تحب نبدأ منين؟';
+
+  @override
+  String get greetingAfternoon2 => 'أهلاً بيك، مشوارك على بعد خطوتين';
+
+  @override
+  String get greetingEvening1 => 'مساء الخير، مشوارك تحت إيدك';
+
+  @override
+  String get greetingEvening2 => 'مساء الفل، اختار محطتك وخلينا نمشي';
+
+  @override
+  String get greetingNight1 => 'سهرة سعيدة، آخر قطار مستنيك';
+
+  @override
+  String get greetingNight2 => 'لسه صاحي؟ اختار محطتك بسرعة';
 }

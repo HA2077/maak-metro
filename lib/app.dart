@@ -5,6 +5,7 @@ import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/providers/settings_provider.dart';
 import 'package:maak_metro/screens/home_shell.dart';
+import 'package:maak_metro/screens/onboarding_screen.dart';
 import 'package:provider/provider.dart';
 
 class MaakMetroApp extends StatelessWidget {
@@ -29,7 +30,7 @@ class MaakMetroApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const HomeShell(),
+      home: settings.onboarded ? const HomeShell() : const OnboardingScreen(),
     );
   }
 }

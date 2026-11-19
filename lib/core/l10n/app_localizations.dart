@@ -451,6 +451,78 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إعادة المحاولة'**
   String get retry;
+
+  /// No description provided for @versionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإصدار {version}'**
+  String versionLabel(String version);
+
+  /// No description provided for @onboardingTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهلاً بيك في معاك'**
+  String get onboardingTitle;
+
+  /// No description provided for @onboardingBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار اللغة والمظهر، وتقدر تغيّرهم في أي وقت من الإعدادات.'**
+  String get onboardingBody;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'يلا نبدأ'**
+  String get onboardingStart;
+
+  /// No description provided for @greetingMorning1.
+  ///
+  /// In ar, this message translates to:
+  /// **'صباح الخير، جاهز للمشوار؟'**
+  String get greetingMorning1;
+
+  /// No description provided for @greetingMorning2.
+  ///
+  /// In ar, this message translates to:
+  /// **'صباح النور، فين رايح النهاردة؟'**
+  String get greetingMorning2;
+
+  /// No description provided for @greetingAfternoon1.
+  ///
+  /// In ar, this message translates to:
+  /// **'نهارك سعيد، تحب نبدأ منين؟'**
+  String get greetingAfternoon1;
+
+  /// No description provided for @greetingAfternoon2.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهلاً بيك، مشوارك على بعد خطوتين'**
+  String get greetingAfternoon2;
+
+  /// No description provided for @greetingEvening1.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساء الخير، مشوارك تحت إيدك'**
+  String get greetingEvening1;
+
+  /// No description provided for @greetingEvening2.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساء الفل، اختار محطتك وخلينا نمشي'**
+  String get greetingEvening2;
+
+  /// No description provided for @greetingNight1.
+  ///
+  /// In ar, this message translates to:
+  /// **'سهرة سعيدة، آخر قطار مستنيك'**
+  String get greetingNight1;
+
+  /// No description provided for @greetingNight2.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه صاحي؟ اختار محطتك بسرعة'**
+  String get greetingNight2;
 }
 
 class _AppLocalizationsDelegate

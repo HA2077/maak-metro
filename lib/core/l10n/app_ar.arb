@@ -117,5 +117,24 @@
   "dataSnapshot": "تاريخ البيانات",
   "fareEffective": "سريان الأجرة",
   "loadError": "تعذّر تحميل البيانات",
-  "retry": "إعادة المحاولة"
+  "retry": "إعادة المحاولة",
+  "versionLabel": "الإصدار {version}",
+  "onboardingTitle": "أهلاً بيك في معاك",
+  "onboardingBody": "اختار اللغة والمظهر، وتقدر تغيّرهم في أي وقت من الإعدادات.",
+  "onboardingStart": "يلا نبدأ",
+  "greetingMorning1": "صباح الخير، جاهز للمشوار؟",
+  "greetingMorning2": "صباح النور، فين رايح النهاردة؟",
+  "greetingAfternoon1": "نهارك سعيد، تحب نبدأ منين؟",
+  "greetingAfternoon2": "أهلاً بيك، مشوارك على بعد خطوتين",
+  "greetingEvening1": "مساء الخير، مشوارك تحت إيدك",
+  "greetingEvening2": "مساء الفل، اختار محطتك وخلينا نمشي",
+  "greetingNight1": "سهرة سعيدة، آخر قطار مستنيك",
+  "greetingNight2": "لسه صاحي؟ اختار محطتك بسرعة",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -10,7 +10,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Maak Metro';
+  String get appName => 'Maak';
 
   @override
   String get tabPlanner => 'Planner';
@@ -224,4 +224,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retry => 'Try again';
+
+  @override
+  String versionLabel(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get onboardingTitle => 'Welcome to Maak';
+
+  @override
+  String get onboardingBody =>
+      'Pick your language and theme. You can change them any time in Settings.';
+
+  @override
+  String get onboardingStart => 'Get started';
+
+  @override
+  String get greetingMorning1 => 'Good morning, ready for the trip?';
+
+  @override
+  String get greetingMorning2 => 'Morning! Where are you headed today?';
+
+  @override
+  String get greetingAfternoon1 => 'Good afternoon, where shall we start?';
+
+  @override
+  String get greetingAfternoon2 => 'Welcome back, your trip is two taps away';
+
+  @override
+  String get greetingEvening1 => 'Good evening, your trip is in your hands';
+
+  @override
+  String get greetingEvening2 => 'Evening! Pick a station and let\'s go';
+
+  @override
+  String get greetingNight1 => 'Late night? The last train is waiting';
+
+  @override
+  String get greetingNight2 => 'Still up? Pick your station quickly';
 }
