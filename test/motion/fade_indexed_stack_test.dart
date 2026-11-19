@@ -24,7 +24,9 @@ double _opacityOf(WidgetTester tester, String label) {
 }
 
 void main() {
-  testWidgets('the old tab is gone before the new one appears', (tester) async {
+  testWidgets('tabs cross-dissolve, so neither a blank frame nor a stuck tab', (
+    tester,
+  ) async {
     await tester.pumpWidget(_app(0));
     expect(find.text('planner'), findsOneWidget);
     expect(find.text('lines'), findsNothing);
@@ -32,13 +34,14 @@ void main() {
     await tester.pumpWidget(_app(1));
     await tester.pump(const Duration(milliseconds: 60));
 
-    // Leaving tab is fading out, incoming is still fully transparent: the two
-    // are never visibly composited on top of each other.
-    expect(_opacityOf(tester, 'planner'), lessThan(1));
-    expect(_opacityOf(tester, 'lines'), 0);
-
-    await tester.pump(const Duration(milliseconds: 120));
-    expect(_opacityOf(tester, 'lines'), greaterThan(0));
+    // Both are already moving: the old tab is never left at full opacity, and
+    // the new one is on screen before the old one is gone.
+    final leaving = _opacityOf(tester, 'planner');
+    final arriving = _opacityOf(tester, 'lines');
+    expect(leaving, greaterThan(0));
+    expect(leaving, lessThan(1));
+    expect(arriving, greaterThan(0));
+    expect(arriving, lessThan(1));
 
     await tester.pumpAndSettle();
     expect(find.text('planner'), findsNothing);
