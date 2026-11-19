@@ -5,6 +5,7 @@ import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/models/metro_models.dart';
 import 'package:maak_metro/providers/library_provider.dart';
 import 'package:maak_metro/providers/route_provider.dart';
+import 'package:maak_metro/screens/route_result_screen.dart';
 import 'package:maak_metro/widgets/station_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -27,8 +28,14 @@ class PlannerScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _search(BuildContext context) =>
-      context.read<RouteProvider>().calculate();
+  Future<void> _search(BuildContext context) async {
+    final route = context.read<RouteProvider>();
+    await route.calculate();
+    if (!context.mounted || route.result == null) return;
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const RouteResultScreen()));
+  }
 
   String? _errorText(AppLocalizations l10n, RouteError? error) =>
       switch (error) {
