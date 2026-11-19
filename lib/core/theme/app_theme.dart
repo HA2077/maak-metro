@@ -29,7 +29,7 @@ abstract final class AppLayout {
 /// saturated colour that belongs to content is a metro line colour, which comes
 /// from the database, so the chrome stays one hue.
 abstract final class AppTheme {
-  static const String fontFamily = 'IBM Plex Sans Arabic';
+  static const String fontFamily = 'Noto Sans Arabic';
 
   static const Color seed = Color(0xFF2563EB);
 
