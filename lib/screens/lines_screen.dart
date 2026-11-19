@@ -149,9 +149,7 @@ class LinesScreen extends StatelessWidget {
         title: Text(l10n.linesTitle),
         actions: [
           IconButton(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const MetroMapScreen()),
-            ),
+            onPressed: () => _openMap(context),
             tooltip: l10n.mapTitle,
             icon: const Icon(Icons.map_outlined),
           ),
@@ -159,92 +157,113 @@ class LinesScreen extends StatelessWidget {
       ),
       body: network.lines.isEmpty
           ? const SizedBox.shrink()
-          : ListView.separated(
-              padding: const EdgeInsetsDirectional.all(18),
-              itemCount: network.lines.length,
-              separatorBuilder: (_, _) => const SizedBox(height: AppSpace.md),
-              itemBuilder: (context, index) {
-                final line = network.lines[index];
-                final branches = network.branchesOf(line.id);
-                final groups = ['main', ...branches.where((b) => b != 'main')];
-                final color = parseHexColor(line.colorHex);
-                return FadeSlideIn(
-                  index: index,
-                  child: Card(
-                    clipBehavior: Clip.antiAlias,
-                    child: ExpansionTile(
-                      leading: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                        ),
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                    18,
+                    AppSpace.md,
+                    18,
+                    0,
+                  ),
+                  child: FilledButton.tonalIcon(
+                    onPressed: () => _openMap(context),
+                    icon: const Icon(Icons.map_outlined),
+                    label: Text(l10n.mapTitle),
+                  ),
+                ),
+                Expanded(child: _lineList(context, network, theme)),
+              ],
+            ),
+    );
+  }
+
+  void _openMap(BuildContext context) {
+    AppHaptics.tap();
+    Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (_) => const MetroMapScreen()));
+  }
+
+  Widget _lineList(BuildContext context, NetworkData network, ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
+    return ListView.separated(
+      padding: const EdgeInsetsDirectional.all(18),
+      itemCount: network.lines.length,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpace.md),
+      itemBuilder: (context, index) {
+        final line = network.lines[index];
+        final branches = network.branchesOf(line.id);
+        final groups = ['main', ...branches.where((b) => b != 'main')];
+        final color = parseHexColor(line.colorHex);
+        return FadeSlideIn(
+          index: index,
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            child: ExpansionTile(
+              leading: Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
+              title: Text(
+                lineName(context, line),
+                style: theme.textTheme.titleMedium,
+              ),
+              subtitle: Text(
+                localizedDigits(
+                  context,
+                  l10n.stationsCount(network.lineStationsOf(line.id).length),
+                ),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              children: [
+                for (final branch in groups) ...[
+                  if (branch != 'main')
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        18,
+                        AppSpace.lg,
+                        18,
+                        AppSpace.xs,
                       ),
-                      title: Text(
-                        lineName(context, line),
-                        style: theme.textTheme.titleMedium,
-                      ),
-                      subtitle: Text(
-                        localizedDigits(
-                          context,
-                          l10n.stationsCount(
-                            network.lineStationsOf(line.id).length,
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          l10n.branchLabel(_branchTitle(branch)),
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  for (final station in network.stationsOf(line.id, branch))
+                    ListTile(
+                      contentPadding: const EdgeInsetsDirectional.only(
+                        start: 18,
+                        end: 18,
+                      ),
+                      minLeadingWidth: 10,
+                      leading: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: color, width: 2),
                         ),
                       ),
-                      children: [
-                        for (final branch in groups) ...[
-                          if (branch != 'main')
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                18,
-                                AppSpace.lg,
-                                18,
-                                AppSpace.xs,
-                              ),
-                              child: Align(
-                                alignment: AlignmentDirectional.centerStart,
-                                child: Text(
-                                  l10n.branchLabel(_branchTitle(branch)),
-                                  style: theme.textTheme.labelLarge?.copyWith(
-                                    color: theme.colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          for (final station in network.stationsOf(
-                            line.id,
-                            branch,
-                          ))
-                            ListTile(
-                              contentPadding: const EdgeInsetsDirectional.only(
-                                start: 18,
-                                end: 18,
-                              ),
-                              minLeadingWidth: 10,
-                              leading: Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: color, width: 2),
-                                ),
-                              ),
-                              title: Text(stationName(context, station)),
-                              onTap: () => _showStation(context, station),
-                            ),
-                        ],
-                        const SizedBox(height: AppSpace.sm),
-                      ],
+                      title: Text(stationName(context, station)),
+                      onTap: () => _showStation(context, station),
                     ),
-                  ),
-                );
-              },
+                ],
+                const SizedBox(height: AppSpace.sm),
+              ],
             ),
+          ),
+        );
+      },
     );
   }
 }
