@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/models/metro_models.dart';
 import 'package:maak_metro/providers/library_provider.dart';
 import 'package:maak_metro/providers/route_provider.dart';
+import 'package:maak_metro/screens/home_shell.dart';
 import 'package:maak_metro/screens/route_result_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -60,6 +62,7 @@ class LibraryScreen extends StatelessWidget {
     final network = context.watch<RouteProvider>().network;
     final history = library.history;
     final favorites = library.favorites;
+    final shell = HomeShell.of(context);
 
     return DefaultTabController(
       length: 2,
@@ -85,7 +88,12 @@ class LibraryScreen extends StatelessWidget {
         body: TabBarView(
           children: [
             favorites.isEmpty
-                ? _EmptyState(icon: Icons.star_border, text: l10n.noFavorites)
+                ? _EmptyState(
+                    icon: Icons.star_border,
+                    text: l10n.noFavorites,
+                    actionLabel: l10n.planTrip,
+                    onAction: () => shell.select(0),
+                  )
                 : ListView.separated(
                     padding: const EdgeInsetsDirectional.all(AppSpace.lg),
                     itemCount: favorites.length,
@@ -93,26 +101,37 @@ class LibraryScreen extends StatelessWidget {
                         const SizedBox(height: AppSpace.sm),
                     itemBuilder: (context, index) {
                       final favorite = favorites[index];
-                      return Dismissible(
-                        key: ValueKey('favorite-${favorite.id}'),
-                        direction: DismissDirection.horizontal,
-                        background: const _DismissBackground(),
-                        onDismissed: (_) => library.removeFavorite(favorite.id),
-                        child: _RouteTile(
-                          network: network,
-                          fromId: favorite.fromId,
-                          toId: favorite.toId,
-                          onTap: () => _open(
-                            context,
+                      return FadeSlideIn(
+                        index: index,
+                        child: Dismissible(
+                          key: ValueKey('favorite-${favorite.id}'),
+                          direction: DismissDirection.horizontal,
+                          background: const _DismissBackground(),
+                          onDismissed: (_) =>
+                              library.removeFavorite(favorite.id),
+                          child: _RouteTile(
+                            network: network,
                             fromId: favorite.fromId,
                             toId: favorite.toId,
+                            onTap: () => _open(
+                              context,
+                              fromId: favorite.fromId,
+                              toId: favorite.toId,
+                            ),
+                            deleteTooltip: l10n.removeFavorite,
+                            onDelete: () => library.removeFavorite(favorite.id),
                           ),
                         ),
                       );
                     },
                   ),
             history.isEmpty
-                ? _EmptyState(icon: Icons.history, text: l10n.noHistory)
+                ? _EmptyState(
+                    icon: Icons.history,
+                    text: l10n.noHistory,
+                    actionLabel: l10n.planTrip,
+                    onAction: () => shell.select(0),
+                  )
                 : ListView.separated(
                     padding: const EdgeInsetsDirectional.all(AppSpace.lg),
                     itemCount: history.length,
@@ -120,14 +139,17 @@ class LibraryScreen extends StatelessWidget {
                         const SizedBox(height: AppSpace.sm),
                     itemBuilder: (context, index) {
                       final entry = history[index];
-                      return _RouteTile(
-                        network: network,
-                        fromId: entry.fromId,
-                        toId: entry.toId,
-                        onTap: () => _open(
-                          context,
+                      return FadeSlideIn(
+                        index: index,
+                        child: _RouteTile(
+                          network: network,
                           fromId: entry.fromId,
                           toId: entry.toId,
+                          onTap: () => _open(
+                            context,
+                            fromId: entry.fromId,
+                            toId: entry.toId,
+                          ),
                         ),
                       );
                     },
@@ -145,58 +167,83 @@ class _RouteTile extends StatelessWidget {
     required this.fromId,
     required this.toId,
     required this.onTap,
+    this.onDelete,
+    this.deleteTooltip,
   });
 
   final NetworkData network;
   final String fromId;
   final String toId;
   final VoidCallback onTap;
+  final VoidCallback? onDelete;
+  final String? deleteTooltip;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = theme.colorScheme.primary;
+    final delete = onDelete;
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsetsDirectional.all(AppSpace.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.trip_origin, size: 14, color: color),
-                  const SizedBox(width: AppSpace.sm),
-                  Expanded(
-                    child: Text(
-                      stationNameById(context, network, fromId),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium,
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                  AppSpace.lg,
+                  AppSpace.lg,
+                  AppSpace.lg,
+                  AppSpace.lg,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.trip_origin, size: 14, color: color),
+                        const SizedBox(width: AppSpace.sm),
+                        Expanded(
+                          child: Text(
+                            stationNameById(context, network, fromId),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpace.sm),
-              Row(
-                children: [
-                  Icon(Icons.place, size: 14, color: color),
-                  const SizedBox(width: AppSpace.sm),
-                  Expanded(
-                    child: Text(
-                      stationNameById(context, network, toId),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium,
+                    const SizedBox(height: AppSpace.sm),
+                    Row(
+                      children: [
+                        Icon(Icons.place, size: 14, color: color),
+                        const SizedBox(width: AppSpace.sm),
+                        Expanded(
+                          child: Text(
+                            stationNameById(context, network, toId),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-        ),
+          if (delete != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: AppSpace.xs),
+              child: IconButton(
+                onPressed: delete,
+                tooltip: deleteTooltip,
+                icon: const Icon(Icons.delete_outline),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -221,14 +268,22 @@ class _DismissBackground extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.icon, required this.text});
+  const _EmptyState({
+    required this.icon,
+    required this.text,
+    this.actionLabel,
+    this.onAction,
+  });
 
   final IconData icon;
   final String text;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final actionLabel = this.actionLabel;
     return Center(
       child: Padding(
         padding: const EdgeInsetsDirectional.all(AppSpace.xl),
@@ -244,6 +299,10 @@ class _EmptyState extends StatelessWidget {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
+            if (actionLabel != null) ...[
+              const SizedBox(height: AppSpace.lg),
+              FilledButton.tonal(onPressed: onAction, child: Text(actionLabel)),
+            ],
           ],
         ),
       ),

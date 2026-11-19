@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_motion.dart';
+import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/providers/library_provider.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/screens/library_screen.dart';
@@ -8,8 +10,8 @@ import 'package:maak_metro/screens/planner_screen.dart';
 import 'package:maak_metro/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
 
-/// Bottom-bar host. The four tabs live in an [IndexedStack], so switching tabs
-/// keeps their scroll position and state.
+/// Bottom bar on phones, side rail on tablets. The four tabs live in an
+/// [IndexedStack], so switching keeps their scroll position and state.
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
@@ -25,57 +27,134 @@ class HomeShell extends StatefulWidget {
   State<HomeShell> createState() => HomeShellState();
 }
 
-class HomeShellState extends State<HomeShell> {
+class HomeShellState extends State<HomeShell>
+    with SingleTickerProviderStateMixin {
   int _index = 0;
+
+  late final AnimationController _entrance = AnimationController(
+    vsync: this,
+    duration: AppMotion.base,
+    value: 1,
+  );
 
   void select(int index) {
     if (index == _index) return;
     setState(() => _index = index);
+    if (!AppMotion.reduced(context)) {
+      _entrance.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _entrance.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final loadFailed = context.watch<RouteProvider>().loadFailed;
-    return Scaffold(
-      body: loadFailed
-          ? const _LoadFailure()
-          : IndexedStack(
-              index: _index,
-              children: const [
-                PlannerScreen(),
-                LinesScreen(),
-                LibraryScreen(),
-                SettingsScreen(),
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth >= AppLayout.railBreakpoint;
+        final content = AnimatedBuilder(
+          animation: _entrance,
+          child: loadFailed ? const _LoadFailure() : _tabs(),
+          builder: (context, child) => Opacity(
+            opacity: 0.7 + 0.3 * _entrance.value,
+            child: Transform.translate(
+              offset: Offset(0, 6 * (1 - _entrance.value)),
+              child: child,
+            ),
+          ),
+        );
+
+        if (wide) {
+          return Scaffold(
+            body: Row(
+              children: [
+                NavigationRail(
+                  extended:
+                      constraints.maxWidth >= AppLayout.extendedRailBreakpoint,
+                  selectedIndex: _index,
+                  onDestinationSelected: select,
+                  labelType:
+                      constraints.maxWidth >= AppLayout.extendedRailBreakpoint
+                      ? null
+                      : NavigationRailLabelType.all,
+                  destinations: _railDestinations(l10n),
+                ),
+                const VerticalDivider(width: 1),
+                Expanded(child: content),
               ],
             ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: select,
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.alt_route),
-            label: l10n.tabPlanner,
+          );
+        }
+
+        return Scaffold(
+          body: content,
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: _index,
+            onDestinationSelected: select,
+            destinations: _barDestinations(l10n),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.subway_outlined),
-            selectedIcon: const Icon(Icons.subway),
-            label: l10n.tabLines,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.bookmark_border),
-            selectedIcon: const Icon(Icons.bookmark),
-            label: l10n.tabLibrary,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
-            label: l10n.tabSettings,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
+
+  Widget _tabs() => Center(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppLayout.maxContentWidth),
+      child: IndexedStack(
+        index: _index,
+        children: const [
+          PlannerScreen(),
+          LinesScreen(),
+          LibraryScreen(),
+          SettingsScreen(),
+        ],
+      ),
+    ),
+  );
+
+  List<NavigationDestination> _barDestinations(AppLocalizations l10n) => [
+    NavigationDestination(
+      icon: const Icon(Icons.alt_route),
+      label: l10n.tabPlanner,
+    ),
+    NavigationDestination(
+      icon: const Icon(Icons.subway_outlined),
+      selectedIcon: const Icon(Icons.subway),
+      label: l10n.tabLines,
+    ),
+    NavigationDestination(
+      icon: const Icon(Icons.bookmark_border),
+      selectedIcon: const Icon(Icons.bookmark),
+      label: l10n.tabLibrary,
+    ),
+    NavigationDestination(
+      icon: const Icon(Icons.settings_outlined),
+      selectedIcon: const Icon(Icons.settings),
+      label: l10n.tabSettings,
+    ),
+  ];
+
+  List<NavigationRailDestination> _railDestinations(AppLocalizations l10n) => [
+    for (final (icon, selectedIcon, label) in [
+      (Icons.alt_route, Icons.alt_route, l10n.tabPlanner),
+      (Icons.subway_outlined, Icons.subway, l10n.tabLines),
+      (Icons.bookmark_border, Icons.bookmark, l10n.tabLibrary),
+      (Icons.settings_outlined, Icons.settings, l10n.tabSettings),
+    ])
+      NavigationRailDestination(
+        icon: Icon(icon),
+        selectedIcon: Icon(selectedIcon),
+        label: Text(label),
+      ),
+  ];
 }
 
 class _LoadFailure extends StatelessWidget {

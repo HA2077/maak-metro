@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/core/utils/station_search.dart';
 import 'package:maak_metro/domain/models/metro_models.dart';
 
 /// Full-height sheet with a search field. Returns the picked station, or null
-/// when the user closes it.
+/// when the user closes it. Dismissible by drag and by the close button.
 Future<Station?> showStationPicker(
   BuildContext context, {
   required List<Station> stations,
@@ -15,6 +16,7 @@ Future<Station?> showStationPicker(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    constraints: const BoxConstraints(maxWidth: AppLayout.maxContentWidth),
     builder: (_) => _StationPickerSheet(stations: stations, title: title),
   );
 }
@@ -53,15 +55,32 @@ class _StationPickerSheetState extends State<_StationPickerSheet> {
       heightFactor: 0.9,
       child: Padding(
         padding: EdgeInsetsDirectional.only(
-          start: 16,
-          end: 16,
-          bottom: MediaQuery.viewInsetsOf(context).bottom + 8,
+          start: AppSpace.lg,
+          end: AppSpace.lg,
+          bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpace.sm,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(widget.title, style: theme.textTheme.titleLarge),
-            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: Semantics(
+                    header: true,
+                    child: Text(
+                      widget.title,
+                      style: theme.textTheme.titleLarge,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  tooltip: l10n.close,
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpace.xs),
             TextField(
               controller: _query,
               autofocus: true,
@@ -70,18 +89,39 @@ class _StationPickerSheetState extends State<_StationPickerSheet> {
               decoration: InputDecoration(
                 hintText: l10n.searchStations,
                 prefixIcon: const Icon(Icons.search),
+                suffixIcon: _query.text.isEmpty
+                    ? null
+                    : IconButton(
+                        onPressed: () {
+                          _query.clear();
+                          setState(() {});
+                        },
+                        tooltip: l10n.close,
+                        icon: const Icon(Icons.clear),
+                      ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpace.sm),
             Expanded(
               child: results.isEmpty
                   ? Center(
-                      child: Text(
-                        l10n.noStationsFound,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                        textAlign: TextAlign.center,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.search_off,
+                            size: 32,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: AppSpace.sm),
+                          Text(
+                            l10n.noStationsFound,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
                     )
                   : ListView.builder(

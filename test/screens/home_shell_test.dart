@@ -35,6 +35,10 @@ void main() {
   testWidgets('the four tabs switch and the app starts in Arabic', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(780, 1688);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+
     final repository = _EmptyRepository();
     final library = LibraryProvider(repository: repository);
     final route = RouteProvider(repository: repository, library: library);

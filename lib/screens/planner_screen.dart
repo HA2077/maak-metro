@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_motion.dart';
+import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/models/metro_models.dart';
@@ -9,8 +11,15 @@ import 'package:maak_metro/screens/route_result_screen.dart';
 import 'package:maak_metro/widgets/station_picker.dart';
 import 'package:provider/provider.dart';
 
-class PlannerScreen extends StatelessWidget {
+class PlannerScreen extends StatefulWidget {
   const PlannerScreen({super.key});
+
+  @override
+  State<PlannerScreen> createState() => _PlannerScreenState();
+}
+
+class _PlannerScreenState extends State<PlannerScreen> {
+  double _swapTurns = 0;
 
   Future<void> _pick(BuildContext context, {required bool from}) async {
     final route = context.read<RouteProvider>();
@@ -37,6 +46,13 @@ class PlannerScreen extends StatelessWidget {
     ).push(MaterialPageRoute<void>(builder: (_) => const RouteResultScreen()));
   }
 
+  void _swap(RouteProvider route) {
+    route.swap();
+    if (!AppMotion.reduced(context)) {
+      setState(() => _swapTurns += 0.5);
+    }
+  }
+
   String? _errorText(AppLocalizations l10n, RouteError? error) =>
       switch (error) {
         null => null,
@@ -47,9 +63,11 @@ class PlannerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     final route = context.watch<RouteProvider>();
     final library = context.watch<LibraryProvider>();
     final errorText = _errorText(l10n, route.error);
+    final recent = library.history.take(3).toList();
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.plannerTitle)),
@@ -65,8 +83,8 @@ class PlannerScreen extends StatelessWidget {
             padding: const EdgeInsetsDirectional.only(bottom: AppSpace.lg),
             child: Text(
               l10n.plannerHint,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
           ),
@@ -74,77 +92,57 @@ class PlannerScreen extends StatelessWidget {
             from: route.fromStation,
             to: route.toStation,
             l10n: l10n,
+            swapTurns: _swapTurns,
             onPickFrom: () => _pick(context, from: true),
             onPickTo: () => _pick(context, from: false),
-            onSwap: route.swap,
+            onSwap: () => _swap(route),
           ),
           const SizedBox(height: AppSpace.lg),
           FilledButton(
             onPressed: route.canSearch ? () => _search(context) : null,
-            child: route.loading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(l10n.findRoute),
-          ),
-          if (errorText != null) ...[
-            const SizedBox(height: AppSpace.md),
-            _ErrorText(text: errorText),
-          ],
-          if (library.history.isNotEmpty) ...[
-            const SizedBox(height: AppSpace.xl),
-            Text(
-              l10n.recentSearches,
-              style: Theme.of(context).textTheme.titleSmall,
+            child: AnimatedSwitcher(
+              duration: AppMotion.of(context, AppMotion.base),
+              transitionBuilder: (child, animation) =>
+                  FadeTransition(opacity: animation, child: child),
+              child: route.loading
+                  ? const SizedBox(
+                      key: ValueKey('loading'),
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(l10n.findRoute, key: const ValueKey('label')),
             ),
+          ),
+          AnimatedSize(
+            duration: AppMotion.of(context, AppMotion.base),
+            curve: AppMotion.decelerate,
+            alignment: AlignmentDirectional.topStart,
+            child: errorText == null
+                ? const SizedBox(width: double.infinity)
+                : Padding(
+                    padding: const EdgeInsetsDirectional.only(top: AppSpace.md),
+                    child: _ErrorText(text: errorText),
+                  ),
+          ),
+          if (recent.isNotEmpty) ...[
+            const SizedBox(height: AppSpace.xl),
+            Text(l10n.recentSearches, style: theme.textTheme.titleSmall),
             const SizedBox(height: AppSpace.md),
             Wrap(
               spacing: AppSpace.sm,
               runSpacing: AppSpace.sm,
               children: [
-                for (final entry in library.history.take(3))
-                  ActionChip(
-                    onPressed: () {
-                      route.setFrom(entry.fromId);
-                      route.setTo(entry.toId);
-                    },
-                    label: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 240),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              stationNameById(
-                                context,
-                                route.network,
-                                entry.fromId,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsetsDirectional.symmetric(
-                              horizontal: AppSpace.xs,
-                            ),
-                            child: Icon(Icons.arrow_forward, size: 14),
-                          ),
-                          Flexible(
-                            child: Text(
-                              stationNameById(
-                                context,
-                                route.network,
-                                entry.toId,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
+                for (var index = 0; index < recent.length; index++)
+                  FadeSlideIn(
+                    index: index,
+                    child: _RecentChip(
+                      entry: recent[index],
+                      network: route.network,
+                      onTap: () {
+                        route.setFrom(recent[index].fromId);
+                        route.setTo(recent[index].toId);
+                      },
                     ),
                   ),
               ],
@@ -156,11 +154,57 @@ class PlannerScreen extends StatelessWidget {
   }
 }
 
+class _RecentChip extends StatelessWidget {
+  const _RecentChip({
+    required this.entry,
+    required this.network,
+    required this.onTap,
+  });
+
+  final HistoryEntry entry;
+  final NetworkData network;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionChip(
+      onPressed: onTap,
+      label: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 240),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Text(
+                stationNameById(context, network, entry.fromId),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsetsDirectional.symmetric(horizontal: AppSpace.xs),
+              child: Icon(Icons.arrow_forward, size: 14),
+            ),
+            Flexible(
+              child: Text(
+                stationNameById(context, network, entry.toId),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _TripCard extends StatelessWidget {
   const _TripCard({
     required this.from,
     required this.to,
     required this.l10n,
+    required this.swapTurns,
     required this.onPickFrom,
     required this.onPickTo,
     required this.onSwap,
@@ -169,6 +213,7 @@ class _TripCard extends StatelessWidget {
   final Station? from;
   final Station? to;
   final AppLocalizations l10n;
+  final double swapTurns;
   final VoidCallback onPickFrom;
   final VoidCallback onPickTo;
   final VoidCallback onSwap;
@@ -223,7 +268,16 @@ class _TripCard extends StatelessWidget {
             IconButton.filledTonal(
               onPressed: onSwap,
               tooltip: l10n.swapStations,
-              icon: const Icon(Icons.swap_vert),
+              style: IconButton.styleFrom(
+                backgroundColor: theme.colorScheme.primaryContainer,
+                foregroundColor: theme.colorScheme.onPrimaryContainer,
+              ),
+              icon: AnimatedRotation(
+                turns: swapTurns,
+                duration: AppMotion.of(context, AppMotion.base),
+                curve: AppMotion.decelerate,
+                child: const Icon(Icons.swap_vert),
+              ),
             ),
           ],
         ),
@@ -249,32 +303,50 @@ class _StationField extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final value = this.value;
-    return InkWell(
+    final text = value ?? placeholder;
+    return Semantics(
+      button: true,
+      label: label,
+      value: text,
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadius.field),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.symmetric(vertical: AppSpace.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+      child: ExcludeSemantics(
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadius.field),
+          child: Padding(
+            padding: const EdgeInsetsDirectional.symmetric(
+              vertical: AppSpace.md,
             ),
-            const SizedBox(height: 2),
-            Text(
-              value ?? placeholder,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: value == null
-                    ? theme.colorScheme.onSurfaceVariant
-                    : theme.colorScheme.onSurface,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                AnimatedSwitcher(
+                  duration: AppMotion.of(context, AppMotion.base),
+                  switchInCurve: AppMotion.decelerate,
+                  transitionBuilder: (child, animation) =>
+                      FadeTransition(opacity: animation, child: child),
+                  child: Text(
+                    text,
+                    key: ValueKey(text),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: value == null
+                          ? theme.colorScheme.onSurfaceVariant
+                          : theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
