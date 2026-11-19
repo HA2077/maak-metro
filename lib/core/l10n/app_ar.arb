@@ -1,0 +1,130 @@
+{
+  "@@locale": "ar",
+  "appName": "معاك",
+  "tabPlanner": "التخطيط",
+  "tabLines": "الخطوط",
+  "tabLibrary": "محفوظات",
+  "tabSettings": "الإعدادات",
+  "plannerTitle": "خطّط مشوارك",
+  "plannerHint": "اختر محطتي البداية والنهاية لعرض أفضل مسار",
+  "fromLabel": "من",
+  "toLabel": "إلى",
+  "selectStation": "اختر محطة",
+  "searchStations": "ابحث باسم المحطة",
+  "noStationsFound": "لا توجد محطة بهذا الاسم",
+  "swapStations": "تبديل المحطتين",
+  "findRoute": "اعرض المسار",
+  "sameStationError": "محطة البداية والنهاية واحدة",
+  "noRouteError": "لا يوجد مسار بين المحطتين",
+  "recentSearches": "آخر عمليات البحث",
+  "routeTitle": "المسار",
+  "estimatedTime": "الوقت التقديري {minutes} دقيقة",
+  "@estimatedTime": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "stationsCount": "{count, plural, =0{لا محطات} =1{محطة واحدة} =2{محطتان} few{{count} محطات} many{{count} محطة} other{{count} محطة}}",
+  "@stationsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "transfersCount": "{count, plural, =0{بدون تغيير خط} =1{تغيير واحد} =2{تغييران} few{{count} تغييرات} many{{count} تغيير} other{{count} تغيير}}",
+  "@transfersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fareEgp": "{price} جنيه",
+  "@fareEgp": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "changeTo": "غيّر إلى {line} في {station}",
+  "@changeTo": {
+    "placeholders": {
+      "line": {
+        "type": "String"
+      },
+      "station": {
+        "type": "String"
+      }
+    }
+  },
+  "legFromTo": "من {from} إلى {to}",
+  "@legFromTo": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "intermediateStations": "{count, plural, =0{بدون محطات بينية} =1{محطة بينية واحدة} =2{محطتان بينيتان} few{{count} محطات بينية} many{{count} محطة بينية} other{{count} محطة بينية}}",
+  "@intermediateStations": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "linesTitle": "الخطوط والمحطات",
+  "branchLabel": "{name}",
+  "@branchLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stationDetails": "المحطة",
+  "servesLines": "الخطوط التي تخدمها",
+  "setAsFrom": "ابدأ من هنا",
+  "setAsTo": "اذهب إلى هنا",
+  "libraryTitle": "المحفوظات",
+  "favorites": "المفضلة",
+  "history": "السجل",
+  "noFavorites": "لا توجد مسارات مفضلة بعد",
+  "noHistory": "لا يوجد سجل بحث بعد",
+  "addFavorite": "أضف إلى المفضلة",
+  "removeFavorite": "إزالة من المفضلة",
+  "clearHistory": "مسح السجل",
+  "clearHistoryConfirm": "سيُمسح كل سجل البحث. هل أنت متأكد؟",
+  "cancel": "إلغاء",
+  "confirm": "تأكيد",
+  "settingsTitle": "الإعدادات",
+  "language": "اللغة",
+  "arabic": "العربية",
+  "english": "English",
+  "about": "عن التطبيق",
+  "dataSnapshot": "تاريخ البيانات {date}",
+  "@dataSnapshot": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fareEffective": "سريان الأجرة {date}",
+  "@fareEffective": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loadError": "تعذّر تحميل البيانات",
+  "retry": "إعادة المحاولة"
+}

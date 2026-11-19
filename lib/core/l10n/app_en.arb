@@ -1,0 +1,130 @@
+{
+  "@@locale": "en",
+  "appName": "Maak Metro",
+  "tabPlanner": "Planner",
+  "tabLines": "Lines",
+  "tabLibrary": "Saved",
+  "tabSettings": "Settings",
+  "plannerTitle": "Plan your trip",
+  "plannerHint": "Pick your start and destination to see the best route",
+  "fromLabel": "From",
+  "toLabel": "To",
+  "selectStation": "Choose a station",
+  "searchStations": "Search by station name",
+  "noStationsFound": "No station matches that name",
+  "swapStations": "Swap stations",
+  "findRoute": "Show route",
+  "sameStationError": "Start and destination are the same station",
+  "noRouteError": "No route between these stations",
+  "recentSearches": "Recent searches",
+  "routeTitle": "Route",
+  "estimatedTime": "About {minutes} min",
+  "@estimatedTime": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "stationsCount": "{count, plural, =0{No stations} =1{1 station} other{{count} stations}}",
+  "@stationsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "transfersCount": "{count, plural, =0{No line changes} =1{1 change} other{{count} changes}}",
+  "@transfersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fareEgp": "EGP {price}",
+  "@fareEgp": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "changeTo": "Change to {line} at {station}",
+  "@changeTo": {
+    "placeholders": {
+      "line": {
+        "type": "String"
+      },
+      "station": {
+        "type": "String"
+      }
+    }
+  },
+  "legFromTo": "From {from} to {to}",
+  "@legFromTo": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "intermediateStations": "{count, plural, =0{No stops in between} =1{1 stop in between} other{{count} stops in between}}",
+  "@intermediateStations": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "linesTitle": "Lines and stations",
+  "branchLabel": "{name}",
+  "@branchLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stationDetails": "Station",
+  "servesLines": "Served by",
+  "setAsFrom": "Start here",
+  "setAsTo": "Go here",
+  "libraryTitle": "Saved",
+  "favorites": "Favorites",
+  "history": "History",
+  "noFavorites": "No favorite routes yet",
+  "noHistory": "No search history yet",
+  "addFavorite": "Add to favorites",
+  "removeFavorite": "Remove from favorites",
+  "clearHistory": "Clear history",
+  "clearHistoryConfirm": "Every search in the history will be removed. Are you sure?",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "settingsTitle": "Settings",
+  "language": "Language",
+  "arabic": "العربية",
+  "english": "English",
+  "about": "About",
+  "dataSnapshot": "Data snapshot {date}",
+  "@dataSnapshot": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fareEffective": "Fare effective {date}",
+  "@fareEffective": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "loadError": "Couldn't load the network data",
+  "retry": "Try again"
+}
