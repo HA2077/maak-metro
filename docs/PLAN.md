@@ -78,8 +78,15 @@ Seeding:
 Owner: Hassan. Put in `lib/domain/models/`. **Pure Dart, no Flutter or sqflite imports**, so the router can be tested without a device.
 
 ```dart
-class Line { final int id; final String nameAr, nameEn, colorHex; }
-class Station { final String id, nameAr, nameEn; }
+class Line {
+  final int id;
+  final String nameAr, nameEn, colorHex;
+  String localizedName(String languageCode);
+}
+class Station {
+  final String id, nameAr, nameEn;
+  String localizedName(String languageCode);
+}
 class LineStation { final int lineId; final String stationId, branch; final int seq; }
 class LineBranch { final int lineId; final String branch, startsAfter; }
 class FareBracket { final int maxStations, priceEgp; }
@@ -90,6 +97,12 @@ class NetworkData {
   final List<LineBranch> branches;
   final List<LineStation> lineStations;
   final List<FareBracket> fares; // sorted ascending by maxStations
+  final String snapshotDate;
+
+  Station? stationById(String id);
+  Line? lineById(int id);
+  List<Line> linesServing(String stationId);
+  List<LineStation> stationsOfLine(int lineId); // main first, then branches by seq
 }
 
 class RoutingConfig {
@@ -108,16 +121,23 @@ class RouteResult {
   final int fareEgp;
 }
 
+class FavoriteRoute { final int id; final String fromId, toId; final DateTime createdAt; }
+class HistoryEntry { final int id; final String fromId, toId; final DateTime searchedAt; }
+
 abstract class MetroRepository {
   Future<NetworkData> loadNetwork();
   Future<List<FavoriteRoute>> getFavorites();
+  Future<bool> isFavorite(String fromId, String toId);
   Future<void> addFavorite(String fromId, String toId);
   Future<void> removeFavorite(int id);
+  Future<void> removeFavoriteByPair(String fromId, String toId);
   Future<List<HistoryEntry>> getHistory({int limit = 50});
   Future<void> addHistory(String fromId, String toId);
   Future<void> clearHistory();
 }
 ```
+
+`Line`, `Station`, `LineStation`, `LineBranch` and `FareBracket` also expose `factory X.fromJson(Map<String, Object?> json)` using the snake_case keys from sections 1 and 2. `NetworkData` sorts `fares` and builds its lookup maps in its constructor.
 
 Router entry point, a pure function:
 
