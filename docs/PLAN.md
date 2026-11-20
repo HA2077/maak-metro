@@ -9,6 +9,7 @@ Android Development final project · Flutter + SQLite · Team of 6 · Plan date 
 - Database: **SQLite via `sqflite`**. Hive was considered and rejected: our data is relational, the team and the DB owner work in SQL, and there is no visible speed or size gain at this data size. The app only talks to `MetroRepository`, so the storage engine can be swapped later by changing `lib/data/` only.
 - Default language Arabic (RTL), instant toggle to English.
 - Routing constants: `perStopMinutes = 2.5`, `transferPenaltyMinutes = 7.5` (1 transfer = 3 stops).
+- Fare station count includes the boarding station: `FareCalculator` defaults to `countBoardingStation: true` (D-1 option B).
 - Single source of truth: `assets/metro_seed.json`, loaded into SQLite on first run.
 - Scope is final: no monorail, GPS, maps, online APIs, accounts or backend. Stretch (only after everything else works): fuzzy Arabic station search, discounted fares, line diagram.
 - Data source: the official Cairo Metro website. Snapshot rule: open stations only, as of the snapshot date written into the seed file (confirmation tracked in D-4).
@@ -163,11 +164,11 @@ The graph is undirected, so A to B and B to A cost the same.
 
 **Legs.** Walk the path and start a new leg whenever the line changes. Branch rule (confirmation tracked in D-2): if a Line 3 route goes from one branch through Kit Kat into the other branch, split it into two legs there so it counts as one transfer and one penalty. This is applied after the search; it does not change the path chosen, because there is only one path between two branches.
 
-**Station count.** `stationCount` is the number of same-line moves along the route, with transfers adding 0. Whether the fare count includes the boarding station is tracked in D-1. If it does, add 1 in `FareCalculator` only, not in the router.
+**Station count.** `stationCount` is the number of same-line moves along the route, with transfers adding 0. D-1 is resolved (option B): the fare count includes the boarding station. The router still counts only same-line moves; `FareCalculator` adds the boarding station by default (`countBoardingStation: true`).
 
 **Time.** `estimatedMinutes = stationCount * perStopMinutes + transfers * transferPenaltyMinutes`. The UI labels it as an estimate.
 
-**Fare.** `FareCalculator` picks the first bracket where `stationCount <= maxStations`. If the count is above the largest bracket, use the largest price and keep a unit test for that case.
+**Fare.** `FareCalculator` adds the boarding station when enabled, then picks the first bracket where the resulting count is `<= maxStations`; brackets are sorted ascending by `maxStations`. If the count is above the largest bracket, use the largest price and keep a unit test for that case.
 
 **Required unit tests (test/):**
 
