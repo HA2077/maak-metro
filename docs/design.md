@@ -10,6 +10,15 @@ Screenshots are not committed. To check a change, run the app at 360dp width in
 Arabic and in English, dark and light, and look at the states listed per screen
 below (empty, loading, error).
 
+Contents: [1. The idea](#1-the-idea-in-one-paragraph) ·
+[2. Foundations](#2-foundations) · [3. Direction, language,
+figures](#3-direction-language-figures) · [4. Motion](#4-motion) ·
+[5. Components](#5-components) · [6. Screens](#6-screens) ·
+[7. Repeating this](#7-repeating-this-on-a-new-screen) ·
+[8. Known open work](#8-known-open-design-work) ·
+[A. Copy deck](#appendix-a--the-copy-deck) ·
+[B. Snippets](#appendix-b--the-four-snippets-a-rebuild-must-not-get-wrong)
+
 ---
 
 ## 1. The idea in one paragraph
@@ -384,3 +393,221 @@ muted heading followed by a full-width control, 24dp apart:
   approves it (branch `feature/map-draft`).
 - Tablet: the shell already switches to a rail at 720dp, but no screen is tuned
   for a two-pane layout yet.
+
+---
+
+## Appendix A — the copy deck
+
+Every user-facing string, Arabic and English, in the order the screens use them.
+This is the reference ARB pair; a rebuild that renames keys is fine, a rebuild
+that rewrites the wording is not. Arabic plurals carry `=0`, `=1`, `=2`, `few`,
+`many`, `other`; English needs only `=0`, `=1`, `other`.
+
+#### Shell and planner
+
+| Key | Arabic | English |
+|---|---|---|
+| `appName` | معاك | Maak |
+| `tabPlanner` | التخطيط | Planner |
+| `tabLines` | الخطوط | Lines |
+| `tabLibrary` | محفوظات | Saved |
+| `tabSettings` | الإعدادات | Settings |
+| `plannerTitle` | خطّط مشوارك | Plan your trip |
+| `plannerHint` | اختر محطتي البداية والنهاية لعرض أفضل مسار | Pick your start and destination to see the best route |
+| `fromLabel` | من | From |
+| `toLabel` | إلى | To |
+| `selectStation` | اختر محطة | Choose a station |
+| `swapStations` | تبديل المحطتين | Swap stations |
+| `findRoute` | اعرض المسار | Show route |
+| `sameStationError` | محطة البداية والنهاية واحدة | Start and destination are the same station |
+| `noRouteError` | لا يوجد مسار بين المحطتين | No route between these stations |
+| `recentSearches` | آخر عمليات البحث | Recent searches |
+| `interchanges` | محطات التبديل | Interchanges |
+| `loadError` | تعذّر تحميل البيانات | Couldn't load the network data |
+| `retry` | إعادة المحاولة | Try again |
+| `noData` | بيانات الشبكة لم تُحمَّل بعد | The network data hasn't loaded yet |
+| `close` | إغلاق | Close |
+
+#### Station picker
+
+| Key | Arabic | English |
+|---|---|---|
+| `searchStations` | ابحث باسم المحطة | Search by station name |
+| `noStationsFound` | لا توجد محطة بهذا الاسم | No station matches that name |
+
+#### Route result
+
+| Key | Arabic | English |
+|---|---|---|
+| `routeTitle` | المسار | Route |
+| `estimatedTime` | الوقت التقديري {minutes} دقيقة | About {minutes} min |
+| `stationsCount` | {count, plural, =0{لا محطات} =1{محطة واحدة} =2{محطتان} few{{count} محطات} many{{count} محطة} other{{count} محطة}} | {count, plural, =0{No stations} =1{1 station} other{{count} stations}} |
+| `transfersCount` | {count, plural, =0{بدون تغيير خط} =1{تغيير واحد} =2{تغييران} few{{count} تغييرات} many{{count} تغيير} other{{count} تغيير}} | {count, plural, =0{No line changes} =1{1 change} other{{count} changes}} |
+| `fareEgp` | {price} جنيه | EGP {price} |
+| `legFromTo` | من {from} إلى {to} | From {from} to {to} |
+| `intermediateStations` | {count, plural, =0{بدون محطات بينية} =1{محطة بينية واحدة} =2{محطتان بينيتان} few{{count} محطات بينية} many{{count} محطة بينية} other{{count} محطة بينية}} | {count, plural, =0{No stops in between} =1{1 stop in between} other{{count} stops in between}} |
+| `addFavorite` | أضف إلى المفضلة | Add to favorites |
+| `removeFavorite` | إزالة من المفضلة | Remove from favorites |
+| `changeAt` | غيّر الخط في {station} | Change lines at {station} |
+
+#### Lines and station sheet
+
+| Key | Arabic | English |
+|---|---|---|
+| `linesTitle` | الخطوط والمحطات | Lines and stations |
+| `branchLabel` | {name} | {name} |
+| `stationDetails` | المحطة | Station |
+| `servesLines` | الخطوط التي تخدمها | Served by |
+| `setAsFrom` | ابدأ من هنا | Start here |
+| `setAsTo` | اذهب إلى هنا | Go here |
+
+#### Library
+
+| Key | Arabic | English |
+|---|---|---|
+| `libraryTitle` | المحفوظات | Saved |
+| `favorites` | المفضلة | Favorites |
+| `history` | السجل | History |
+| `noFavorites` | لا توجد مسارات مفضلة بعد | No favorite routes yet |
+| `noHistory` | لا يوجد سجل بحث بعد | No search history yet |
+| `clearHistory` | مسح السجل | Clear history |
+| `clearHistoryConfirm` | سيُمسح كل سجل البحث. هل أنت متأكد؟ | Every search in the history will be removed. Are you sure? |
+| `cancel` | إلغاء | Cancel |
+| `confirm` | تأكيد | Confirm |
+| `planTrip` | ابدأ رحلة | Plan a trip |
+
+#### Settings and about
+
+| Key | Arabic | English |
+|---|---|---|
+| `settingsTitle` | الإعدادات | Settings |
+| `language` | اللغة | Language |
+| `arabic` | العربية | العربية |
+| `english` | English | English |
+| `appearance` | المظهر | Appearance |
+| `themeSystem` | حسب النظام | System |
+| `themeLight` | فاتح | Light |
+| `themeDark` | غامق | Dark |
+| `dateFormat` | تنسيق التاريخ | Date format |
+| `dateNumeric` | رقمي | Numeric |
+| `dateWritten` | مكتوب | Written |
+| `about` | عن التطبيق | About |
+| `dataSnapshot` | تاريخ البيانات | Data snapshot |
+| `fareEffective` | سريان الأجرة | Fare effective |
+| `versionLabel` | الإصدار {version} | Version {version} |
+
+#### First run
+
+| Key | Arabic | English |
+|---|---|---|
+| `onboardingTitle` | أهلاً بيك في معاك | Welcome to Maak |
+| `onboardingBody` | اختار اللغة والمظهر، وتقدر تغيّرهم في أي وقت من الإعدادات. | Pick your language and theme. You can change them any time in Settings. |
+| `onboardingStart` | يلا نبدأ | Get started |
+
+#### Greetings (four per part of the day)
+
+| Key | Arabic | English |
+|---|---|---|
+| `greetingMorning1` | صباح الخير، جاهز للمشوار؟ | Good morning, ready for the trip? |
+| `greetingMorning2` | صباح النور، فين رايح النهاردة؟ | Morning! Where are you headed today? |
+| `greetingMorning3` | صباح الفل، مشوارك النهاردة يبدأ من هنا | Morning! Your trip starts right here |
+| `greetingMorning4` | صباح الخير، اختار محطتين والباقي علينا | Good morning, pick two stations and we handle the rest |
+| `greetingAfternoon1` | نهارك سعيد، تحب نبدأ منين؟ | Good afternoon, where shall we start? |
+| `greetingAfternoon2` | أهلاً بيك، مشوارك على بعد خطوتين | Welcome back, your trip is two taps away |
+| `greetingAfternoon3` | نهارك فل، فين محطتك النهاردة؟ | Good afternoon, where's your station today? |
+| `greetingAfternoon4` | أهلاً بيك، خلّي المشوار أسهل من كده | Hi there, let's make this trip easier |
+| `greetingEvening1` | مساء الخير، مشوارك تحت إيدك | Good evening, your trip is in your hands |
+| `greetingEvening2` | مساء الفل، اختار محطتك وخلينا نمشي | Evening! Pick a station and let's go |
+| `greetingEvening3` | مساء الخير، رايح فين بعد الشغل؟ | Good evening, where to after work? |
+| `greetingEvening4` | مساء النور، خطّط مشوارك في ثانية | Evening, plan your trip in a second |
+| `greetingNight1` | سهرة سعيدة، آخر قطار مستنيك | Late night? The last train is waiting |
+| `greetingNight2` | لسه صاحي؟ اختار محطتك بسرعة | Still up? Pick your station quickly |
+| `greetingNight3` | سهرة هادية، فين رايح دلوقتي؟ | Quiet night — where are you off to? |
+| `greetingNight4` | آخر الليل، مشوارك لسه محتاج تخطيط | Late night, your trip still needs a plan |
+
+#### Month names
+
+| Key | Arabic | English |
+|---|---|---|
+| `monthJan` | يناير | January |
+| `monthFeb` | فبراير | February |
+| `monthMar` | مارس | March |
+| `monthApr` | أبريل | April |
+| `monthMay` | مايو | May |
+| `monthJun` | يونيو | June |
+| `monthJul` | يوليو | July |
+| `monthAug` | أغسطس | August |
+| `monthSep` | سبتمبر | September |
+| `monthOct` | أكتوبر | October |
+| `monthNov` | نوفمبر | November |
+| `monthDec` | ديسمبر | December |
+
+---
+
+## Appendix B — the four snippets a rebuild must not get wrong
+
+These are the places where the obvious implementation is wrong and the mistake is
+invisible until someone reads Arabic. Copy the shape, not the names.
+
+**1. A date in figures is three texts, not one.** Arabic-Indic numbers form a
+single right-to-left run, so `'٢٧-٣-٢٠٢٦'` in one `Text` renders year first.
+
+```dart
+Row(
+  mainAxisSize: MainAxisSize.min,
+  textDirection: arabic ? TextDirection.rtl : TextDirection.ltr,
+  children: [
+    Text(localizedDigits(context, '${date.day}')),
+    Text('-'),
+    Text(localizedDigits(context, '${date.month}')),
+    Text('-'),
+    Text(localizedDigits(context, '${date.year}')),
+  ],
+)
+```
+
+The written style ("٢٧ مارس ٢٠٢٦") needs no split: the month words keep bidi from
+reordering the two numbers.
+
+**2. A tab switch is a cross-dissolve, never a fade to nothing.** The leaving and
+arriving opacities must sum to one, or the frame flashes.
+
+```dart
+final arriving = CurvedAnimation(parent: _controller, curve: AppMotion.standard);
+Stack(fit: StackFit.expand, children: [
+  // keep every other tab alive but invisible
+  for (var i = 0; i < children.length; i++)
+    if (i != index && i != previous) Offstage(offstage: true, child: children[i]),
+  if (previous != null)
+    IgnorePointer(child: FadeTransition(opacity: ReverseAnimation(arriving), child: children[previous])),
+  FadeTransition(opacity: previous == null ? kAlwaysCompleteAnimation : arriving, child: children[index]),
+]);
+```
+
+**3. Figures are localised at the edge, never formatted twice.**
+
+```dart
+String localizedDigits(BuildContext context, String text) =>
+    Localizations.localeOf(context).languageCode == 'ar'
+        ? text.replaceAllMapped(RegExp('[0-9.]'), (m) => { '0':'٠','1':'١','2':'٢',
+            '3':'٣','4':'٤','5':'٥','6':'٦','7':'٧','8':'٨','9':'٩','.':'٫' }[m[0]]!)
+        : text;
+```
+
+Arabic needs `٫` (U+066B), not the Latin full stop, or a price reads wrong.
+
+**4. A stop is a dot threaded on a line, not a bullet.** The 2dp connector is what
+makes a list read as a metro line; use it on the route result *and* on the line
+detail screen.
+
+```dart
+SizedBox(
+  width: 20,
+  height: 28,
+  child: Stack(alignment: Alignment.center, children: [
+    Container(width: 2, color: theme.colorScheme.outlineVariant),
+    Container(width: 8, height: 8,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: lineColor)),
+  ]),
+)
+```
