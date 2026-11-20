@@ -9,6 +9,7 @@ Android Development final project · Flutter + SQLite · Team of 6 · Plan date 
 - Database: **SQLite via `sqflite`**. Hive was considered and rejected: our data is relational, the team and the DB owner work in SQL, and there is no visible speed or size gain at this data size. The app only talks to `MetroRepository`, so the storage engine can be swapped later by changing `lib/data/` only.
 - Default language Arabic (RTL), instant toggle to English.
 - Routing constants: `perStopMinutes = 2.5`, `transferPenaltyMinutes = 7.5` (1 transfer = 3 stops).
+- Fare station count includes the boarding station: `FareCalculator` defaults to `countBoardingStation: true` (D-1 option B).
 - Single source of truth: `assets/metro_seed.json`, loaded into SQLite on first run.
 - Scope is final: no monorail, GPS, maps, online APIs, accounts or backend. Stretch (only after everything else works): fuzzy Arabic station search, discounted fares, line diagram.
 - Data source: the official Cairo Metro website. Snapshot rule: open stations only, as of the snapshot date written into the seed file (confirmation tracked in D-4).
@@ -78,8 +79,15 @@ Seeding:
 Owner: Hassan. Put in `lib/domain/models/`. **Pure Dart, no Flutter or sqflite imports**, so the router can be tested without a device.
 
 ```dart
-class Line { final int id; final String nameAr, nameEn, colorHex; }
-class Station { final String id, nameAr, nameEn; }
+class Line {
+  final int id;
+  final String nameAr, nameEn, colorHex;
+  String localizedName(String languageCode);
+}
+class Station {
+  final String id, nameAr, nameEn;
+  String localizedName(String languageCode);
+}
 class LineStation { final int lineId; final String stationId, branch; final int seq; }
 class LineBranch { final int lineId; final String branch, startsAfter; }
 class FareBracket { final int maxStations, priceEgp; }
@@ -90,6 +98,12 @@ class NetworkData {
   final List<LineBranch> branches;
   final List<LineStation> lineStations;
   final List<FareBracket> fares; // sorted ascending by maxStations
+  final String snapshotDate;
+
+  Station? stationById(String id);
+  Line? lineById(int id);
+  List<Line> linesServing(String stationId);
+  List<LineStation> stationsOfLine(int lineId); // main first, then branches by seq
 }
 
 class RoutingConfig {
@@ -108,16 +122,23 @@ class RouteResult {
   final int fareEgp;
 }
 
+class FavoriteRoute { final int id; final String fromId, toId; final DateTime createdAt; }
+class HistoryEntry { final int id; final String fromId, toId; final DateTime searchedAt; }
+
 abstract class MetroRepository {
   Future<NetworkData> loadNetwork();
   Future<List<FavoriteRoute>> getFavorites();
+  Future<bool> isFavorite(String fromId, String toId);
   Future<void> addFavorite(String fromId, String toId);
   Future<void> removeFavorite(int id);
+  Future<void> removeFavoriteByPair(String fromId, String toId);
   Future<List<HistoryEntry>> getHistory({int limit = 50});
   Future<void> addHistory(String fromId, String toId);
   Future<void> clearHistory();
 }
 ```
+
+`Line`, `Station`, `LineStation`, `LineBranch` and `FareBracket` also expose `factory X.fromJson(Map<String, Object?> json)` using the snake_case keys from sections 1 and 2. `NetworkData` sorts `fares` and builds its lookup maps in its constructor.
 
 Router entry point, a pure function:
 
@@ -143,11 +164,11 @@ The graph is undirected, so A to B and B to A cost the same.
 
 **Legs.** Walk the path and start a new leg whenever the line changes. Branch rule (confirmation tracked in D-2): if a Line 3 route goes from one branch through Kit Kat into the other branch, split it into two legs there so it counts as one transfer and one penalty. This is applied after the search; it does not change the path chosen, because there is only one path between two branches.
 
-**Station count.** `stationCount` is the number of same-line moves along the route, with transfers adding 0. Whether the fare count includes the boarding station is tracked in D-1. If it does, add 1 in `FareCalculator` only, not in the router.
+**Station count.** `stationCount` is the number of same-line moves along the route, with transfers adding 0. D-1 is resolved (option B): the fare count includes the boarding station. The router still counts only same-line moves; `FareCalculator` adds the boarding station by default (`countBoardingStation: true`).
 
 **Time.** `estimatedMinutes = stationCount * perStopMinutes + transfers * transferPenaltyMinutes`. The UI labels it as an estimate.
 
-**Fare.** `FareCalculator` picks the first bracket where `stationCount <= maxStations`. If the count is above the largest bracket, use the largest price and keep a unit test for that case.
+**Fare.** `FareCalculator` adds the boarding station when enabled, then picks the first bracket where the resulting count is `<= maxStations`; brackets are sorted ascending by `maxStations`. If the count is above the largest bracket, use the largest price and keep a unit test for that case.
 
 **Required unit tests (test/):**
 
