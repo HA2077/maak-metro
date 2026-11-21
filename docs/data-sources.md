@@ -1,9 +1,11 @@
 # Data sources
 
-Snapshot: `2026-11-21` · Seed version: `1` · Scope: Lines 1 and 2.
+Snapshot: `2026-11-21` · Seed version: `1` · Scope: Lines 1, 2 and 3.
 
-The seed is built from official sources only. No station name, order or fare
-was copied from a blog, wiki or route-planner site.
+Station order and fares come from official sources only. No order or fare was
+copied from a blog, wiki or route-planner site. One English display name,
+**Rod El Farag Corridor**, follows the common label for the official Arabic
+**محور روض الفرج**; official English sources say **Rod El Farag Axis**.
 
 ## Sources used
 
@@ -27,7 +29,8 @@ Used for: Line 1 has 35 open stations from Helwan to New El Marg (30 surface,
 Line 2 has 20 open stations from Shubra El Kheima to El Mounib (12 tunnel,
 6 surface, 2 elevated), no branches, and interchanges with Line 1 at Al Shohadaa
 and Sadat. The same pages confirm official line colours and the four fare
-brackets.
+brackets. The operator site has no Line 3 operations page; the official network
+map is used for the Line 3 branch shape and interchanges.
 
 ### Cairo Governorate official portal
 
@@ -37,40 +40,71 @@ brackets.
   https://www.cairo.gov.eg/ar/governorate-services/transportation-services/metro/
 
 `Last updated: 2026` on both pages. Used for the complete ordered Line 1 and
-Line 2 station lists and the Arabic spellings, because the operator site
-confirms the counts and termini but does not publish station-by-station lists.
+Line 2 station lists, the Line 3 phase breakdown, and the Arabic spellings,
+because the operator site confirms the counts and termini but does not publish
+station-by-station lists.
+
+### National Authority for Tunnels (NAT)
+
+- Line 3 project page:
+  http://www.nat.gov.eg/LocationActivity.aspx?id=85
+
+Used for: Line 3 has 34 open stations and 41.2 km, the branch structure at Kit
+Kat, and the Tawfikia branch assignment. If the page is unavailable, the Cairo
+Governorate phase lists and the official network map cover the same stations.
 
 ## Decisions
 
+### D-3 — Line 3 branches and Tawfikia
+
+The branch names are frozen as `rod_el_farag` and `cairo_uni`. Tawfikia is on
+`cairo_uni` at `seq` 1.
+
+- `main`: Adly Mansour `seq` 1 → Kit Kat `seq` 23. Kit Kat is only on `main`.
+- `rod_el_farag`: Sudan 1, Imbaba 2, El Bohy 3, El Qawmeya El Arabia 4, Ring
+  Road 5, Rod El Farag Corridor 6.
+- `cairo_uni`: Tawfikia 1, Wadi El Nile 2, League of Arab States 3, Bolak El
+  Dakrour 4, Cairo University 5.
+
+`rod_el_farag_corridor` is a different station from the Line 2 `rod_el_farag`
+station. They are not an interchange and are not merged.
+
 ### D-4 — open stations only
 
-All 35 Line 1 and all 20 Line 2 stations are open. No station on either line is
-under construction. Line 3 data comes in a later task; Line 4 and the monorail
-are outside the app scope, so they are not in the seed. The seed never contains a
-"coming soon" station; that would be unrouteable in the current format and would
-need a separate status field and seed version.
+All 35 Line 1, 20 Line 2 and 34 Line 3 stations are open. The Line 3 branches
+opened in 2024. No station on Lines 1–3 is under construction. Line 4 and the
+monorail are outside the app scope, so they are not in the seed. The seed never
+contains a "coming soon" station; that would be unrouteable in the current format
+and would need a separate status field and seed version.
 
-### D-6 — branches on Lines 1 and 2
+### D-6 — branches
 
-Neither line has a branch. Line 1 is one `main` run Helwan → New El Marg; Line 2
-is one `main` run Shubra El Kheima → El Mounib. Only Line 3 forks after Kit Kat.
-This seed therefore has an empty `line_branches` list and all Line 1 and Line 2
-rows use `branch: "main"`.
+Lines 1 and 2 have no branches; all their rows use `branch: "main"`. Line 3
+forks after Kit Kat into `rod_el_farag` and `cairo_uni`, and both
+`line_branches` rows use `starts_after: "kit_kat"`.
 
 ### Station order
 
 - Line 1: `seq` 1 at Helwan, 35 at New El Marg.
 - Line 2: `seq` 1 at El Mounib, 20 at Shubra El Kheima.
+- Line 3 `main`: `seq` 1 at Adly Mansour, 23 at Kit Kat.
+- Line 3 `rod_el_farag`: `seq` 1 at Sudan, 6 at Rod El Farag Corridor.
+- Line 3 `cairo_uni`: `seq` 1 at Tawfikia, 5 at Cairo University.
 
-Both follow the order of the official Cairo Governorate list. That list presents
-Line 2 from El Mounib to Shubra, while the operator describes the line in the
-opposite direction. The lines are undirected in the router, so direction only
-fixes the seed order.
+Line 1 and Line 2 follow the order of the official Cairo Governorate list. That
+list presents Line 2 from El Mounib to Shubra, while the operator describes the
+line in the opposite direction. The lines are undirected in the router, so
+direction only fixes the seed order.
 
 Line 2 sequence: El Mounib, Sakiat Mekki, Om El Masryeen, Giza, Faisal, Cairo
 University, El Bohouth, Dokki, Opera, Sadat, Mohamed Naguib, Ataba, Al Shohadaa,
 Massara, Rod El Farag, Saint Teresa, Khalafawy, El Mazallat, Faculty of
 Agriculture, Shubra El Kheima.
+
+Line 3 main sequence: Adly Mansour, El Haykestep, Omar Ibn El Khattab, Qobaa,
+Hesham Barakat, El Nozha, El Shams Club, Alf Maskan, Heliopolis, Haroun, El
+Ahram, Girls' College, Stadium, Ard El Maared, Abbassia, Abdo Pasha, El Geish,
+Bab El Shaaria, Ataba, Nasser, Maspero, Safaa Hegazy, Kit Kat.
 
 ### Arabic names
 
@@ -102,6 +136,20 @@ For Line 1, parenthetical area names such as "(Tahrir)" and "(Ramses)" are not
 part of the station name and are not stored in `name_ar` / `name_en`. For Line 2,
 **Om El Masryeen** is stored as the station name; "Giza Suburbs" is the
 Governorate primary label.
+
+Line 3:
+
+| Station | Chosen | Note |
+|---|---|---|
+| Rod El Farag Corridor | محور روض الفرج | Governorate and NAT English: Rod El Farag Axis |
+| El Haykestep | الهايكستب | Also written El Haykstep |
+| Qobaa | قباء | Also written Qubaa |
+| El Shams Club | نادي الشمس | Also written Nadi El-Shams |
+| Girls' College | كلية البنات | Also written Koleyet El Banat |
+| Ard El Maared | أرض المعارض | Also written Fair Zone |
+| El Qawmeya El Arabia | القومية العربية | Also written El Qawmia |
+| League of Arab States | جامعة الدول العربية | Also written Gamat El Dowal |
+| Bolak El Dakrour | بولاق الدكرور | Also written Boulak El-Dakrour |
 
 ### English names
 
@@ -138,19 +186,41 @@ Line 2:
 | Shubra El Kheima | Shubra El Kheima | Operator: Shubra El-Kheima |
 | Faculty of Agriculture | Faculty of Agriculture | Operator: Kolleyyet El-Zeraa |
 
+Line 3:
+
+| Station | Chosen | Alternate |
+|---|---|---|
+| Rod El Farag Corridor | Rod El Farag Corridor | Governorate/NAT: Rod El Farag Axis |
+| El Haykestep | El Haykestep | El Haykstep |
+| Qobaa | Qobaa | Qubaa |
+| El Shams Club | El Shams Club | Nadi El-Shams |
+| Heliopolis | Heliopolis | Heliopolis Square |
+| Girls' College | Girls' College | Koleyet El-Banat |
+| Ard El Maared | Ard El Maared | Fair Zone |
+| Abdo Pasha | Abdo Pasha | Abdou Pasha |
+| El Qawmeya El Arabia | El Qawmeya El Arabia | El-Qawmia |
+| League of Arab States | League of Arab States | Gamat El Dowal |
+| Bolak El Dakrour | Bolak El Dakrour | Boulak El-Dakrour |
+| Tawfikia | Tawfikia | Tawfikiya |
+
 `helwan_university` stays **Helwan University**. Some community sources have
 renamed the station to Capital University, but both official sources still use
 Helwan University in 2026.
 
 ### Interchanges
 
-| Station | Lines | Line 1 seq | Line 2 seq | Decision |
-|---|---|---:|---:|---|
-| Sadat | 1, 2 | 19 | 10 | One `sadat` station row, reused |
-| Al Shohadaa | 1, 2 | 22 | 13 | One `al_shohadaa` station row, reused |
-| Ataba | 2, 3 | — | 12 | `ataba`; DATA-3 must reuse this id |
-| Cairo University | 2, 3 | — | 6 | `cairo_university`; Governorate labels it a Line 3 interchange, but the operator page names only Ataba, so verify in DATA-3 |
-| Giza | 2, 4 | — | 4 | Line 4 is under construction and out of scope |
+| Station | Lines | Seq | Decision |
+|---|---|---|---|
+| Sadat | 1, 2 | L1 19; L2 10 | One `sadat` station row, reused |
+| Al Shohadaa | 1, 2 | L1 22; L2 13 | One `al_shohadaa` station row, reused |
+| Nasser | 1, 3 | L1 20; L3 main 20 | One `nasser` station row, reused |
+| Ataba | 2, 3 | L2 12; L3 main 19 | One `ataba` station row, reused |
+| Cairo University | 2, 3 | L2 6; L3 cairo_uni 5 | One `cairo_university` station row, reused |
+| Giza | 2, 4 | L2 4 | Line 4 is under construction and out of scope |
+
+Line 2 `rod_el_farag` and Line 3 `rod_el_farag_corridor` are different stations,
+not an interchange. The LRT at Adly Mansour, the East Nile Monorail at Stadium
+and the West Nile Monorail at Wadi El Nile are out of scope.
 
 ### Line colours
 

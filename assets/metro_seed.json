@@ -286,9 +286,175 @@
       "id": "shubra_el_kheima",
       "name_ar": "شبرا الخيمة",
       "name_en": "Shubra El Kheima"
+    },
+    {
+      "id": "adly_mansour",
+      "name_ar": "عدلي منصور",
+      "name_en": "Adly Mansour"
+    },
+    {
+      "id": "el_haykestep",
+      "name_ar": "الهايكستب",
+      "name_en": "El Haykestep"
+    },
+    {
+      "id": "omar_ibn_el_khattab",
+      "name_ar": "عمر بن الخطاب",
+      "name_en": "Omar Ibn El Khattab"
+    },
+    {
+      "id": "qobaa",
+      "name_ar": "قباء",
+      "name_en": "Qobaa"
+    },
+    {
+      "id": "hesham_barakat",
+      "name_ar": "هشام بركات",
+      "name_en": "Hesham Barakat"
+    },
+    {
+      "id": "el_nozha",
+      "name_ar": "النزهة",
+      "name_en": "El Nozha"
+    },
+    {
+      "id": "el_shams_club",
+      "name_ar": "نادي الشمس",
+      "name_en": "El Shams Club"
+    },
+    {
+      "id": "alf_maskan",
+      "name_ar": "ألف مسكن",
+      "name_en": "Alf Maskan"
+    },
+    {
+      "id": "heliopolis",
+      "name_ar": "هليوبوليس",
+      "name_en": "Heliopolis"
+    },
+    {
+      "id": "haroun",
+      "name_ar": "هارون",
+      "name_en": "Haroun"
+    },
+    {
+      "id": "el_ahram",
+      "name_ar": "الأهرام",
+      "name_en": "El Ahram"
+    },
+    {
+      "id": "girls_college",
+      "name_ar": "كلية البنات",
+      "name_en": "Girls' College"
+    },
+    {
+      "id": "stadium",
+      "name_ar": "الإستاد",
+      "name_en": "Stadium"
+    },
+    {
+      "id": "ard_el_maared",
+      "name_ar": "أرض المعارض",
+      "name_en": "Ard El Maared"
+    },
+    {
+      "id": "abbassia",
+      "name_ar": "العباسية",
+      "name_en": "Abbassia"
+    },
+    {
+      "id": "abdo_pasha",
+      "name_ar": "عبده باشا",
+      "name_en": "Abdo Pasha"
+    },
+    {
+      "id": "el_geish",
+      "name_ar": "الجيش",
+      "name_en": "El Geish"
+    },
+    {
+      "id": "bab_el_shaaria",
+      "name_ar": "باب الشعرية",
+      "name_en": "Bab El Shaaria"
+    },
+    {
+      "id": "maspero",
+      "name_ar": "ماسبيرو",
+      "name_en": "Maspero"
+    },
+    {
+      "id": "safaa_hegazy",
+      "name_ar": "صفاء حجازي",
+      "name_en": "Safaa Hegazy"
+    },
+    {
+      "id": "kit_kat",
+      "name_ar": "الكيت كات",
+      "name_en": "Kit Kat"
+    },
+    {
+      "id": "sudan",
+      "name_ar": "السودان",
+      "name_en": "Sudan"
+    },
+    {
+      "id": "imbaba",
+      "name_ar": "إمبابة",
+      "name_en": "Imbaba"
+    },
+    {
+      "id": "el_bohy",
+      "name_ar": "البوهي",
+      "name_en": "El Bohy"
+    },
+    {
+      "id": "el_qawmeya_el_arabia",
+      "name_ar": "القومية العربية",
+      "name_en": "El Qawmeya El Arabia"
+    },
+    {
+      "id": "ring_road",
+      "name_ar": "الطريق الدائري",
+      "name_en": "Ring Road"
+    },
+    {
+      "id": "rod_el_farag_corridor",
+      "name_ar": "محور روض الفرج",
+      "name_en": "Rod El Farag Corridor"
+    },
+    {
+      "id": "tawfikia",
+      "name_ar": "التوفيقية",
+      "name_en": "Tawfikia"
+    },
+    {
+      "id": "wadi_el_nile",
+      "name_ar": "وادي النيل",
+      "name_en": "Wadi El Nile"
+    },
+    {
+      "id": "league_of_arab_states",
+      "name_ar": "جامعة الدول العربية",
+      "name_en": "League of Arab States"
+    },
+    {
+      "id": "bolak_el_dakrour",
+      "name_ar": "بولاق الدكرور",
+      "name_en": "Bolak El Dakrour"
     }
   ],
-  "line_branches": [],
+  "line_branches": [
+    {
+      "line_id": 3,
+      "branch": "rod_el_farag",
+      "starts_after": "kit_kat"
+    },
+    {
+      "line_id": 3,
+      "branch": "cairo_uni",
+      "starts_after": "kit_kat"
+    }
+  ],
   "line_stations": [
     {
       "line_id": 1,
@@ -619,6 +785,210 @@
       "station_id": "shubra_el_kheima",
       "branch": "main",
       "seq": 20
+    },
+    {
+      "line_id": 3,
+      "station_id": "adly_mansour",
+      "branch": "main",
+      "seq": 1
+    },
+    {
+      "line_id": 3,
+      "station_id": "el_haykestep",
+      "branch": "main",
+      "seq": 2
+    },
+    {
+      "line_id": 3,
+      "station_id": "omar_ibn_el_khattab",
+      "branch": "main",
+      "seq": 3
+    },
+    {
+      "line_id": 3,
+      "station_id": "qobaa",
+      "branch": "main",
+      "seq": 4
+    },
+    {
+      "line_id": 3,
+      "station_id": "hesham_barakat",
+      "branch": "main",
+      "seq": 5
+    },
+    {
+      "line_id": 3,
+      "station_id": "el_nozha",
+      "branch": "main",
+      "seq": 6
+    },
+    {
+      "line_id": 3,
+      "station_id": "el_shams_club",
+      "branch": "main",
+      "seq": 7
+    },
+    {
+      "line_id": 3,
+      "station_id": "alf_maskan",
+      "branch": "main",
+      "seq": 8
+    },
+    {
+      "line_id": 3,
+      "station_id": "heliopolis",
+      "branch": "main",
+      "seq": 9
+    },
+    {
+      "line_id": 3,
+      "station_id": "haroun",
+      "branch": "main",
+      "seq": 10
+    },
+    {
+      "line_id": 3,
+      "station_id": "el_ahram",
+      "branch": "main",
+      "seq": 11
+    },
+    {
+      "line_id": 3,
+      "station_id": "girls_college",
+      "branch": "main",
+      "seq": 12
+    },
+    {
+      "line_id": 3,
+      "station_id": "stadium",
+      "branch": "main",
+      "seq": 13
+    },
+    {
+      "line_id": 3,
+      "station_id": "ard_el_maared",
+      "branch": "main",
+      "seq": 14
+    },
+    {
+      "line_id": 3,
+      "station_id": "abbassia",
+      "branch": "main",
+      "seq": 15
+    },
+    {
+      "line_id": 3,
+      "station_id": "abdo_pasha",
+      "branch": "main",
+      "seq": 16
+    },
+    {
+      "line_id": 3,
+      "station_id": "el_geish",
+      "branch": "main",
+      "seq": 17
+    },
+    {
+      "line_id": 3,
+      "station_id": "bab_el_shaaria",
+      "branch": "main",
+      "seq": 18
+    },
+    {
+      "line_id": 3,
+      "station_id": "ataba",
+      "branch": "main",
+      "seq": 19
+    },
+    {
+      "line_id": 3,
+      "station_id": "nasser",
+      "branch": "main",
+      "seq": 20
+    },
+    {
+      "line_id": 3,
+      "station_id": "maspero",
+      "branch": "main",
+      "seq": 21
+    },
+    {
+      "line_id": 3,
+      "station_id": "safaa_hegazy",
+      "branch": "main",
+      "seq": 22
+    },
+    {
+      "line_id": 3,
+      "station_id": "kit_kat",
+      "branch": "main",
+      "seq": 23
+    },
+    {
+      "line_id": 3,
+      "station_id": "sudan",
+      "branch": "rod_el_farag",
+      "seq": 1
+    },
+    {
+      "line_id": 3,
+      "station_id": "imbaba",
+      "branch": "rod_el_farag",
+      "seq": 2
+    },
+    {
+      "line_id": 3,
+      "station_id": "el_bohy",
+      "branch": "rod_el_farag",
+      "seq": 3
+    },
+    {
+      "line_id": 3,
+      "station_id": "el_qawmeya_el_arabia",
+      "branch": "rod_el_farag",
+      "seq": 4
+    },
+    {
+      "line_id": 3,
+      "station_id": "ring_road",
+      "branch": "rod_el_farag",
+      "seq": 5
+    },
+    {
+      "line_id": 3,
+      "station_id": "rod_el_farag_corridor",
+      "branch": "rod_el_farag",
+      "seq": 6
+    },
+    {
+      "line_id": 3,
+      "station_id": "tawfikia",
+      "branch": "cairo_uni",
+      "seq": 1
+    },
+    {
+      "line_id": 3,
+      "station_id": "wadi_el_nile",
+      "branch": "cairo_uni",
+      "seq": 2
+    },
+    {
+      "line_id": 3,
+      "station_id": "league_of_arab_states",
+      "branch": "cairo_uni",
+      "seq": 3
+    },
+    {
+      "line_id": 3,
+      "station_id": "bolak_el_dakrour",
+      "branch": "cairo_uni",
+      "seq": 4
+    },
+    {
+      "line_id": 3,
+      "station_id": "cairo_university",
+      "branch": "cairo_uni",
+      "seq": 5
     }
   ],
   "fares": [
