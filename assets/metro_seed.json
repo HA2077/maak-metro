@@ -1,9 +1,432 @@
 {
-  "version": 0,
-  "snapshot_date": "",
-  "lines": [],
-  "stations": [],
+  "version": 1,
+  "snapshot_date": "2026-11-21",
+  "lines": [
+    {
+      "id": 1,
+      "name_ar": "الخط الأول",
+      "name_en": "Line 1",
+      "color_hex": "#1E63B8"
+    },
+    {
+      "id": 2,
+      "name_ar": "الخط الثاني",
+      "name_en": "Line 2",
+      "color_hex": "#D01F2F"
+    },
+    {
+      "id": 3,
+      "name_ar": "الخط الثالث",
+      "name_en": "Line 3",
+      "color_hex": "#3A9E4D"
+    }
+  ],
+  "stations": [
+    {
+      "id": "helwan",
+      "name_ar": "حلوان",
+      "name_en": "Helwan"
+    },
+    {
+      "id": "ain_helwan",
+      "name_ar": "عين حلوان",
+      "name_en": "Ain Helwan"
+    },
+    {
+      "id": "helwan_university",
+      "name_ar": "جامعة حلوان",
+      "name_en": "Helwan University"
+    },
+    {
+      "id": "wadi_hof",
+      "name_ar": "وادي حوف",
+      "name_en": "Wadi Hof"
+    },
+    {
+      "id": "hadayek_helwan",
+      "name_ar": "حدائق حلوان",
+      "name_en": "Hadayek Helwan"
+    },
+    {
+      "id": "el_maasara",
+      "name_ar": "المعصرة",
+      "name_en": "El Maasara"
+    },
+    {
+      "id": "tora_el_asmant",
+      "name_ar": "طرة الأسمنت",
+      "name_en": "Tora El Asmant"
+    },
+    {
+      "id": "kotsika",
+      "name_ar": "كوتسيكا",
+      "name_en": "Kotsika"
+    },
+    {
+      "id": "tora_el_balad",
+      "name_ar": "طرة البلد",
+      "name_en": "Tora El Balad"
+    },
+    {
+      "id": "maadi_barracks",
+      "name_ar": "ثكنات المعادي",
+      "name_en": "Maadi Barracks"
+    },
+    {
+      "id": "maadi",
+      "name_ar": "المعادي",
+      "name_en": "Maadi"
+    },
+    {
+      "id": "hadayek_el_maadi",
+      "name_ar": "حدائق المعادي",
+      "name_en": "Hadayek El Maadi"
+    },
+    {
+      "id": "dar_el_salam",
+      "name_ar": "دار السلام",
+      "name_en": "Dar El Salam"
+    },
+    {
+      "id": "el_zahraa",
+      "name_ar": "الزهراء",
+      "name_en": "El Zahraa"
+    },
+    {
+      "id": "mar_girgis",
+      "name_ar": "مار جرجس",
+      "name_en": "Mar Girgis"
+    },
+    {
+      "id": "el_malek_el_saleh",
+      "name_ar": "الملك الصالح",
+      "name_en": "El Malek El Saleh"
+    },
+    {
+      "id": "sayeda_zeinab",
+      "name_ar": "السيدة زينب",
+      "name_en": "Sayeda Zeinab"
+    },
+    {
+      "id": "saad_zaghloul",
+      "name_ar": "سعد زغلول",
+      "name_en": "Saad Zaghloul"
+    },
+    {
+      "id": "sadat",
+      "name_ar": "السادات",
+      "name_en": "Sadat"
+    },
+    {
+      "id": "nasser",
+      "name_ar": "جمال عبد الناصر",
+      "name_en": "Gamal Abdel Nasser"
+    },
+    {
+      "id": "ahmed_orabi",
+      "name_ar": "أحمد عرابي",
+      "name_en": "Ahmed Orabi"
+    },
+    {
+      "id": "al_shohadaa",
+      "name_ar": "الشهداء",
+      "name_en": "Al Shohadaa"
+    },
+    {
+      "id": "ghamra",
+      "name_ar": "غمرة",
+      "name_en": "Ghamra"
+    },
+    {
+      "id": "el_demerdash",
+      "name_ar": "الدمرداش",
+      "name_en": "El Demerdash"
+    },
+    {
+      "id": "manshiet_el_sadr",
+      "name_ar": "منشية الصدر",
+      "name_en": "Manshiet El Sadr"
+    },
+    {
+      "id": "kobri_el_qobba",
+      "name_ar": "كوبري القبة",
+      "name_en": "Kobri El Qobba"
+    },
+    {
+      "id": "hammamat_el_qobba",
+      "name_ar": "حمامات القبة",
+      "name_en": "Hammamat El Qobba"
+    },
+    {
+      "id": "saray_el_qobba",
+      "name_ar": "سراي القبة",
+      "name_en": "Saray El Qobba"
+    },
+    {
+      "id": "hadayek_el_zeitoun",
+      "name_ar": "حدائق الزيتون",
+      "name_en": "Hadayek El Zeitoun"
+    },
+    {
+      "id": "helmiet_el_zeitoun",
+      "name_ar": "حلمية الزيتون",
+      "name_en": "Helmiet El Zeitoun"
+    },
+    {
+      "id": "el_matareya",
+      "name_ar": "المطرية",
+      "name_en": "El Matareya"
+    },
+    {
+      "id": "ain_shams",
+      "name_ar": "عين شمس",
+      "name_en": "Ain Shams"
+    },
+    {
+      "id": "ezbet_el_nakhl",
+      "name_ar": "عزبة النخل",
+      "name_en": "Ezbet El Nakhl"
+    },
+    {
+      "id": "el_marg",
+      "name_ar": "المرج",
+      "name_en": "El Marg"
+    },
+    {
+      "id": "new_el_marg",
+      "name_ar": "المرج الجديدة",
+      "name_en": "New El Marg"
+    }
+  ],
   "line_branches": [],
-  "line_stations": [],
-  "fares": []
+  "line_stations": [
+    {
+      "line_id": 1,
+      "station_id": "helwan",
+      "branch": "main",
+      "seq": 1
+    },
+    {
+      "line_id": 1,
+      "station_id": "ain_helwan",
+      "branch": "main",
+      "seq": 2
+    },
+    {
+      "line_id": 1,
+      "station_id": "helwan_university",
+      "branch": "main",
+      "seq": 3
+    },
+    {
+      "line_id": 1,
+      "station_id": "wadi_hof",
+      "branch": "main",
+      "seq": 4
+    },
+    {
+      "line_id": 1,
+      "station_id": "hadayek_helwan",
+      "branch": "main",
+      "seq": 5
+    },
+    {
+      "line_id": 1,
+      "station_id": "el_maasara",
+      "branch": "main",
+      "seq": 6
+    },
+    {
+      "line_id": 1,
+      "station_id": "tora_el_asmant",
+      "branch": "main",
+      "seq": 7
+    },
+    {
+      "line_id": 1,
+      "station_id": "kotsika",
+      "branch": "main",
+      "seq": 8
+    },
+    {
+      "line_id": 1,
+      "station_id": "tora_el_balad",
+      "branch": "main",
+      "seq": 9
+    },
+    {
+      "line_id": 1,
+      "station_id": "maadi_barracks",
+      "branch": "main",
+      "seq": 10
+    },
+    {
+      "line_id": 1,
+      "station_id": "maadi",
+      "branch": "main",
+      "seq": 11
+    },
+    {
+      "line_id": 1,
+      "station_id": "hadayek_el_maadi",
+      "branch": "main",
+      "seq": 12
+    },
+    {
+      "line_id": 1,
+      "station_id": "dar_el_salam",
+      "branch": "main",
+      "seq": 13
+    },
+    {
+      "line_id": 1,
+      "station_id": "el_zahraa",
+      "branch": "main",
+      "seq": 14
+    },
+    {
+      "line_id": 1,
+      "station_id": "mar_girgis",
+      "branch": "main",
+      "seq": 15
+    },
+    {
+      "line_id": 1,
+      "station_id": "el_malek_el_saleh",
+      "branch": "main",
+      "seq": 16
+    },
+    {
+      "line_id": 1,
+      "station_id": "sayeda_zeinab",
+      "branch": "main",
+      "seq": 17
+    },
+    {
+      "line_id": 1,
+      "station_id": "saad_zaghloul",
+      "branch": "main",
+      "seq": 18
+    },
+    {
+      "line_id": 1,
+      "station_id": "sadat",
+      "branch": "main",
+      "seq": 19
+    },
+    {
+      "line_id": 1,
+      "station_id": "nasser",
+      "branch": "main",
+      "seq": 20
+    },
+    {
+      "line_id": 1,
+      "station_id": "ahmed_orabi",
+      "branch": "main",
+      "seq": 21
+    },
+    {
+      "line_id": 1,
+      "station_id": "al_shohadaa",
+      "branch": "main",
+      "seq": 22
+    },
+    {
+      "line_id": 1,
+      "station_id": "ghamra",
+      "branch": "main",
+      "seq": 23
+    },
+    {
+      "line_id": 1,
+      "station_id": "el_demerdash",
+      "branch": "main",
+      "seq": 24
+    },
+    {
+      "line_id": 1,
+      "station_id": "manshiet_el_sadr",
+      "branch": "main",
+      "seq": 25
+    },
+    {
+      "line_id": 1,
+      "station_id": "kobri_el_qobba",
+      "branch": "main",
+      "seq": 26
+    },
+    {
+      "line_id": 1,
+      "station_id": "hammamat_el_qobba",
+      "branch": "main",
+      "seq": 27
+    },
+    {
+      "line_id": 1,
+      "station_id": "saray_el_qobba",
+      "branch": "main",
+      "seq": 28
+    },
+    {
+      "line_id": 1,
+      "station_id": "hadayek_el_zeitoun",
+      "branch": "main",
+      "seq": 29
+    },
+    {
+      "line_id": 1,
+      "station_id": "helmiet_el_zeitoun",
+      "branch": "main",
+      "seq": 30
+    },
+    {
+      "line_id": 1,
+      "station_id": "el_matareya",
+      "branch": "main",
+      "seq": 31
+    },
+    {
+      "line_id": 1,
+      "station_id": "ain_shams",
+      "branch": "main",
+      "seq": 32
+    },
+    {
+      "line_id": 1,
+      "station_id": "ezbet_el_nakhl",
+      "branch": "main",
+      "seq": 33
+    },
+    {
+      "line_id": 1,
+      "station_id": "el_marg",
+      "branch": "main",
+      "seq": 34
+    },
+    {
+      "line_id": 1,
+      "station_id": "new_el_marg",
+      "branch": "main",
+      "seq": 35
+    }
+  ],
+  "fares": [
+    {
+      "max_stations": 9,
+      "price_egp": 10
+    },
+    {
+      "max_stations": 16,
+      "price_egp": 12
+    },
+    {
+      "max_stations": 23,
+      "price_egp": 15
+    },
+    {
+      "max_stations": 39,
+      "price_egp": 20
+    }
+  ]
 }
