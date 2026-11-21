@@ -196,6 +196,96 @@
       "id": "new_el_marg",
       "name_ar": "المرج الجديدة",
       "name_en": "New El Marg"
+    },
+    {
+      "id": "el_mounib",
+      "name_ar": "المنيب",
+      "name_en": "El Mounib"
+    },
+    {
+      "id": "sakiat_mekki",
+      "name_ar": "ساقية مكي",
+      "name_en": "Sakiat Mekki"
+    },
+    {
+      "id": "om_el_masryeen",
+      "name_ar": "أم المصريين",
+      "name_en": "Om El Masryeen"
+    },
+    {
+      "id": "giza",
+      "name_ar": "الجيزة",
+      "name_en": "Giza"
+    },
+    {
+      "id": "faisal",
+      "name_ar": "فيصل",
+      "name_en": "Faisal"
+    },
+    {
+      "id": "cairo_university",
+      "name_ar": "جامعة القاهرة",
+      "name_en": "Cairo University"
+    },
+    {
+      "id": "el_bohouth",
+      "name_ar": "البحوث",
+      "name_en": "El Bohouth"
+    },
+    {
+      "id": "dokki",
+      "name_ar": "الدقي",
+      "name_en": "Dokki"
+    },
+    {
+      "id": "opera",
+      "name_ar": "الأوبرا",
+      "name_en": "Opera"
+    },
+    {
+      "id": "mohamed_naguib",
+      "name_ar": "محمد نجيب",
+      "name_en": "Mohamed Naguib"
+    },
+    {
+      "id": "ataba",
+      "name_ar": "العتبة",
+      "name_en": "Ataba"
+    },
+    {
+      "id": "massara",
+      "name_ar": "مسرة",
+      "name_en": "Massara"
+    },
+    {
+      "id": "rod_el_farag",
+      "name_ar": "روض الفرج",
+      "name_en": "Rod El Farag"
+    },
+    {
+      "id": "saint_teresa",
+      "name_ar": "سانت تريزا",
+      "name_en": "Saint Teresa"
+    },
+    {
+      "id": "khalafawy",
+      "name_ar": "الخلفاوي",
+      "name_en": "Khalafawy"
+    },
+    {
+      "id": "el_mazallat",
+      "name_ar": "المظلات",
+      "name_en": "El Mazallat"
+    },
+    {
+      "id": "faculty_of_agriculture",
+      "name_ar": "كلية الزراعة",
+      "name_en": "Faculty of Agriculture"
+    },
+    {
+      "id": "shubra_el_kheima",
+      "name_ar": "شبرا الخيمة",
+      "name_en": "Shubra El Kheima"
     }
   ],
   "line_branches": [],
@@ -409,6 +499,126 @@
       "station_id": "new_el_marg",
       "branch": "main",
       "seq": 35
+    },
+    {
+      "line_id": 2,
+      "station_id": "el_mounib",
+      "branch": "main",
+      "seq": 1
+    },
+    {
+      "line_id": 2,
+      "station_id": "sakiat_mekki",
+      "branch": "main",
+      "seq": 2
+    },
+    {
+      "line_id": 2,
+      "station_id": "om_el_masryeen",
+      "branch": "main",
+      "seq": 3
+    },
+    {
+      "line_id": 2,
+      "station_id": "giza",
+      "branch": "main",
+      "seq": 4
+    },
+    {
+      "line_id": 2,
+      "station_id": "faisal",
+      "branch": "main",
+      "seq": 5
+    },
+    {
+      "line_id": 2,
+      "station_id": "cairo_university",
+      "branch": "main",
+      "seq": 6
+    },
+    {
+      "line_id": 2,
+      "station_id": "el_bohouth",
+      "branch": "main",
+      "seq": 7
+    },
+    {
+      "line_id": 2,
+      "station_id": "dokki",
+      "branch": "main",
+      "seq": 8
+    },
+    {
+      "line_id": 2,
+      "station_id": "opera",
+      "branch": "main",
+      "seq": 9
+    },
+    {
+      "line_id": 2,
+      "station_id": "sadat",
+      "branch": "main",
+      "seq": 10
+    },
+    {
+      "line_id": 2,
+      "station_id": "mohamed_naguib",
+      "branch": "main",
+      "seq": 11
+    },
+    {
+      "line_id": 2,
+      "station_id": "ataba",
+      "branch": "main",
+      "seq": 12
+    },
+    {
+      "line_id": 2,
+      "station_id": "al_shohadaa",
+      "branch": "main",
+      "seq": 13
+    },
+    {
+      "line_id": 2,
+      "station_id": "massara",
+      "branch": "main",
+      "seq": 14
+    },
+    {
+      "line_id": 2,
+      "station_id": "rod_el_farag",
+      "branch": "main",
+      "seq": 15
+    },
+    {
+      "line_id": 2,
+      "station_id": "saint_teresa",
+      "branch": "main",
+      "seq": 16
+    },
+    {
+      "line_id": 2,
+      "station_id": "khalafawy",
+      "branch": "main",
+      "seq": 17
+    },
+    {
+      "line_id": 2,
+      "station_id": "el_mazallat",
+      "branch": "main",
+      "seq": 18
+    },
+    {
+      "line_id": 2,
+      "station_id": "faculty_of_agriculture",
+      "branch": "main",
+      "seq": 19
+    },
+    {
+      "line_id": 2,
+      "station_id": "shubra_el_kheima",
+      "branch": "main",
+      "seq": 20
     }
   ],
   "fares": [
