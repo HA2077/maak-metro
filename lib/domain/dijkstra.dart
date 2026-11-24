@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+
 import 'routing_graph.dart';
 
 class DijkstraResult {
