@@ -84,7 +84,12 @@ class _PlannerScreenState extends State<PlannerScreen> {
     final route = context.watch<RouteProvider>();
     final library = context.watch<LibraryProvider>();
     final errorText = _errorText(l10n, route.error);
-    final recent = library.history.take(3).toList();
+    // The same pair can be searched twice; show it once, newest first.
+    final seenPairs = <String>{};
+    final recent = [
+      for (final entry in library.history)
+        if (seenPairs.add('${entry.fromId}/${entry.toId}')) entry,
+    ].take(3).toList();
     final interchanges = _interchanges(context, route.network);
 
     return Scaffold(
@@ -216,7 +221,11 @@ class _PlannerScreenState extends State<PlannerScreen> {
     final from = network.stationById(entry.fromId);
     final to = network.stationById(entry.toId);
     if (from == null || to == null) return null;
-    return '${stationName(context, from)} ← ${stationName(context, to)}';
+    // The arrow points the way the reader reads: towards the destination.
+    final arrow = Localizations.localeOf(context).languageCode == 'ar'
+        ? '←'
+        : '→';
+    return '${stationName(context, from)} $arrow ${stationName(context, to)}';
   }
 
   Future<void> _openRecent(RouteProvider route, HistoryEntry entry) async {
