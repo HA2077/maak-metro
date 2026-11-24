@@ -148,5 +148,12 @@
         "type": "String"
       }
     }
-  }
+  },
+  "onboardingTitle": "أهلاً بيك في معاك",
+  "onboardingBody": "اختار اللغة والمظهر، وتقدر تغيّرهم في أي وقت من الإعدادات.",
+  "onboardingStart": "يلا نبدأ",
+  "appearance": "المظهر",
+  "themeSystem": "حسب النظام",
+  "themeLight": "فاتح",
+  "themeDark": "غامق"
 }

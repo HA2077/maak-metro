@@ -49,6 +49,33 @@ class SettingsScreen extends StatelessWidget {
           FadeSlideIn(
             index: 1,
             child: _Section(
+              title: l10n.appearance,
+              child: SegmentedButton<ThemeMode>(
+                showSelectedIcon: false,
+                segments: [
+                  ButtonSegment(
+                    value: ThemeMode.system,
+                    label: Text(l10n.themeSystem),
+                  ),
+                  ButtonSegment(
+                    value: ThemeMode.light,
+                    label: Text(l10n.themeLight),
+                  ),
+                  ButtonSegment(
+                    value: ThemeMode.dark,
+                    label: Text(l10n.themeDark),
+                  ),
+                ],
+                selected: {settings.themeMode},
+                onSelectionChanged: (selection) =>
+                    settings.setThemeMode(selection.first),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpace.xl),
+          FadeSlideIn(
+            index: 2,
+            child: _Section(
               title: l10n.about,
               child: Card(
                 clipBehavior: Clip.antiAlias,

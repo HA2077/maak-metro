@@ -277,4 +277,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String changeAt(String station) {
     return 'غيّر الخط في $station';
   }
+
+  @override
+  String get onboardingTitle => 'أهلاً بيك في معاك';
+
+  @override
+  String get onboardingBody =>
+      'اختار اللغة والمظهر، وتقدر تغيّرهم في أي وقت من الإعدادات.';
+
+  @override
+  String get onboardingStart => 'يلا نبدأ';
+
+  @override
+  String get appearance => 'المظهر';
+
+  @override
+  String get themeSystem => 'حسب النظام';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'غامق';
 }

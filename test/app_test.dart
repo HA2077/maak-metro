@@ -7,6 +7,7 @@ import 'package:maak_metro/providers/library_provider.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/providers/settings_provider.dart';
 import 'package:maak_metro/screens/home_shell.dart';
+import 'package:maak_metro/screens/onboarding_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -87,6 +88,7 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     final settings = SettingsProvider(prefs);
     await settings.load();
+    await settings.completeOnboarding();
     final repo = _FakeRepository(buildFixtureNetwork());
     final library = LibraryProvider(repo);
     await library.refresh();
@@ -117,6 +119,7 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     final settings = SettingsProvider(prefs);
     await settings.setLocale(const Locale('en'));
+    await settings.completeOnboarding();
     final repo = _FakeRepository(buildFixtureNetwork(), failures: 1);
     final library = LibraryProvider(repo);
     await library.refresh();
@@ -133,6 +136,36 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(route.initError, isNull);
+    expect(find.byType(HomeShell), findsOneWidget);
+  });
+
+  testWidgets('first run asks for language and theme before the tabs', (
+    tester,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final settings = SettingsProvider(prefs);
+    await settings.load();
+    final repo = _FakeRepository(buildFixtureNetwork());
+    final library = LibraryProvider(repo);
+    await library.refresh();
+    final route = RouteProvider(repo, onLibraryChanged: library.refresh);
+    await route.init();
+
+    await tester.pumpWidget(_appWith(settings, library, route));
+
+    expect(find.byType(OnboardingScreen), findsOneWidget);
+    expect(find.byType(HomeShell), findsNothing);
+    expect(find.byType(SegmentedButton<Locale>), findsOneWidget);
+    expect(find.byType(SegmentedButton<ThemeMode>), findsOneWidget);
+
+    await tester.tap(find.text('غامق'));
+    await tester.pumpAndSettle();
+    expect(settings.themeMode, ThemeMode.dark);
+
+    await tester.tap(find.byType(FilledButton));
+    await tester.pumpAndSettle();
+
+    expect(settings.onboarded, isTrue);
     expect(find.byType(HomeShell), findsOneWidget);
   });
 

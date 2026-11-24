@@ -272,4 +272,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String changeAt(String station) {
     return 'Change lines at $station';
   }
+
+  @override
+  String get onboardingTitle => 'Welcome to Maak';
+
+  @override
+  String get onboardingBody =>
+      'Pick your language and theme. You can change them any time in Settings.';
+
+  @override
+  String get onboardingStart => 'Get started';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
 }

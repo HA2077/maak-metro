@@ -535,6 +535,48 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'غيّر الخط في {station}'**
   String changeAt(String station);
+
+  /// No description provided for @onboardingTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهلاً بيك في معاك'**
+  String get onboardingTitle;
+
+  /// No description provided for @onboardingBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار اللغة والمظهر، وتقدر تغيّرهم في أي وقت من الإعدادات.'**
+  String get onboardingBody;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'يلا نبدأ'**
+  String get onboardingStart;
+
+  /// No description provided for @appearance.
+  ///
+  /// In ar, this message translates to:
+  /// **'المظهر'**
+  String get appearance;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب النظام'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتح'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In ar, this message translates to:
+  /// **'غامق'**
+  String get themeDark;
 }
 
 class _AppLocalizationsDelegate

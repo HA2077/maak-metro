@@ -141,5 +141,12 @@
   "dataSnapshotTitle": "Data snapshot",
   "fareEffectiveTitle": "Fare effective",
   "planTrip": "Plan a trip",
-  "changeAt": "Change lines at {station}"
+  "changeAt": "Change lines at {station}",
+  "onboardingTitle": "Welcome to Maak",
+  "onboardingBody": "Pick your language and theme. You can change them any time in Settings.",
+  "onboardingStart": "Get started",
+  "appearance": "Appearance",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark"
 }

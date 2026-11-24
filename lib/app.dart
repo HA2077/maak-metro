@@ -6,6 +6,7 @@ import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/providers/settings_provider.dart';
 import 'package:maak_metro/screens/home_shell.dart';
+import 'package:maak_metro/screens/onboarding_screen.dart';
 import 'package:provider/provider.dart';
 
 const _delegates = <LocalizationsDelegate<dynamic>>[
@@ -40,7 +41,7 @@ class MaakMetroApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      themeMode: settings.themeMode,
       themeAnimationDuration: AppMotion.of(context, AppMotion.slow),
       themeAnimationCurve: AppMotion.standard,
       locale: settings.locale,
@@ -50,7 +51,7 @@ class MaakMetroApp extends StatelessWidget {
         textDirection: settings.textDirection,
         child: child ?? const SizedBox.shrink(),
       ),
-      home: const HomeShell(),
+      home: settings.onboarded ? const HomeShell() : const OnboardingScreen(),
     );
   }
 
