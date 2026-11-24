@@ -217,7 +217,14 @@ abstract final class AppTheme {
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
           minimumSize: const WidgetStatePropertyAll(Size.fromHeight(48)),
-          textStyle: WidgetStatePropertyAll(text.labelLarge),
+          // 14dp with 8dp of side padding: three segments on a 360dp phone
+          // still hold "حسب النظام" on one line without touching the borders.
+          textStyle: WidgetStatePropertyAll(
+            text.labelLarge?.copyWith(fontSize: 14),
+          ),
+          padding: const WidgetStatePropertyAll(
+            EdgeInsetsDirectional.symmetric(horizontal: 8),
+          ),
           backgroundColor: WidgetStateProperty.resolveWith(
             (states) => states.contains(WidgetState.selected)
                 ? scheme.primaryContainer

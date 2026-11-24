@@ -29,7 +29,7 @@ class OnboardingScreen extends StatelessWidget {
                 children: [
                   Center(
                     child: Image.asset(
-                      'assets/images/logo.webp',
+                      'assets/images/logo.png',
                       width: 120,
                       height: 120,
                       excludeFromSemantics: true,

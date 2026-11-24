@@ -89,7 +89,7 @@ class SettingsScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           Image.asset(
-                            'assets/images/logo.webp',
+                            'assets/images/logo.png',
                             width: 104,
                             height: 104,
                             excludeFromSemantics: true,

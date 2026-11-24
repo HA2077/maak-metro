@@ -200,7 +200,7 @@ do not re-style a control locally.
 | **Filled button** | height 52 min, radius 16, `primary`; disabled = `surfaceContainerHighest` fill + `onSurfaceVariant` label. One per screen. |
 | **Outlined button** | height 52 min, radius 16, `outline` border, transparent fill. Sits beside a filled one when a screen has two equal choices. |
 | **Text button** | dialogs only; destructive one uses `foregroundColor: error`. |
-| **Segmented button** | height 48, selected = `primaryContainer` + `onPrimaryContainer`, unselected transparent, 1dp `outline` border, no selection tick. Two or three options, never four. |
+| **Segmented button** | height 48, label 14dp with 8dp side padding so three segments still fit on a 360dp phone without touching the borders, selected = `primaryContainer` + `onPrimaryContainer`, unselected transparent, 1dp `outline` border, no selection tick. Two or three options, never four. |
 | **Chip / ActionChip** | stadium, card fill, `outlineVariant` border, label `labelLarge`, padding 16/11. |
 | **Line chip** | stadium on the line's own colour, `labelMedium` 600, text colour by luminance, hairline border at 35% `outline`. |
 | **Input** | filled `surfaceContainerHigh`, radius 16, transparent border that becomes `primary` 1.6dp on focus, content padding 18/16, hint `bodyLarge` in `onSurfaceVariant`. |
@@ -485,7 +485,7 @@ that rewrites the wording is not. Arabic plurals carry `=0`, `=1`, `=2`, `few`,
 | `arabic` | العربية | العربية |
 | `english` | English | English |
 | `appearance` | المظهر | Appearance |
-| `themeSystem` | حسب النظام | System |
+| `themeSystem` | النظام | System |
 | `themeLight` | فاتح | Light |
 | `themeDark` | غامق | Dark |
 | `dateFormat` | تنسيق التاريخ | Date format |

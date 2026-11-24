@@ -68,7 +68,7 @@ flutter:
   generate: true
   assets:
     - assets/metro_seed.json
-    - assets/images/logo.webp
+    - assets/images/logo.png
   fonts:
     - family: Noto Sans Arabic
       fonts:

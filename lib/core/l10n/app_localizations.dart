@@ -563,7 +563,7 @@ abstract class AppLocalizations {
   /// No description provided for @themeSystem.
   ///
   /// In ar, this message translates to:
-  /// **'حسب النظام'**
+  /// **'النظام'**
   String get themeSystem;
 
   /// No description provided for @themeLight.
