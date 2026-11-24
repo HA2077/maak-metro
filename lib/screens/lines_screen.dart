@@ -1,243 +1,273 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
+import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
+import 'package:maak_metro/core/theme/line_colors.dart';
+import 'package:maak_metro/core/utils/digits.dart';
+import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/domain.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/screens/home_shell.dart';
 import 'package:maak_metro/widgets/line_chip.dart';
-import 'package:maak_metro/widgets/summary_stat.dart';
 import 'package:provider/provider.dart';
 
-/// Every line with its stations in travel order, as expandable sections.
-///
-/// Tapping a station opens a sheet where it can be set as the origin or the
-/// destination of a trip; doing so switches to the Planner tab.
 class LinesScreen extends StatelessWidget {
   const LinesScreen({super.key});
 
+  static String _branchTitle(String branch) => branch
+      .split('_')
+      .where((word) => word.isNotEmpty)
+      .map((word) => '${word[0].toUpperCase()}${word.substring(1)}')
+      .join(' ');
+
+  void _showStation(BuildContext context, Station station) {
+    final route = context.read<RouteProvider>();
+    final network = route.network;
+    if (network == null) return;
+    final lines = network.linesServing(station.id);
+
+    showModalBottomSheet<void>(
+      context: context,
+      useSafeArea: true,
+      constraints: const BoxConstraints(maxWidth: AppLayout.maxContentWidth),
+      builder: (sheetContext) {
+        final l10n = AppLocalizations.of(sheetContext);
+        final theme = Theme.of(sheetContext);
+        void setAs({required bool from}) {
+          if (from) {
+            route.setFrom(station);
+          } else {
+            route.setTo(station);
+          }
+          AppHaptics.confirm();
+          Navigator.of(sheetContext).pop();
+          HomeShell.openPlanner(context);
+        }
+
+        return Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(
+            AppSpace.xl,
+            0,
+            AppSpace.sm,
+            AppSpace.xl,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Semantics(
+                          header: true,
+                          child: Text(
+                            stationName(sheetContext, station),
+                            style: theme.textTheme.headlineSmall,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpace.xs),
+                        Text(
+                          otherStationName(sheetContext, station),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(sheetContext).pop(),
+                    tooltip: l10n.close,
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpace.lg),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(end: AppSpace.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      l10n.servesLines,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpace.sm),
+                    Wrap(
+                      spacing: AppSpace.sm,
+                      runSpacing: AppSpace.sm,
+                      children: [
+                        for (final line in lines) LineChip(line: line),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpace.xl),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => setAs(from: true),
+                            child: Text(l10n.setAsFrom),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpace.md),
+                        Expanded(
+                          child: FilledButton(
+                            onPressed: () => setAs(from: false),
+                            child: Text(l10n.setAsTo),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final route = context.watch<RouteProvider>();
-    final network = route.network;
+    final theme = Theme.of(context);
+    final network = context.watch<RouteProvider>().network;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.linesTitle)),
-      body: network == null
-          ? EmptyHint(icon: Icons.subway_outlined, message: l10n.loadError)
-          : ListView.builder(
-              padding: const EdgeInsets.all(AppSpace.lg),
-              itemCount: network.lines.length,
-              itemBuilder: (context, index) {
-                final line = network.lines[index];
-                return _LineSection(line: line, network: network);
-              },
-            ),
-    );
-  }
-}
-
-class _LineSection extends StatelessWidget {
-  const _LineSection({required this.line, required this.network});
-
-  final Line line;
-  final NetworkData network;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final language = Localizations.localeOf(context).languageCode;
-    final stations = network.stationsOfLine(line.id);
-    final branches = [
-      for (final branch in network.branches)
-        if (branch.lineId == line.id) branch,
-    ];
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppSpace.md),
-      child: Theme(
-        data: theme.copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          tilePadding: const EdgeInsetsDirectional.symmetric(
-            horizontal: AppSpace.lg,
-          ),
-          childrenPadding: const EdgeInsetsDirectional.only(
-            bottom: AppSpace.md,
-          ),
-          leading: LineChip(line: line),
-          title: Text(
-            '${stations.length}',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          children: _buildStationList(context, stations, branches, language),
-        ),
-      ),
+      body: network == null || network.lines.isEmpty
+          ? const SizedBox.shrink()
+          : _lineList(context, network, theme),
     );
   }
 
-  List<Widget> _buildStationList(
-    BuildContext context,
-    List<LineStation> stations,
-    List<LineBranch> branches,
-    String language,
-  ) {
-    final branchNames = {for (final branch in branches) branch.branch: branch};
-    final widgets = <Widget>[];
-    String? lastBranch;
-
-    for (final lineStation in stations) {
-      // Line 3 forks: show a header the first time each branch appears.
-      // The main trunk has no header of its own.
-      if (lineStation.branch != lastBranch) {
-        lastBranch = lineStation.branch;
-        if (lineStation.branch != 'main') {
-          widgets.add(
-            _BranchHeader(
-              label: AppLocalizations.of(context)
-                  .branchLabel(branchNames[lineStation.branch]?.branch ?? ''),
-            ),
-          );
-        }
-      }
-
-      final station = network.stationById(lineStation.stationId);
-      if (station == null) continue;
-
-      widgets.add(
-        ListTile(
-          dense: true,
-          leading: const SizedBox(width: AppSpace.sm),
-          title: Text(station.localizedName(language)),
-          subtitle: Text(
-            language == 'ar' ? station.nameEn : station.nameAr,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          trailing: network.linesServing(station.id).length > 1
-              ? const Icon(Icons.sync_alt, size: 18)
-              : null,
-          onTap: () => _openStationSheet(context, station),
-        ),
-      );
-    }
-    return widgets;
-  }
-
-  Future<void> _openStationSheet(BuildContext context, Station station) {
-    return showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (sheetContext) => _StationSheet(station: station),
-    );
-  }
-}
-
-class _BranchHeader extends StatelessWidget {
-  const _BranchHeader({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(
-        AppSpace.lg,
-        AppSpace.md,
-        AppSpace.lg,
-        AppSpace.xs,
-      ),
-      child: Text(
-        label,
-        style: theme.textTheme.labelLarge?.copyWith(
-          color: theme.colorScheme.primary,
-        ),
-      ),
-    );
-  }
-}
-
-class _StationSheet extends StatelessWidget {
-  const _StationSheet({required this.station});
-
-  final Station station;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _lineList(BuildContext context, NetworkData network, ThemeData theme) {
     final l10n = AppLocalizations.of(context);
-    final route = context.watch<RouteProvider>();
-    final network = route.network;
-    final language = Localizations.localeOf(context).languageCode;
-    final serving = network?.linesServing(station.id) ?? const <Line>[];
-    // Captured before the sheet pops; the sheet's own context is unmounted after.
-    final shellContext = context;
+    return ListView.separated(
+      padding: const EdgeInsetsDirectional.all(18),
+      itemCount: network.lines.length,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpace.md),
+      itemBuilder: (context, index) {
+        final line = network.lines[index];
+        final color = parseHexColor(line.colorHex);
+        final rows = network.stationsOfLine(line.id);
+        final branches = <String>[];
+        for (final row in rows) {
+          if (!branches.contains(row.branch)) branches.add(row.branch);
+        }
+        final stationCount = {for (final row in rows) row.stationId}.length;
 
-    void apply({required bool asFrom}) {
-      if (asFrom) {
-        route.setFrom(station);
-      } else {
-        route.setTo(station);
-      }
-      Navigator.of(context).pop();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        HomeShell.openPlanner(shellContext);
-      });
-    }
+        return FadeSlideIn(
+          index: index,
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            child: ExpansionTile(
+              leading: Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
+              title: Text(
+                lineName(context, line),
+                style: theme.textTheme.titleMedium,
+              ),
+              subtitle: Text(
+                localizedDigits(context, l10n.stationsCount(stationCount)),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              children: [
+                for (final branch in branches) ...[
+                  if (branch != 'main')
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        18,
+                        AppSpace.lg,
+                        18,
+                        AppSpace.xs,
+                      ),
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          l10n.branchLabel(_branchTitle(branch)),
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ),
+                  for (final row in rows)
+                    if (row.branch == branch)
+                      _StationRow(
+                        station: network.stationById(row.stationId),
+                        color: color,
+                        onTap: _showStation,
+                      ),
+                ],
+                const SizedBox(height: AppSpace.sm),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
 
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(
-        AppSpace.lg,
-        AppSpace.sm,
-        AppSpace.lg,
-        AppSpace.xl,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+class _StationRow extends StatelessWidget {
+  const _StationRow({
+    required this.station,
+    required this.color,
+    required this.onTap,
+  });
+
+  final Station? station;
+  final Color color;
+  final void Function(BuildContext, Station) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final station = this.station;
+    if (station == null) return const SizedBox.shrink();
+    return ListTile(
+      contentPadding: const EdgeInsetsDirectional.only(start: 18, end: 18),
+      minLeadingWidth: 10,
+      leading: _StopDot(color: color),
+      title: Text(stationName(context, station)),
+      onTap: () => onTap(context, station),
+    );
+  }
+}
+
+/// A stop is a dot threaded on the line colour, so a list of stations reads as
+/// the line it belongs to rather than a list of bullets.
+class _StopDot extends StatelessWidget {
+  const _StopDot({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 20,
+      height: 28,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          Text(
-            l10n.stationDetails,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: AppSpace.xs),
-          Text(
-            station.localizedName(language),
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          Text(
-            language == 'ar' ? station.nameEn : station.nameAr,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: AppSpace.lg),
-          Text(
-            l10n.servesLines,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: AppSpace.sm),
-          Wrap(
-            spacing: AppSpace.sm,
-            runSpacing: AppSpace.sm,
-            children: [for (final line in serving) LineChip(line: line)],
-          ),
-          const SizedBox(height: AppSpace.xl),
-          FilledButton.icon(
-            onPressed: () => apply(asFrom: true),
-            icon: const Icon(Icons.trip_origin),
-            label: Text(l10n.setAsFrom),
-          ),
-          const SizedBox(height: AppSpace.sm),
-          OutlinedButton.icon(
-            onPressed: () => apply(asFrom: false),
-            icon: const Icon(Icons.place),
-            label: Text(l10n.setAsTo),
+          Container(width: 2, color: color.withValues(alpha: 0.35)),
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(shape: BoxShape.circle, color: color),
           ),
         ],
       ),

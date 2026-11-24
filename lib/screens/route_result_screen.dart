@@ -1,147 +1,226 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
+import 'package:maak_metro/core/motion/app_motion.dart';
+import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
+import 'package:maak_metro/core/utils/digits.dart';
+import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/domain/domain.dart';
 import 'package:maak_metro/providers/route_provider.dart';
+import 'package:maak_metro/widgets/count_up.dart';
 import 'package:maak_metro/widgets/leg_card.dart';
+import 'package:maak_metro/widgets/line_chip.dart';
 import 'package:maak_metro/widgets/summary_stat.dart';
 import 'package:provider/provider.dart';
 
-/// Shows [RouteProvider.result] as a summary plus one card per leg.
-class RouteResultScreen extends StatefulWidget {
+class RouteResultScreen extends StatelessWidget {
   const RouteResultScreen({super.key});
 
-  @override
-  State<RouteResultScreen> createState() => _RouteResultScreenState();
-}
-
-class _RouteResultScreenState extends State<RouteResultScreen> {
-  bool _isFavorite = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadFavoriteState();
-  }
-
-  Future<void> _loadFavoriteState() async {
-    final isFavorite = await context.read<RouteProvider>().isCurrentFavorite();
-    if (!mounted) return;
-    setState(() => _isFavorite = isFavorite);
-  }
-
-  Future<void> _toggleFavorite() async {
-    await context.read<RouteProvider>().toggleFavorite();
-    if (!mounted) return;
-    setState(() => _isFavorite = !_isFavorite);
-  }
+  static String _minutes(double value) => value == value.roundToDouble()
+      ? value.round().toString()
+      : value.toStringAsFixed(1);
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     final route = context.watch<RouteProvider>();
     final result = route.result;
     final network = route.network;
-
-    if (result == null || network == null) {
-      return Scaffold(
-        appBar: AppBar(title: Text(l10n.routeTitle)),
-        body: EmptyHint(icon: Icons.route, message: l10n.noRouteError),
-      );
-    }
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.routeTitle),
         actions: [
-          IconButton(
-            tooltip: _isFavorite ? l10n.removeFavorite : l10n.addFavorite,
-            onPressed: _toggleFavorite,
-            icon: Icon(_isFavorite ? Icons.star : Icons.star_border),
-          ),
+          if (result != null)
+            _FavoriteButton(pair: '${result.fromId}/${result.toId}'),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(AppSpace.lg),
-        children: [
-          _SummaryCard(result: result),
-          const SizedBox(height: AppSpace.xl),
-          for (var i = 0; i < result.legs.length; i++) ...[
-            LegCard(leg: result.legs[i], network: network),
-            if (i < result.legs.length - 1)
-              if (_transferBetween(result.legs[i], result.legs[i + 1])
-                  case final marker?)
-                marker,
-          ],
-        ],
-      ),
+      body: result == null || network == null
+          ? const SizedBox.shrink()
+          : ListView(
+              padding: const EdgeInsetsDirectional.all(18),
+              children: [
+                FadeSlideIn(
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.all(18),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Semantics(
+                            label: localizedDigits(
+                              context,
+                              l10n.estimatedTime(
+                                _minutes(result.estimatedMinutes),
+                              ),
+                            ),
+                            child: ExcludeSemantics(
+                              child: CountUp(
+                                value: result.estimatedMinutes,
+                                duration: AppMotion.counter,
+                                text: (value) => localizedDigits(
+                                  context,
+                                  l10n.estimatedTime(_minutes(value)),
+                                ),
+                                style: AppTheme.numeric(
+                                  theme.textTheme.headlineSmall,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpace.lg),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: SummaryStat(
+                                  icon: Icons.pin_drop_outlined,
+                                  text: localizedDigits(
+                                    context,
+                                    l10n.stationsCount(result.stationCount),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: SummaryStat(
+                                  icon: Icons.alt_route,
+                                  text: localizedDigits(
+                                    context,
+                                    l10n.transfersCount(result.transfers),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: SummaryStat(
+                                  icon: Icons.payments_outlined,
+                                  text: localizedDigits(
+                                    context,
+                                    l10n.fareEgp(result.fareEgp.toString()),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpace.lg),
+                for (var index = 0; index < result.legs.length; index++) ...[
+                  if (index > 0)
+                    FadeSlideIn(
+                      index: index * 2 - 1,
+                      child: _TransferRow(
+                        network: network,
+                        previous: result.legs[index - 1],
+                        next: result.legs[index],
+                      ),
+                    ),
+                  FadeSlideIn(
+                    index: index * 2,
+                    child: LegCard(leg: result.legs[index], network: network),
+                  ),
+                  if (index < result.legs.length - 1)
+                    const SizedBox(height: AppSpace.md),
+                ],
+              ],
+            ),
     );
   }
-
-  /// Builds the transfer marker between two consecutive legs, or null when the
-  /// shared station or the next line cannot be resolved from the network.
-  Widget? _transferBetween(RouteLeg current, RouteLeg next) {
-    if (current.stationIds.isEmpty) return null;
-    final station = network?.stationById(current.stationIds.last);
-    final line = network?.lineById(next.lineId);
-    if (station == null || line == null) return null;
-    return TransferMarker(station: station, nextLine: line);
-  }
-
-  NetworkData? get network => context.read<RouteProvider>().network;
 }
 
-class _SummaryCard extends StatelessWidget {
-  const _SummaryCard({required this.result});
+/// The star reads the favourite state asynchronously, because the library is
+/// async. It re-checks when the pair changes or after a toggle.
+class _FavoriteButton extends StatefulWidget {
+  const _FavoriteButton({required this.pair});
 
-  final RouteResult result;
+  final String pair;
+
+  @override
+  State<_FavoriteButton> createState() => _FavoriteButtonState();
+}
+
+class _FavoriteButtonState extends State<_FavoriteButton> {
+  bool _isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _check();
+  }
+
+  @override
+  void didUpdateWidget(_FavoriteButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.pair != widget.pair) _check();
+  }
+
+  Future<void> _check() async {
+    final route = context.read<RouteProvider>();
+    final favorite = await route.isCurrentFavorite();
+    if (mounted) setState(() => _isFavorite = favorite);
+  }
+
+  Future<void> _toggle() async {
+    AppHaptics.action();
+    await context.read<RouteProvider>().toggleFavorite();
+    await _check();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final minutes = result.estimatedMinutes.round().toString();
+    final theme = Theme.of(context);
+    return IconButton(
+      onPressed: _toggle,
+      tooltip: _isFavorite ? l10n.removeFavorite : l10n.addFavorite,
+      isSelected: _isFavorite,
+      icon: const Icon(Icons.star_border),
+      selectedIcon: Icon(Icons.star, color: theme.colorScheme.primary),
+    );
+  }
+}
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpace.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.estimatedTime(minutes),
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: AppSpace.lg),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: SummaryStat(
-                    icon: Icons.place,
-                    value: '${result.stationCount}',
-                    label: l10n.stationsCount(result.stationCount),
-                  ),
-                ),
-                const SizedBox(width: AppSpace.md),
-                Expanded(
-                  child: SummaryStat(
-                    icon: Icons.swap_horiz,
-                    value: '${result.transfers}',
-                    label: l10n.transfersCount(result.transfers),
-                  ),
-                ),
-                const SizedBox(width: AppSpace.md),
-                Expanded(
-                  child: SummaryStat(
-                    icon: Icons.payments_outlined,
-                    value: l10n.fareEgp(result.fareEgp.toString()),
-                    label: l10n.fare,
-                  ),
-                ),
-              ],
-            ),
+class _TransferRow extends StatelessWidget {
+  const _TransferRow({
+    required this.network,
+    required this.previous,
+    required this.next,
+  });
+
+  final NetworkData network;
+  final RouteLeg previous;
+  final RouteLeg next;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final line = network.lineById(next.lineId);
+    final previousStops = previous.stationIds;
+    final station = previousStops.isEmpty
+        ? ''
+        : stationNameById(context, network, previousStops.last);
+
+    return Padding(
+      padding: const EdgeInsetsDirectional.symmetric(vertical: AppSpace.sm),
+      child: Row(
+        children: [
+          Icon(Icons.alt_route, size: 18, color: theme.colorScheme.primary),
+          const SizedBox(width: AppSpace.sm),
+          if (line != null) ...[
+            LineChip(line: line),
+            const SizedBox(width: AppSpace.sm),
           ],
-        ),
+          Expanded(
+            child: Text(
+              l10n.changeAt(station),
+              style: theme.textTheme.bodyMedium,
+            ),
+          ),
+        ],
       ),
     );
   }

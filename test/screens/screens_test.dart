@@ -12,6 +12,7 @@ import 'package:maak_metro/screens/lines_screen.dart';
 import 'package:maak_metro/screens/planner_screen.dart';
 import 'package:maak_metro/screens/route_result_screen.dart';
 import 'package:maak_metro/screens/settings_screen.dart';
+import 'package:maak_metro/widgets/date_text.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -174,7 +175,12 @@ void main() {
     testWidgets('shows the language switch and the About rows', (tester) async {
       await _pumpScreen(tester, const SettingsScreen());
       expect(find.byType(SegmentedButton<Locale>), findsOneWidget);
-      expect(find.textContaining('2026-03-27'), findsOneWidget);
+      expect(find.text('تاريخ البيانات'), findsOneWidget);
+      expect(find.text('سريان الأجرة'), findsOneWidget);
+      // Each date is three texts so bidi cannot reorder the fields; the second
+      // row may sit below the fold, hence findsWidgets.
+      expect(find.byType(DateText), findsWidgets);
+      expect(find.text('٢٠٢٦'), findsWidgets);
       expect(tester.takeException(), isNull);
     });
 
