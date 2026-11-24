@@ -4,6 +4,40 @@ import 'package:maak_metro/data/metro_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+/// Ten stations from the seed; any ordered pair of them is a valid trip.
+const _historyStations = [
+  'helwan',
+  'ain_helwan',
+  'helwan_university',
+  'wadi_hof',
+  'hadayek_helwan',
+  'el_maasara',
+  'tora_el_asmant',
+  'kotsika',
+  'tora_el_balad',
+  'maadi_barracks',
+];
+
+/// History keeps one row per pair, so a test that needs many rows has to
+/// search many different trips.
+Future<void> addDistinctHistory(
+  SqliteMetroRepository repository,
+  int count,
+) async {
+  var added = 0;
+  for (final from in _historyStations) {
+    for (final to in _historyStations) {
+      if (from == to) continue;
+      await repository.addHistory(from, to);
+      if (++added == count) return;
+    }
+  }
+  fail(
+    'only ${_historyStations.length * (_historyStations.length - 1)} '
+    'distinct pairs exist, asked for $count',
+  );
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -88,33 +122,42 @@ void main() {
 
   group('history', () {
     test('keeps the newest 50 entries when 60 are added', () async {
-      for (var i = 0; i < 60; i++) {
-        await repository.addHistory('sadat', 'nasser');
-      }
+      await addDistinctHistory(repository, 60);
 
-      final history = await repository.getHistory();
+      final history = await repository.getHistory(limit: 100);
       expect(history, hasLength(50));
     });
 
     test('lists history newest first by id', () async {
-      for (var i = 0; i < 3; i++) {
-        await repository.addHistory('sadat', 'nasser');
-      }
+      await addDistinctHistory(repository, 3);
 
       final history = await repository.getHistory();
       final ids = [for (final entry in history) entry.id];
       expect(ids, [...ids]..sort((a, b) => b.compareTo(a)));
     });
 
-    test('respects the limit parameter', () async {
-      for (var i = 0; i < 10; i++) {
-        await repository.addHistory('sadat', 'nasser');
-      }
+    test('keeps one row per pair and moves it to the top', () async {
+      await repository.addHistory('sadat', 'nasser');
+      await repository.addHistory('helwan', 'maadi');
+      await repository.addHistory('sadat', 'nasser');
 
-      final all = await repository.getHistory();
+      final rows = await repository.getHistory();
+
+      expect(rows, hasLength(2));
+      expect(rows.first.fromId, 'sadat');
+      expect(rows.first.toId, 'nasser');
+      // Direction still counts as a different trip.
+      await repository.addHistory('nasser', 'sadat');
+      expect(await repository.getHistory(), hasLength(3));
+    });
+
+    test('respects the limit parameter', () async {
+      await addDistinctHistory(repository, 55);
+
+      final all = await repository.getHistory(limit: 100);
       final three = await repository.getHistory(limit: 3);
 
-      expect(all, hasLength(10));
+      expect(all, hasLength(50));
       expect(three, hasLength(3));
       expect(three.first.id, all.first.id);
     });

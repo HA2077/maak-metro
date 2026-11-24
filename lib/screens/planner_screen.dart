@@ -45,11 +45,19 @@ class _PlannerScreenState extends State<PlannerScreen> {
       title: from ? l10n.fromLabel : l10n.toLabel,
     );
     if (station == null) return;
-    if (from) {
-      route.setFrom(station);
-    } else {
+    if (!from) {
       route.setTo(station);
+      return;
     }
+    route.setFrom(station);
+    // A trip needs both ends, so go straight on to the destination.
+    if (!mounted || route.to != null) return;
+    final to = await showStationPicker(
+      context,
+      stations: _pickable(route),
+      title: l10n.toLabel,
+    );
+    if (to != null) route.setTo(to);
   }
 
   Future<void> _search(BuildContext context) async {

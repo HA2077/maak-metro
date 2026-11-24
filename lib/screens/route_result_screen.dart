@@ -57,16 +57,48 @@ class RouteResultScreen extends StatelessWidget {
                               ),
                             ),
                             child: ExcludeSemantics(
-                              child: CountUp(
-                                value: result.estimatedMinutes,
-                                duration: AppMotion.counter,
-                                text: (value) => localizedDigits(
-                                  context,
-                                  l10n.estimatedTime(_minutes(value)),
-                                ),
-                                style: AppTheme.numeric(
-                                  theme.textTheme.headlineSmall,
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    l10n.estimatedLabel,
+                                    style: theme.textTheme.labelMedium
+                                        ?.copyWith(
+                                          color: theme
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                        ),
+                                  ),
+                                  const SizedBox(height: AppSpace.xs),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.baseline,
+                                    textBaseline: TextBaseline.alphabetic,
+                                    children: [
+                                      CountUp(
+                                        value: result.estimatedMinutes,
+                                        duration: AppMotion.counter,
+                                        text: (value) => localizedDigits(
+                                          context,
+                                          _minutes(value),
+                                        ),
+                                        style: AppTheme.numeric(
+                                          theme.textTheme.displaySmall,
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppSpace.sm),
+                                      Text(
+                                        l10n.minutesShort,
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                              color: theme
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ),

@@ -88,7 +88,7 @@ class AppLocalizationsEn extends AppLocalizations {
       locale: localeName,
       other: '$count changes',
       one: '1 change',
-      zero: 'No line changes',
+      zero: 'No changes',
     );
     return '$_temp0';
   }
@@ -297,4 +297,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get removeFromHistory => 'Remove from history';
+
+  @override
+  String get estimatedLabel => 'Estimated time';
+
+  @override
+  String get minutesShort => 'min';
 }

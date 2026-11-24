@@ -34,7 +34,7 @@
       }
     }
   },
-  "transfersCount": "{count, plural, =0{بدون تغيير خط} =1{تغيير واحد} =2{تغييران} few{{count} تغييرات} many{{count} تغيير} other{{count} تغيير}}",
+  "transfersCount": "{count, plural, =0{بدون تغيير} =1{تغيير واحد} =2{تغييران} few{{count} تغييرات} many{{count} تغيير} other{{count} تغيير}}",
   "@transfersCount": {
     "placeholders": {
       "count": {
@@ -156,5 +156,7 @@
   "themeSystem": "النظام",
   "themeLight": "فاتح",
   "themeDark": "غامق",
-  "removeFromHistory": "إزالة من السجل"
+  "removeFromHistory": "إزالة من السجل",
+  "estimatedLabel": "الوقت التقديري",
+  "minutesShort": "دقيقة"
 }

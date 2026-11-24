@@ -221,7 +221,7 @@ abstract class AppLocalizations {
   /// No description provided for @transfersCount.
   ///
   /// In ar, this message translates to:
-  /// **'{count, plural, =0{بدون تغيير خط} =1{تغيير واحد} =2{تغييران} few{{count} تغييرات} many{{count} تغيير} other{{count} تغيير}}'**
+  /// **'{count, plural, =0{بدون تغيير} =1{تغيير واحد} =2{تغييران} few{{count} تغييرات} many{{count} تغيير} other{{count} تغيير}}'**
   String transfersCount(int count);
 
   /// No description provided for @fareEgp.
@@ -583,6 +583,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إزالة من السجل'**
   String get removeFromHistory;
+
+  /// No description provided for @estimatedLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت التقديري'**
+  String get estimatedLabel;
+
+  /// No description provided for @minutesShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقيقة'**
+  String get minutesShort;
 }
 
 class _AppLocalizationsDelegate

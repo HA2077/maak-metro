@@ -101,6 +101,13 @@ class SqliteMetroRepository implements MetroRepository {
 
   @override
   Future<void> addHistory(String fromId, String toId) async {
+    // One row per pair: searching the same trip again moves it to the top
+    // instead of filling the list with copies.
+    await _db.delete(
+      'history',
+      where: 'from_id = ? AND to_id = ?',
+      whereArgs: [fromId, toId],
+    );
     await _db.insert('history', <String, Object?>{
       'from_id': fromId,
       'to_id': toId,

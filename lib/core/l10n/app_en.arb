@@ -34,7 +34,7 @@
       }
     }
   },
-  "transfersCount": "{count, plural, =0{No line changes} =1{1 change} other{{count} changes}}",
+  "transfersCount": "{count, plural, =0{No changes} =1{1 change} other{{count} changes}}",
   "@transfersCount": {
     "placeholders": {
       "count": {
@@ -149,5 +149,7 @@
   "themeSystem": "System",
   "themeLight": "Light",
   "themeDark": "Dark",
-  "removeFromHistory": "Remove from history"
+  "removeFromHistory": "Remove from history",
+  "estimatedLabel": "Estimated time",
+  "minutesShort": "min"
 }

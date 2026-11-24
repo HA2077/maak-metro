@@ -93,7 +93,7 @@ class AppLocalizationsAr extends AppLocalizations {
       few: '$count تغييرات',
       two: 'تغييران',
       one: 'تغيير واحد',
-      zero: 'بدون تغيير خط',
+      zero: 'بدون تغيير',
     );
     return '$_temp0';
   }
@@ -302,4 +302,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get removeFromHistory => 'إزالة من السجل';
+
+  @override
+  String get estimatedLabel => 'الوقت التقديري';
+
+  @override
+  String get minutesShort => 'دقيقة';
 }
