@@ -120,5 +120,21 @@ void main() {
     test('returns no legs for an empty path', () {
       expect(buildLegs(const <NodeKey>[], graph), isEmpty);
     });
+
+    test('throws when a branch change has no fork station', () {
+      expect(
+        () => buildLegs([
+          const NodeKey(stationId: 'p1', lineId: 3),
+          const NodeKey(stationId: 'q1', lineId: 3),
+        ], graph),
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'message',
+            contains('no fork station'),
+          ),
+        ),
+      );
+    });
   });
 }
