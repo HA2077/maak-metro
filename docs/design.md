@@ -298,10 +298,12 @@ sits under the keyboard.
 Pushed, not a tab. App bar "المسار" with a star action that toggles the current
 route as a favourite (`star_border` → filled `star` in `primary`).
 
-1. **Summary card** (18dp padding): the estimated time as a `headlineSmall`
-   count-up, tabular, 800ms; then a row of three equal `SummaryStat`s — stations,
-   transfers, fare in EGP. Figures are Arabic-Indic in Arabic and the label is
-   always "تقديري" / "estimated".
+1. **Summary card** (18dp padding): "الوقت التقديري" as a `labelMedium` in
+   `onSurfaceVariant`, then the figure as a `displaySmall` count-up with
+   tabular figures and "دقيقة" beside it in `titleMedium`, so the number is the
+   one thing that reads from arm's length. Then a row of three equal
+   `SummaryStat`s — stations, transfers, fare in EGP. Figures are Arabic-Indic in
+   Arabic and the label is always "تقديري" / "estimated".
 2. **Legs**, one card each, in travel order: a 6dp strip on the leading edge in
    the line colour, the `LineChip`, "من X إلى Y" in `titleMedium`, and an
    `ExpansionTile` reading "N محطات بينية" through an ICU plural (zero, one,
@@ -342,10 +344,11 @@ history is not empty, guarded by a confirmation dialog whose destructive action
 is `error`-coloured. Below it, a two-tab `TabBar`: المفضلة / السجل.
 
 Each entry is a card with two rows — `trip_origin` + from-station,
-`place` + to-station, both `titleMedium` with ellipsis — and, on favourites, a
-`delete_outline` button. Favourites also swipe horizontally to delete, over an
-`errorContainer` background with a delete icon. Empty tab: 40dp icon, one line,
-a tonal "ابدأ رحلة" that switches to the planner tab.
+`place` + to-station, both `titleMedium` with ellipsis — and a `delete_outline`
+button. Both tabs swipe horizontally to delete one row, over an `errorContainer`
+background with a delete icon; the history keeps one row per pair, so searching
+the same trip again moves it to the top instead of adding a copy. Empty tab:
+40dp icon, one line, a tonal "ابدأ رحلة" that switches to the planner tab.
 
 Opening an entry recalculates without writing history and pushes the result.
 
