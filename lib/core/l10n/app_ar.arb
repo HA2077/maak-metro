@@ -50,6 +50,7 @@
       }
     }
   },
+  "fare": "الأجرة",
   "changeTo": "غيّر إلى {line} في {station}",
   "@changeTo": {
     "placeholders": {

@@ -104,6 +104,9 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get fare => 'الأجرة';
+
+  @override
   String changeTo(String line, String station) {
     return 'غيّر إلى $line في $station';
   }

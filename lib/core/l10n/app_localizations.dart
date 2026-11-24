@@ -230,6 +230,12 @@ abstract class AppLocalizations {
   /// **'{price} جنيه'**
   String fareEgp(String price);
 
+  /// No description provided for @fare.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأجرة'**
+  String get fare;
+
   /// No description provided for @changeTo.
   ///
   /// In ar, this message translates to:

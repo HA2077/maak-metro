@@ -10,6 +10,14 @@ import 'package:maak_metro/screens/settings_screen.dart';
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
+  /// Index of the Planner tab in the bottom bar.
+  static const int plannerIndex = 0;
+
+  /// Switches to the Planner tab from any tab that can reach this state.
+  static void openPlanner(BuildContext context) {
+    context.findAncestorStateOfType<HomeShellState>()?.select(plannerIndex);
+  }
+
   @override
   State<HomeShell> createState() => HomeShellState();
 }

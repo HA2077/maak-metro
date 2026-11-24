@@ -99,6 +99,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get fare => 'Fare';
+
+  @override
   String changeTo(String line, String station) {
     return 'Change to $line at $station';
   }

@@ -50,6 +50,7 @@
       }
     }
   },
+  "fare": "Fare",
   "changeTo": "Change to {line} at {station}",
   "@changeTo": {
     "placeholders": {
