@@ -193,18 +193,83 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About';
 
   @override
-  String dataSnapshot(String date) {
-    return 'Data snapshot $date';
-  }
-
-  @override
-  String fareEffective(String date) {
-    return 'Fare effective $date';
-  }
-
-  @override
   String get loadError => 'Couldn\'t load the network data';
 
   @override
   String get retry => 'Try again';
+
+  @override
+  String get interchanges => 'Interchanges';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String versionLabel(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get greetingMorning1 => 'Good morning, ready for the trip?';
+
+  @override
+  String get greetingMorning2 => 'Morning! Where are you headed today?';
+
+  @override
+  String get greetingMorning3 => 'Morning! Your trip starts right here';
+
+  @override
+  String get greetingMorning4 =>
+      'Good morning, pick two stations and we handle the rest';
+
+  @override
+  String get greetingAfternoon1 => 'Good afternoon, where shall we start?';
+
+  @override
+  String get greetingAfternoon2 => 'Welcome back, your trip is two taps away';
+
+  @override
+  String get greetingAfternoon3 =>
+      'Good afternoon, where\'s your station today?';
+
+  @override
+  String get greetingAfternoon4 => 'Hi there, let\'s make this trip easier';
+
+  @override
+  String get greetingEvening1 => 'Good evening, your trip is in your hands';
+
+  @override
+  String get greetingEvening2 => 'Evening! Pick a station and let\'s go';
+
+  @override
+  String get greetingEvening3 => 'Good evening, where to after work?';
+
+  @override
+  String get greetingEvening4 => 'Evening, plan your trip in a second';
+
+  @override
+  String get greetingNight1 => 'Late night? The last train is waiting';
+
+  @override
+  String get greetingNight2 => 'Still up? Pick your station quickly';
+
+  @override
+  String get greetingNight3 => 'Quiet night — where are you off to?';
+
+  @override
+  String get greetingNight4 => 'Late night, your trip still needs a plan';
+
+  @override
+  String get dataSnapshotTitle => 'Data snapshot';
+
+  @override
+  String get fareEffectiveTitle => 'Fare effective';
+
+  @override
+  String get planTrip => 'Plan a trip';
+
+  @override
+  String changeAt(String station) {
+    return 'Change lines at $station';
+  }
 }

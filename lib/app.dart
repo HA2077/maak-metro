@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/providers/route_provider.dart';
 import 'package:maak_metro/providers/settings_provider.dart';
@@ -38,6 +39,10 @@ class MaakMetroApp extends StatelessWidget {
       onGenerateTitle: (context) => AppLocalizations.of(context).appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
+      themeAnimationDuration: AppMotion.of(context, AppMotion.slow),
+      themeAnimationCurve: AppMotion.standard,
       locale: settings.locale,
       localizationsDelegates: _delegates,
       supportedLocales: AppLocalizations.supportedLocales,

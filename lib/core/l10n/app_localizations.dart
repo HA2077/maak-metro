@@ -386,18 +386,6 @@ abstract class AppLocalizations {
   /// **'عن التطبيق'**
   String get about;
 
-  /// No description provided for @dataSnapshot.
-  ///
-  /// In ar, this message translates to:
-  /// **'تاريخ البيانات {date}'**
-  String dataSnapshot(String date);
-
-  /// No description provided for @fareEffective.
-  ///
-  /// In ar, this message translates to:
-  /// **'سريان الأجرة {date}'**
-  String fareEffective(String date);
-
   /// No description provided for @loadError.
   ///
   /// In ar, this message translates to:
@@ -409,6 +397,144 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إعادة المحاولة'**
   String get retry;
+
+  /// No description provided for @interchanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'محطات التبديل'**
+  String get interchanges;
+
+  /// No description provided for @close.
+  ///
+  /// In ar, this message translates to:
+  /// **'إغلاق'**
+  String get close;
+
+  /// No description provided for @versionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإصدار {version}'**
+  String versionLabel(String version);
+
+  /// No description provided for @greetingMorning1.
+  ///
+  /// In ar, this message translates to:
+  /// **'صباح الخير، جاهز للمشوار؟'**
+  String get greetingMorning1;
+
+  /// No description provided for @greetingMorning2.
+  ///
+  /// In ar, this message translates to:
+  /// **'صباح النور، فين رايح النهاردة؟'**
+  String get greetingMorning2;
+
+  /// No description provided for @greetingMorning3.
+  ///
+  /// In ar, this message translates to:
+  /// **'صباح الفل، مشوارك النهاردة يبدأ من هنا'**
+  String get greetingMorning3;
+
+  /// No description provided for @greetingMorning4.
+  ///
+  /// In ar, this message translates to:
+  /// **'صباح الخير، اختار محطتين والباقي علينا'**
+  String get greetingMorning4;
+
+  /// No description provided for @greetingAfternoon1.
+  ///
+  /// In ar, this message translates to:
+  /// **'نهارك سعيد، تحب نبدأ منين؟'**
+  String get greetingAfternoon1;
+
+  /// No description provided for @greetingAfternoon2.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهلاً بيك، مشوارك على بعد خطوتين'**
+  String get greetingAfternoon2;
+
+  /// No description provided for @greetingAfternoon3.
+  ///
+  /// In ar, this message translates to:
+  /// **'نهارك فل، فين محطتك النهاردة؟'**
+  String get greetingAfternoon3;
+
+  /// No description provided for @greetingAfternoon4.
+  ///
+  /// In ar, this message translates to:
+  /// **'أهلاً بيك، خلّي المشوار أسهل من كده'**
+  String get greetingAfternoon4;
+
+  /// No description provided for @greetingEvening1.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساء الخير، مشوارك تحت إيدك'**
+  String get greetingEvening1;
+
+  /// No description provided for @greetingEvening2.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساء الفل، اختار محطتك وخلينا نمشي'**
+  String get greetingEvening2;
+
+  /// No description provided for @greetingEvening3.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساء الخير، رايح فين بعد الشغل؟'**
+  String get greetingEvening3;
+
+  /// No description provided for @greetingEvening4.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساء النور، خطّط مشوارك في ثانية'**
+  String get greetingEvening4;
+
+  /// No description provided for @greetingNight1.
+  ///
+  /// In ar, this message translates to:
+  /// **'سهرة سعيدة، آخر قطار مستنيك'**
+  String get greetingNight1;
+
+  /// No description provided for @greetingNight2.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه صاحي؟ اختار محطتك بسرعة'**
+  String get greetingNight2;
+
+  /// No description provided for @greetingNight3.
+  ///
+  /// In ar, this message translates to:
+  /// **'سهرة هادية، فين رايح دلوقتي؟'**
+  String get greetingNight3;
+
+  /// No description provided for @greetingNight4.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر الليل، مشوارك لسه محتاج تخطيط'**
+  String get greetingNight4;
+
+  /// No description provided for @dataSnapshotTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ البيانات'**
+  String get dataSnapshotTitle;
+
+  /// No description provided for @fareEffectiveTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سريان الأجرة'**
+  String get fareEffectiveTitle;
+
+  /// No description provided for @planTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ رحلة'**
+  String get planTrip;
+
+  /// No description provided for @changeAt.
+  ///
+  /// In ar, this message translates to:
+  /// **'غيّر الخط في {station}'**
+  String changeAt(String station);
 }
 
 class _AppLocalizationsDelegate

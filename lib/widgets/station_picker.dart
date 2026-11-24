@@ -1,143 +1,152 @@
 import 'package:flutter/material.dart';
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
-import 'package:maak_metro/core/utils/arabic_normalize.dart';
+import 'package:maak_metro/core/utils/localized_names.dart';
+import 'package:maak_metro/core/utils/station_search.dart';
 import 'package:maak_metro/domain/domain.dart';
 
-/// Opens a full-height bottom sheet listing [stations] with a search field.
-///
-/// Returns the picked station, or `null` when the sheet is dismissed. The list
-/// is filtered with [stationMatchesQuery], so Arabic spelling variants and
-/// English casing both match. Each row shows the name in the active language
-/// with the other language as a smaller subtitle.
+/// Full-height sheet with a search field. Returns the picked station, or null
+/// when the user closes it. Dismissible by drag and by the close button.
 Future<Station?> showStationPicker(
-  BuildContext context,
-  List<Station> stations,
-) {
+  BuildContext context, {
+  required List<Station> stations,
+  required String title,
+}) {
   return showModalBottomSheet<Station>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    builder: (sheetContext) => _StationPickerSheet(stations: stations),
+    constraints: const BoxConstraints(maxWidth: AppLayout.maxContentWidth),
+    builder: (_) => _StationPickerSheet(stations: stations, title: title),
   );
 }
 
 class _StationPickerSheet extends StatefulWidget {
-  const _StationPickerSheet({required this.stations});
+  const _StationPickerSheet({required this.stations, required this.title});
 
   final List<Station> stations;
+  final String title;
 
   @override
   State<_StationPickerSheet> createState() => _StationPickerSheetState();
 }
 
 class _StationPickerSheetState extends State<_StationPickerSheet> {
-  final TextEditingController _controller = TextEditingController();
-  String _query = '';
-  late String _languageCode;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _languageCode = Localizations.localeOf(context).languageCode;
-  }
+  final TextEditingController _query = TextEditingController();
 
   @override
   void dispose() {
-    _controller.dispose();
+    _query.dispose();
     super.dispose();
-  }
-
-  List<Station> get _filtered {
-    final matched = <Station>[
-      for (final station in widget.stations)
-        if (stationMatchesQuery(station.nameAr, _query) ||
-            stationMatchesQuery(station.nameEn, _query))
-          station,
-    ];
-    matched.sort(
-      (a, b) => a
-          .localizedName(_languageCode)
-          .compareTo(b.localizedName(_languageCode)),
-    );
-    return matched;
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final results = _filtered;
+    final results = searchStations(
+      widget.stations,
+      _query.text,
+      name: (station) => stationName(context, station),
+      otherName: (station) => otherStationName(context, station),
+    );
 
     return FractionallySizedBox(
-      heightFactor: 0.92,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(
-              AppSpace.lg,
-              AppSpace.sm,
-              AppSpace.lg,
-              AppSpace.md,
+      heightFactor: 0.9,
+      child: Padding(
+        padding: EdgeInsetsDirectional.only(
+          start: AppSpace.lg,
+          end: AppSpace.lg,
+          bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpace.sm,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Semantics(
+                    header: true,
+                    child: Text(
+                      widget.title,
+                      style: theme.textTheme.titleLarge,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  tooltip: l10n.close,
+                  icon: const Icon(Icons.close),
+                ),
+              ],
             ),
-            child: TextField(
-              controller: _controller,
+            const SizedBox(height: AppSpace.xs),
+            TextField(
+              controller: _query,
               autofocus: true,
               textInputAction: TextInputAction.search,
-              onChanged: (value) => setState(() => _query = value),
+              onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 hintText: l10n.searchStations,
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: _query.isEmpty
+                suffixIcon: _query.text.isEmpty
                     ? null
                     : IconButton(
-                        icon: const Icon(Icons.clear),
                         onPressed: () {
-                          _controller.clear();
-                          setState(() => _query = '');
+                          _query.clear();
+                          setState(() {});
                         },
+                        tooltip: l10n.close,
+                        icon: const Icon(Icons.clear),
                       ),
               ),
             ),
-          ),
-          const Divider(height: 1),
-          Expanded(
-            child: results.isEmpty
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpace.xxl),
-                      child: Text(
-                        l10n.noStationsFound,
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                  )
-                : ListView.separated(
-                    itemCount: results.length,
-                    separatorBuilder: (_, _) => const Divider(height: 1),
-                    itemBuilder: (context, index) {
-                      final station = results[index];
-                      final primary = station.localizedName(_languageCode);
-                      final secondary = _languageCode == 'ar'
-                          ? station.nameEn
-                          : station.nameAr;
-                      return ListTile(
-                        title: Text(primary),
-                        subtitle: Text(
-                          secondary,
-                          style: theme.textTheme.bodySmall?.copyWith(
+            const SizedBox(height: AppSpace.sm),
+            Expanded(
+              child: results.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.search_off,
+                            size: 32,
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
-                        ),
-                        onTap: () => Navigator.of(context).pop(station),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                          const SizedBox(height: AppSpace.sm),
+                          Text(
+                            l10n.noStationsFound,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: results.length,
+                      itemBuilder: (context, index) {
+                        final station = results[index];
+                        return ListTile(
+                          title: Text(stationName(context, station)),
+                          subtitle: Text(
+                            otherStationName(context, station),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          onTap: () {
+                            AppHaptics.tap();
+                            Navigator.of(context).pop(station);
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
