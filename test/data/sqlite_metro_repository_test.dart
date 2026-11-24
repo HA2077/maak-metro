@@ -119,6 +119,19 @@ void main() {
       expect(three.first.id, all.first.id);
     });
 
+    test('removes one row and leaves the rest', () async {
+      await repository.addHistory('sadat', 'nasser');
+      await repository.addHistory('nasser', 'sadat');
+      final rows = await repository.getHistory();
+      final older = rows.last;
+
+      await repository.removeHistory(older.id);
+
+      final left = await repository.getHistory();
+      expect(left, hasLength(1));
+      expect(left.single.id, isNot(older.id));
+    });
+
     test('clears every row', () async {
       await repository.addHistory('sadat', 'nasser');
 

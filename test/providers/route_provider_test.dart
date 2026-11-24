@@ -57,6 +57,9 @@ class _FakeRepository implements MetroRepository {
   }
 
   @override
+  Future<void> removeHistory(int id) async => throw UnimplementedError();
+
+  @override
   Future<void> clearHistory() async => history.clear();
 }
 

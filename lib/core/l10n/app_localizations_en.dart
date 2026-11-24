@@ -294,4 +294,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeDark => 'Dark';
+
+  @override
+  String get removeFromHistory => 'Remove from history';
 }

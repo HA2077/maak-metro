@@ -51,6 +51,8 @@ class _FakeRepository implements MetroRepository {
   Future<void> addHistory(String fromId, String toId) async {}
 
   @override
+  Future<void> removeHistory(int id) async {}
+  @override
   Future<void> clearHistory() async {}
 }
 

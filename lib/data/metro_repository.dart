@@ -113,6 +113,11 @@ class SqliteMetroRepository implements MetroRepository {
   }
 
   @override
+  Future<void> removeHistory(int id) async {
+    await _db.delete('history', where: 'id = ?', whereArgs: [id]);
+  }
+
+  @override
   Future<void> clearHistory() async {
     await _db.delete('history');
   }

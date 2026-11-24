@@ -155,5 +155,6 @@
   "appearance": "المظهر",
   "themeSystem": "النظام",
   "themeLight": "فاتح",
-  "themeDark": "غامق"
+  "themeDark": "غامق",
+  "removeFromHistory": "إزالة من السجل"
 }

@@ -299,4 +299,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get themeDark => 'غامق';
+
+  @override
+  String get removeFromHistory => 'إزالة من السجل';
 }

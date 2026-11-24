@@ -148,5 +148,6 @@
   "appearance": "Appearance",
   "themeSystem": "System",
   "themeLight": "Light",
-  "themeDark": "Dark"
+  "themeDark": "Dark",
+  "removeFromHistory": "Remove from history"
 }

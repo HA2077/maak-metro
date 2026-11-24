@@ -577,6 +577,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'غامق'**
   String get themeDark;
+
+  /// No description provided for @removeFromHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة من السجل'**
+  String get removeFromHistory;
 }
 
 class _AppLocalizationsDelegate

@@ -17,5 +17,7 @@ abstract class MetroRepository {
 
   Future<void> addHistory(String fromId, String toId);
 
+  Future<void> removeHistory(int id);
+
   Future<void> clearHistory();
 }

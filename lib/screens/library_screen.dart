@@ -156,14 +156,28 @@ class LibraryScreen extends StatelessWidget {
                             final entry = history[index];
                             return FadeSlideIn(
                               index: index,
-                              child: _RouteTile(
-                                network: network,
-                                fromId: entry.fromId,
-                                toId: entry.toId,
-                                onTap: () => _open(
-                                  context,
+                              child: Dismissible(
+                                key: ValueKey('history-${entry.id}'),
+                                direction: DismissDirection.horizontal,
+                                background: const _DismissBackground(),
+                                onDismissed: (_) {
+                                  AppHaptics.action();
+                                  library.removeHistory(entry.id);
+                                },
+                                child: _RouteTile(
+                                  network: network,
                                   fromId: entry.fromId,
                                   toId: entry.toId,
+                                  onTap: () => _open(
+                                    context,
+                                    fromId: entry.fromId,
+                                    toId: entry.toId,
+                                  ),
+                                  onDelete: () {
+                                    AppHaptics.action();
+                                    library.removeHistory(entry.id);
+                                  },
+                                  deleteTooltip: l10n.removeFromHistory,
                                 ),
                               ),
                             );
