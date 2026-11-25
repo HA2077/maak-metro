@@ -1,10 +1,6 @@
 {
   "@@locale": "ar",
   "appName": "معاك",
-  "devicePreview": "معاينة الجهاز",
-  "devicePreviewRotate": "تدوير الجهاز",
-  "devicePreviewTextSize": "حجم النص",
-  "devicePreviewReset": "إعادة ضبط المعاينة",
   "tabPlanner": "التخطيط",
   "tabLines": "الخطوط",
   "tabLibrary": "محفوظات",

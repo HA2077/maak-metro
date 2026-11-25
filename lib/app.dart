@@ -1,12 +1,9 @@
-import 'package:device_preview/device_preview.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/motion/app_motion.dart';
-import 'package:maak_metro/core/presentation/web_device_preview.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/features/network/presentation/network_cubit.dart';
 import 'package:maak_metro/features/settings/presentation/onboarding_screen.dart';
@@ -53,7 +50,7 @@ class MaakMetroApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) => Directionality(
         textDirection: settings.textDirection,
-        child: _withDevicePreview(context, child),
+        child: child ?? const SizedBox.shrink(),
       ),
       home: settings.onboarded ? const HomeShell() : const OnboardingScreen(),
     );
@@ -66,21 +63,9 @@ class MaakMetroApp extends StatelessWidget {
       theme: AppTheme.light,
       localizationsDelegates: _delegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      builder: _withDevicePreview,
       home: _ErrorScreen(error: error, retry: retry),
     );
   }
-}
-
-Widget _withDevicePreview(BuildContext context, Widget? child) {
-  final content = child ?? const SizedBox.shrink();
-  if (kIsWeb && kDebugMode) {
-    final controller = DevicePreview.maybeController;
-    if (controller != null) {
-      return WebDevicePreview(controller: controller, child: content);
-    }
-  }
-  return content;
 }
 
 class _ErrorScreen extends StatelessWidget {

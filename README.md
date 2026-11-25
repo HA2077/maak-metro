@@ -14,13 +14,6 @@ your IDE’s Run command. Open the `device_preview` tab in Flutter DevTools to
 select a phone or tablet, rotate it, or change the text scale. Use the app’s
 Settings to switch between Arabic and English.
 
-To preview in Chrome with a local copy of CanvasKit, run
-`flutter run -d chrome --no-web-resources-cdn`. Open **Device preview** in the
-app to choose a phone or tablet, rotate it, scale the text, or reset the preview.
-Regenerate the bundled SQLite files with
-`dart run sqflite_common_ffi_web:setup --force` after updating the SQLite
-dependencies.
-
 ## Toolchain
 
 Everyone uses exactly these versions. `pubspec.lock` is committed and must not be regenerated with a different SDK.

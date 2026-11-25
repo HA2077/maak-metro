@@ -1,10 +1,6 @@
 {
   "@@locale": "en",
   "appName": "Maak Metro",
-  "devicePreview": "Device preview",
-  "devicePreviewRotate": "Rotate device",
-  "devicePreviewTextSize": "Text size",
-  "devicePreviewReset": "Reset preview",
   "tabPlanner": "Planner",
   "tabLines": "Lines",
   "tabLibrary": "Saved",

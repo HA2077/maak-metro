@@ -13,18 +13,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Maak Metro';
 
   @override
-  String get devicePreview => 'Device preview';
-
-  @override
-  String get devicePreviewRotate => 'Rotate device';
-
-  @override
-  String get devicePreviewTextSize => 'Text size';
-
-  @override
-  String get devicePreviewReset => 'Reset preview';
-
-  @override
   String get tabPlanner => 'Planner';
 
   @override

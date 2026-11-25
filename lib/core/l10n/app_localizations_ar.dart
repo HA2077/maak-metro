@@ -13,18 +13,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appName => 'معاك';
 
   @override
-  String get devicePreview => 'معاينة الجهاز';
-
-  @override
-  String get devicePreviewRotate => 'تدوير الجهاز';
-
-  @override
-  String get devicePreviewTextSize => 'حجم النص';
-
-  @override
-  String get devicePreviewReset => 'إعادة ضبط المعاينة';
-
-  @override
   String get tabPlanner => 'التخطيط';
 
   @override

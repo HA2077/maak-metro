@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:maak_metro/core/data/database_setup.dart';
 import 'package:maak_metro/core/data/db_helper.dart';
 import 'package:maak_metro/features/library/data/sqlite_library_repository.dart';
 import 'package:maak_metro/features/library/presentation/library_cubit.dart';
@@ -23,7 +22,6 @@ Future<void> main() async {
   } else {
     WidgetsFlutterBinding.ensureInitialized();
   }
-  initializeDatabaseFactory();
   await _bootstrap();
 }
 
