@@ -26,6 +26,11 @@ class LibraryProvider extends ChangeNotifier {
     await refresh();
   }
 
+  Future<void> removeHistory(int id) async {
+    await _repo.removeHistory(id);
+    await refresh();
+  }
+
   Future<void> clearHistory() async {
     await _repo.clearHistory();
     await refresh();

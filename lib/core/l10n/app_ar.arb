@@ -34,7 +34,7 @@
       }
     }
   },
-  "transfersCount": "{count, plural, =0{بدون تغيير خط} =1{تغيير واحد} =2{تغييران} few{{count} تغييرات} many{{count} تغيير} other{{count} تغيير}}",
+  "transfersCount": "{count, plural, =0{بدون تغيير} =1{تغيير واحد} =2{تغييران} few{{count} تغييرات} many{{count} تغيير} other{{count} تغيير}}",
   "@transfersCount": {
     "placeholders": {
       "count": {
@@ -50,6 +50,7 @@
       }
     }
   },
+  "fare": "الأجرة",
   "changeTo": "غيّر إلى {line} في {station}",
   "@changeTo": {
     "placeholders": {
@@ -109,22 +110,53 @@
   "arabic": "العربية",
   "english": "English",
   "about": "عن التطبيق",
-  "dataSnapshot": "تاريخ البيانات {date}",
-  "@dataSnapshot": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "fareEffective": "سريان الأجرة {date}",
-  "@fareEffective": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "loadError": "تعذّر تحميل البيانات",
-  "retry": "إعادة المحاولة"
+  "retry": "إعادة المحاولة",
+  "interchanges": "محطات التبديل",
+  "close": "إغلاق",
+  "versionLabel": "الإصدار {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingMorning1": "صباح الخير، جاهز للمشوار؟",
+  "greetingMorning2": "صباح النور، فين رايح النهاردة؟",
+  "greetingMorning3": "صباح الفل، مشوارك النهاردة يبدأ من هنا",
+  "greetingMorning4": "صباح الخير، اختار محطتين والباقي علينا",
+  "greetingAfternoon1": "نهارك سعيد، تحب نبدأ منين؟",
+  "greetingAfternoon2": "أهلاً بيك، مشوارك على بعد خطوتين",
+  "greetingAfternoon3": "نهارك فل، فين محطتك النهاردة؟",
+  "greetingAfternoon4": "أهلاً بيك، خلّي المشوار أسهل من كده",
+  "greetingEvening1": "مساء الخير، مشوارك تحت إيدك",
+  "greetingEvening2": "مساء الفل، اختار محطتك وخلينا نمشي",
+  "greetingEvening3": "مساء الخير، رايح فين بعد الشغل؟",
+  "greetingEvening4": "مساء النور، خطّط مشوارك في ثانية",
+  "greetingNight1": "سهرة سعيدة، آخر قطار مستنيك",
+  "greetingNight2": "لسه صاحي؟ اختار محطتك بسرعة",
+  "greetingNight3": "سهرة هادية، فين رايح دلوقتي؟",
+  "greetingNight4": "آخر الليل، مشوارك لسه محتاج تخطيط",
+  "dataSnapshotTitle": "تاريخ البيانات",
+  "fareEffectiveTitle": "سريان الأجرة",
+  "planTrip": "ابدأ رحلة",
+  "changeAt": "غيّر الخط في {station}",
+  "@changeAt": {
+    "placeholders": {
+      "station": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingTitle": "أهلاً بيك في معاك",
+  "onboardingBody": "اختار اللغة والمظهر، وتقدر تغيّرهم في أي وقت من الإعدادات.",
+  "onboardingStart": "يلا نبدأ",
+  "appearance": "المظهر",
+  "themeSystem": "النظام",
+  "themeLight": "فاتح",
+  "themeDark": "غامق",
+  "removeFromHistory": "إزالة من السجل",
+  "estimatedLabel": "الوقت التقديري",
+  "minutesShort": "دقيقة"
 }

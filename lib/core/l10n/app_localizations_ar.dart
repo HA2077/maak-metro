@@ -93,7 +93,7 @@ class AppLocalizationsAr extends AppLocalizations {
       few: '$count تغييرات',
       two: 'تغييران',
       one: 'تغيير واحد',
-      zero: 'بدون تغيير خط',
+      zero: 'بدون تغيير',
     );
     return '$_temp0';
   }
@@ -102,6 +102,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String fareEgp(String price) {
     return '$price جنيه';
   }
+
+  @override
+  String get fare => 'الأجرة';
 
   @override
   String changeTo(String line, String station) {
@@ -197,18 +200,112 @@ class AppLocalizationsAr extends AppLocalizations {
   String get about => 'عن التطبيق';
 
   @override
-  String dataSnapshot(String date) {
-    return 'تاريخ البيانات $date';
-  }
-
-  @override
-  String fareEffective(String date) {
-    return 'سريان الأجرة $date';
-  }
-
-  @override
   String get loadError => 'تعذّر تحميل البيانات';
 
   @override
   String get retry => 'إعادة المحاولة';
+
+  @override
+  String get interchanges => 'محطات التبديل';
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
+  String versionLabel(String version) {
+    return 'الإصدار $version';
+  }
+
+  @override
+  String get greetingMorning1 => 'صباح الخير، جاهز للمشوار؟';
+
+  @override
+  String get greetingMorning2 => 'صباح النور، فين رايح النهاردة؟';
+
+  @override
+  String get greetingMorning3 => 'صباح الفل، مشوارك النهاردة يبدأ من هنا';
+
+  @override
+  String get greetingMorning4 => 'صباح الخير، اختار محطتين والباقي علينا';
+
+  @override
+  String get greetingAfternoon1 => 'نهارك سعيد، تحب نبدأ منين؟';
+
+  @override
+  String get greetingAfternoon2 => 'أهلاً بيك، مشوارك على بعد خطوتين';
+
+  @override
+  String get greetingAfternoon3 => 'نهارك فل، فين محطتك النهاردة؟';
+
+  @override
+  String get greetingAfternoon4 => 'أهلاً بيك، خلّي المشوار أسهل من كده';
+
+  @override
+  String get greetingEvening1 => 'مساء الخير، مشوارك تحت إيدك';
+
+  @override
+  String get greetingEvening2 => 'مساء الفل، اختار محطتك وخلينا نمشي';
+
+  @override
+  String get greetingEvening3 => 'مساء الخير، رايح فين بعد الشغل؟';
+
+  @override
+  String get greetingEvening4 => 'مساء النور، خطّط مشوارك في ثانية';
+
+  @override
+  String get greetingNight1 => 'سهرة سعيدة، آخر قطار مستنيك';
+
+  @override
+  String get greetingNight2 => 'لسه صاحي؟ اختار محطتك بسرعة';
+
+  @override
+  String get greetingNight3 => 'سهرة هادية، فين رايح دلوقتي؟';
+
+  @override
+  String get greetingNight4 => 'آخر الليل، مشوارك لسه محتاج تخطيط';
+
+  @override
+  String get dataSnapshotTitle => 'تاريخ البيانات';
+
+  @override
+  String get fareEffectiveTitle => 'سريان الأجرة';
+
+  @override
+  String get planTrip => 'ابدأ رحلة';
+
+  @override
+  String changeAt(String station) {
+    return 'غيّر الخط في $station';
+  }
+
+  @override
+  String get onboardingTitle => 'أهلاً بيك في معاك';
+
+  @override
+  String get onboardingBody =>
+      'اختار اللغة والمظهر، وتقدر تغيّرهم في أي وقت من الإعدادات.';
+
+  @override
+  String get onboardingStart => 'يلا نبدأ';
+
+  @override
+  String get appearance => 'المظهر';
+
+  @override
+  String get themeSystem => 'النظام';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'غامق';
+
+  @override
+  String get removeFromHistory => 'إزالة من السجل';
+
+  @override
+  String get estimatedLabel => 'الوقت التقديري';
+
+  @override
+  String get minutesShort => 'دقيقة';
 }

@@ -34,7 +34,7 @@
       }
     }
   },
-  "transfersCount": "{count, plural, =0{No line changes} =1{1 change} other{{count} changes}}",
+  "transfersCount": "{count, plural, =0{No changes} =1{1 change} other{{count} changes}}",
   "@transfersCount": {
     "placeholders": {
       "count": {
@@ -50,6 +50,7 @@
       }
     }
   },
+  "fare": "Fare",
   "changeTo": "Change to {line} at {station}",
   "@changeTo": {
     "placeholders": {
@@ -109,22 +110,46 @@
   "arabic": "العربية",
   "english": "English",
   "about": "About",
-  "dataSnapshot": "Data snapshot {date}",
-  "@dataSnapshot": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "fareEffective": "Fare effective {date}",
-  "@fareEffective": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "loadError": "Couldn't load the network data",
-  "retry": "Try again"
+  "retry": "Try again",
+  "interchanges": "Interchanges",
+  "close": "Close",
+  "versionLabel": "Version {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingMorning1": "Good morning, ready for the trip?",
+  "greetingMorning2": "Morning! Where are you headed today?",
+  "greetingMorning3": "Morning! Your trip starts right here",
+  "greetingMorning4": "Good morning, pick two stations and we handle the rest",
+  "greetingAfternoon1": "Good afternoon, where shall we start?",
+  "greetingAfternoon2": "Welcome back, your trip is two taps away",
+  "greetingAfternoon3": "Good afternoon, where's your station today?",
+  "greetingAfternoon4": "Hi there, let's make this trip easier",
+  "greetingEvening1": "Good evening, your trip is in your hands",
+  "greetingEvening2": "Evening! Pick a station and let's go",
+  "greetingEvening3": "Good evening, where to after work?",
+  "greetingEvening4": "Evening, plan your trip in a second",
+  "greetingNight1": "Late night? The last train is waiting",
+  "greetingNight2": "Still up? Pick your station quickly",
+  "greetingNight3": "Quiet night — where are you off to?",
+  "greetingNight4": "Late night, your trip still needs a plan",
+  "dataSnapshotTitle": "Data snapshot",
+  "fareEffectiveTitle": "Fare effective",
+  "planTrip": "Plan a trip",
+  "changeAt": "Change lines at {station}",
+  "onboardingTitle": "Welcome to Maak",
+  "onboardingBody": "Pick your language and theme. You can change them any time in Settings.",
+  "onboardingStart": "Get started",
+  "appearance": "Appearance",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "removeFromHistory": "Remove from history",
+  "estimatedLabel": "Estimated time",
+  "minutesShort": "min"
 }

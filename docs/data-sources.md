@@ -224,9 +224,12 @@ and the West Nile Monorail at Wadi El Nile are out of scope.
 
 ### Line colours
 
-The official map marks Line 1 blue, Line 2 red and Line 3 green. The operator
-does not publish hex codes, so the seed uses the values already fixed in
-`docs/PLAN.md` and the test fixtures:
+The official network map (https://www.cairometro.gov.eg/images/new-map8.jpg, read
+on 2026-11-24) draws Line 1 blue, Line 2 red and Line 3 green, so the seed keeps
+those. Community maps and the English Wikipedia article agree with the blue Line
+1; the OpenStreetMap wiki lists Line 1 red and Line 2 orange, which does not
+match the operator. The operator does not publish hex codes, so the seed uses the
+values already fixed in `docs/PLAN.md` and the test fixtures:
 
 - Line 1 `#1E63B8`
 - Line 2 `#D01F2F`
@@ -246,3 +249,21 @@ plan:
 
 The fare count includes the boarding station; that rule is in
 `docs/PLAN.md` and is applied by `FareCalculator`, not by this file.
+
+## Verification (2026-11-24)
+
+Re-checked against the operator's network map and the counts on its Line 1 and
+Line 2 pages:
+
+- 84 stations and 89 `line_stations` rows: 35 on Line 1, 20 on Line 2 and 34 on
+  Line 3 (23 `main`, 6 `rod_el_farag`, 5 `cairo_uni`).
+- Termini and order match the map: Helwan → New El Marg, El Mounib → Shubra El
+  Kheima, Adly Mansour → Kit Kat, with both branches leaving after Kit Kat.
+- The five interchanges reuse one station id each (Sadat, Al Shohadaa, Nasser,
+  Ataba, Cairo University); no station id appears twice inside a single line.
+- Line colours match the operator's map (see above).
+- Fares: four brackets at 9, 16, 23 and 39 stations for 10, 12, 15 and 20 EGP.
+- `test/data/seed_validation_test.dart` covers the format and
+  `sqlite_metro_repository_test.dart` covers the load; the counts above were
+  re-counted from the file itself.
+

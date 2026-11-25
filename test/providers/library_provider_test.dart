@@ -16,6 +16,7 @@ class _FakeRepository implements MetroRepository {
   int getHistoryCalls = 0;
   int clearHistoryCalls = 0;
   final removedIds = <int>[];
+  final removeHistoryIds = <int>[];
 
   @override
   Future<NetworkData> loadNetwork() => throw UnimplementedError();
@@ -53,6 +54,12 @@ class _FakeRepository implements MetroRepository {
   @override
   Future<void> addHistory(String fromId, String toId) =>
       throw UnimplementedError();
+
+  @override
+  Future<void> removeHistory(int id) async {
+    removeHistoryIds.add(id);
+    _history.removeWhere((entry) => entry.id == id);
+  }
 
   @override
   Future<void> clearHistory() async {
@@ -117,6 +124,24 @@ void main() {
       expect(provider.favorites.map((favorite) => favorite.id), [2]);
       expect(repo.getFavoritesCalls, 2);
       expect(repo.getHistoryCalls, 2);
+      expect(notifications, 1);
+    });
+
+    test('removing one history row keeps the rest', () async {
+      final repo = _FakeRepository(
+        favorites: [_favorite(1)],
+        history: [_entry(1), _entry(2), _entry(3)],
+      );
+      final provider = LibraryProvider(repo);
+      await provider.refresh();
+      var notifications = 0;
+      provider.addListener(() => notifications++);
+
+      await provider.removeHistory(2);
+
+      expect(repo.removeHistoryIds, [2]);
+      expect(provider.history.map((entry) => entry.id), [1, 3]);
+      expect(provider.favorites.map((favorite) => favorite.id), [1]);
       expect(notifications, 1);
     });
 

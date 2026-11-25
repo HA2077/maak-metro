@@ -200,7 +200,7 @@ do not re-style a control locally.
 | **Filled button** | height 52 min, radius 16, `primary`; disabled = `surfaceContainerHighest` fill + `onSurfaceVariant` label. One per screen. |
 | **Outlined button** | height 52 min, radius 16, `outline` border, transparent fill. Sits beside a filled one when a screen has two equal choices. |
 | **Text button** | dialogs only; destructive one uses `foregroundColor: error`. |
-| **Segmented button** | height 48, selected = `primaryContainer` + `onPrimaryContainer`, unselected transparent, 1dp `outline` border, no selection tick. Two or three options, never four. |
+| **Segmented button** | height 48, label 14dp with 8dp side padding so three segments still fit on a 360dp phone without touching the borders, selected = `primaryContainer` + `onPrimaryContainer`, unselected transparent, 1dp `outline` border, no selection tick. Two or three options, never four. |
 | **Chip / ActionChip** | stadium, card fill, `outlineVariant` border, label `labelLarge`, padding 16/11. |
 | **Line chip** | stadium on the line's own colour, `labelMedium` 600, text colour by luminance, hairline border at 35% `outline`. |
 | **Input** | filled `surfaceContainerHigh`, radius 16, transparent border that becomes `primary` 1.6dp on focus, content padding 18/16, hint `bodyLarge` in `onSurfaceVariant`. |
@@ -298,10 +298,12 @@ sits under the keyboard.
 Pushed, not a tab. App bar "المسار" with a star action that toggles the current
 route as a favourite (`star_border` → filled `star` in `primary`).
 
-1. **Summary card** (18dp padding): the estimated time as a `headlineSmall`
-   count-up, tabular, 800ms; then a row of three equal `SummaryStat`s — stations,
-   transfers, fare in EGP. Figures are Arabic-Indic in Arabic and the label is
-   always "تقديري" / "estimated".
+1. **Summary card** (18dp padding): "الوقت التقديري" as a `labelMedium` in
+   `onSurfaceVariant`, then the figure as a `displaySmall` count-up with
+   tabular figures and "دقيقة" beside it in `titleMedium`, so the number is the
+   one thing that reads from arm's length. Then a row of three equal
+   `SummaryStat`s — stations, transfers, fare in EGP. Figures are Arabic-Indic in
+   Arabic and the label is always "تقديري" / "estimated".
 2. **Legs**, one card each, in travel order: a 6dp strip on the leading edge in
    the line colour, the `LineChip`, "من X إلى Y" in `titleMedium`, and an
    `ExpansionTile` reading "N محطات بينية" through an ICU plural (zero, one,
@@ -342,10 +344,11 @@ history is not empty, guarded by a confirmation dialog whose destructive action
 is `error`-coloured. Below it, a two-tab `TabBar`: المفضلة / السجل.
 
 Each entry is a card with two rows — `trip_origin` + from-station,
-`place` + to-station, both `titleMedium` with ellipsis — and, on favourites, a
-`delete_outline` button. Favourites also swipe horizontally to delete, over an
-`errorContainer` background with a delete icon. Empty tab: 40dp icon, one line,
-a tonal "ابدأ رحلة" that switches to the planner tab.
+`place` + to-station, both `titleMedium` with ellipsis — and a `delete_outline`
+button. Both tabs swipe horizontally to delete one row, over an `errorContainer`
+background with a delete icon; the history keeps one row per pair, so searching
+the same trip again moves it to the top instead of adding a copy. Empty tab:
+40dp icon, one line, a tonal "ابدأ رحلة" that switches to the planner tab.
 
 Opening an entry recalculates without writing history and pushes the result.
 
@@ -485,7 +488,7 @@ that rewrites the wording is not. Arabic plurals carry `=0`, `=1`, `=2`, `few`,
 | `arabic` | العربية | العربية |
 | `english` | English | English |
 | `appearance` | المظهر | Appearance |
-| `themeSystem` | حسب النظام | System |
+| `themeSystem` | النظام | System |
 | `themeLight` | فاتح | Light |
 | `themeDark` | غامق | Dark |
 | `dateFormat` | تنسيق التاريخ | Date format |
