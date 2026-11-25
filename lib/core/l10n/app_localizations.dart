@@ -104,6 +104,30 @@ abstract class AppLocalizations {
   /// **'معاك'**
   String get appName;
 
+  /// No description provided for @devicePreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة الجهاز'**
+  String get devicePreview;
+
+  /// No description provided for @devicePreviewRotate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تدوير الجهاز'**
+  String get devicePreviewRotate;
+
+  /// No description provided for @devicePreviewTextSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجم النص'**
+  String get devicePreviewTextSize;
+
+  /// No description provided for @devicePreviewReset.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة ضبط المعاينة'**
+  String get devicePreviewReset;
+
   /// No description provided for @tabPlanner.
   ///
   /// In ar, this message translates to:

@@ -229,6 +229,7 @@ maak_metro/
 ```
 
 - `pubspec.yaml`: flutter_bloc, sqflite, path, shared_preferences, flutter_localizations, intl, collection. Dev: flutter_test, flutter_lints, sqflite_common_ffi (repository tests without a device).
+- Chrome debug previews use `sqflite_common_ffi_web` with SQLite and its worker bundled in `web/`.
 - Branches: `main` is protected (PR required, 1 review, no direct pushes). Branch names `feature/<area>-<short>`, `fix/<short>`. Small PRs, one issue each, `Closes #n` in the description.
 - Request review from the relevant area owners when working in the feature folders. Domain model changes need Hassan’s review.
 - PR checklist: `dart format .`, `flutter analyze` clean, `flutter test` green, tested on emulator or device, screenshot for UI changes.
