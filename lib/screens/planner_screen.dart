@@ -50,8 +50,10 @@ class _PlannerScreenState extends State<PlannerScreen> {
       return;
     }
     route.setFrom(station);
+    
     // A trip needs both ends, so go straight on to the destination.
-    if (!mounted || route.to != null) return;
+    if (!context.mounted || route.to != null) return;
+
     final to = await showStationPicker(
       context,
       stations: _pickable(route),
