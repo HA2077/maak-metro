@@ -308,4 +308,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get minutesShort => 'دقيقة';
+
+  @override
+  String get closedHoursAdvisory =>
+      'المترو قافل دلوقتي.. بتخطط لمشوار بدري ولا إيه؟';
 }

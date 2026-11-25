@@ -8,6 +8,7 @@ import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
+import 'package:maak_metro/core/utils/dates.dart';
 import 'package:maak_metro/core/utils/greeting.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/features/library/domain/models/history_entry.dart';
@@ -20,7 +21,9 @@ import 'planner_cubit.dart';
 import 'route_result_screen.dart';
 
 class PlannerScreen extends StatefulWidget {
-  const PlannerScreen({super.key});
+  const PlannerScreen({super.key, this.now});
+
+  final DateTime? now;
 
   @override
   State<PlannerScreen> createState() => _PlannerScreenState();
@@ -133,6 +136,38 @@ class _PlannerScreenState extends State<PlannerScreen> {
           AppSpace.xl,
         ),
         children: [
+          if (isMetroClosed(now: widget.now)) ...[
+            FadeSlideIn(
+              child: Card(
+                color: theme.colorScheme.secondaryContainer,
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.symmetric(
+                    horizontal: AppSpace.md,
+                    vertical: AppSpace.sm,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 20,
+                        color: theme.colorScheme.onSecondaryContainer,
+                      ),
+                      const SizedBox(width: AppSpace.sm),
+                      Expanded(
+                        child: Text(
+                          l10n.closedHoursAdvisory,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSecondaryContainer,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpace.sm),
+          ],
           const Padding(
             padding: EdgeInsetsDirectional.only(bottom: AppSpace.sm),
             child: _Greeting(),

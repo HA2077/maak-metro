@@ -151,5 +151,6 @@
   "themeDark": "Dark",
   "removeFromHistory": "Remove from history",
   "estimatedLabel": "Estimated time",
-  "minutesShort": "min"
+  "minutesShort": "min",
+  "closedHoursAdvisory": "The metro is closed now — trying to plan something early!?"
 }

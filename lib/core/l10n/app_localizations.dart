@@ -595,6 +595,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'دقيقة'**
   String get minutesShort;
+
+  /// No description provided for @closedHoursAdvisory.
+  ///
+  /// In ar, this message translates to:
+  /// **'المترو قافل دلوقتي.. بتخطط لمشوار بدري ولا إيه؟'**
+  String get closedHoursAdvisory;
 }
 
 class _AppLocalizationsDelegate

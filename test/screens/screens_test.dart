@@ -146,6 +146,25 @@ void main() {
       expect(find.text(l10n.toLabel), findsNWidgets(2));
       expect(tester.takeException(), isNull);
     });
+
+    for (final entry in [
+      (DateTime(2026, 1, 1, 2, 30), true),
+      (DateTime(2026, 1, 1, 12, 0), false),
+    ]) {
+      testWidgets('advisory visibility follows the injected time', (
+        tester,
+      ) async {
+        await _pumpScreen(tester, PlannerScreen(now: entry.$1));
+        final l10n = AppLocalizations.of(
+          tester.element(find.byType(PlannerScreen)),
+        );
+        expect(
+          find.text(l10n.closedHoursAdvisory),
+          entry.$2 ? findsOneWidget : findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+      });
+    }
   });
 
   group('LinesScreen', () {

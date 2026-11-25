@@ -303,4 +303,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get minutesShort => 'min';
+
+  @override
+  String get closedHoursAdvisory =>
+      'The metro is closed now — trying to plan something early!?';
 }
