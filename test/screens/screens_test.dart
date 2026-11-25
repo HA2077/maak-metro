@@ -15,6 +15,7 @@ import 'package:maak_metro/features/planner/domain/domain.dart';
 import 'package:maak_metro/features/planner/presentation/planner_cubit.dart';
 import 'package:maak_metro/features/planner/presentation/planner_screen.dart';
 import 'package:maak_metro/features/planner/presentation/route_result_screen.dart';
+import 'package:maak_metro/features/planner/presentation/widgets/count_up.dart';
 import 'package:maak_metro/features/planner/presentation/widgets/leg_card.dart';
 import 'package:maak_metro/features/settings/data/preferences_settings_repository.dart';
 import 'package:maak_metro/features/settings/presentation/settings_cubit.dart';
@@ -119,6 +120,32 @@ void main() {
       final button = tester.widget<FilledButton>(find.byType(FilledButton));
       expect(button.enabled, isFalse);
     });
+
+    testWidgets('picker does not grab focus and leads on to the To field', (
+      tester,
+    ) async {
+      await _pumpScreen(tester, const PlannerScreen());
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(PlannerScreen)),
+      );
+      await tester.tap(find.text(l10n.fromLabel));
+      await tester.pumpAndSettle();
+      expect(find.byType(TextField), findsOneWidget);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).autofocus,
+        isFalse,
+      );
+
+      await tester.tap(find.byType(ListTile).first);
+      await tester.pumpAndSettle();
+      final cubit = BlocProvider.of<PlannerCubit>(
+        tester.element(find.byType(PlannerScreen)),
+      );
+      expect(cubit.state.from, isNotNull);
+      expect(cubit.state.to, isNull);
+      expect(find.text(l10n.toLabel), findsNWidgets(2));
+      expect(tester.takeException(), isNull);
+    });
   });
 
   group('LinesScreen', () {
@@ -187,6 +214,31 @@ void main() {
       expect(find.byType(LegCard), findsNWidgets(result.legs.length));
       expect(tester.takeException(), isNull);
     });
+
+    for (final locale in [const Locale('ar'), const Locale('en')]) {
+      testWidgets(
+        'keeps the duration and its unit on one line in ${locale.languageCode}',
+        (tester) async {
+          await _pumpScreen(tester, screen, locale: locale, textScale: 1.5);
+          final l10n = AppLocalizations.of(
+            tester.element(find.byType(RouteResultScreen)),
+          );
+          final row = find.ancestor(
+            of: find.byType(CountUp),
+            matching: find.byType(Row),
+          );
+          expect(row, findsOneWidget);
+          final rowWidget = tester.widget<Row>(row);
+          expect(rowWidget.crossAxisAlignment, CrossAxisAlignment.baseline);
+          expect(rowWidget.textBaseline, TextBaseline.alphabetic);
+          expect(
+            find.descendant(of: row, matching: find.text(l10n.minutesShort)),
+            findsOneWidget,
+          );
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
 
     _testLargeTextLayouts(screen);
   });

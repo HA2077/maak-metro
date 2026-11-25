@@ -59,6 +59,10 @@ class _PlannerScreenState extends State<PlannerScreen> {
     // A trip needs both ends, so go straight on to the destination.
     if (route.state.to != null) return;
 
+    final pause = AppMotion.of(context, AppMotion.page);
+    if (pause > Duration.zero) await Future<void>.delayed(pause);
+    if (!context.mounted) return;
+
     final to = await showStationPicker(
       context,
       stations: _pickable(network),

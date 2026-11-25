@@ -66,26 +66,37 @@ class RouteResultScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: AppSpace.xs),
-                            Wrap(
-                              spacing: AppSpace.sm,
-                              crossAxisAlignment: WrapCrossAlignment.end,
-                              children: [
-                                CountUp(
-                                  value: result.estimatedMinutes,
-                                  duration: AppMotion.counter,
-                                  text: (value) =>
-                                      localizedDigits(context, _minutes(value)),
-                                  style: AppTheme.numeric(
-                                    theme.textTheme.displaySmall,
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: AlignmentDirectional.centerStart,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  CountUp(
+                                    value: result.estimatedMinutes,
+                                    duration: AppMotion.counter,
+                                    text: (value) => localizedDigits(
+                                      context,
+                                      _minutes(value),
+                                    ),
+                                    style: AppTheme.numeric(
+                                      theme.textTheme.displaySmall,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  l10n.minutesShort,
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    color: theme.colorScheme.onSurfaceVariant,
+                                  const SizedBox(width: AppSpace.sm),
+                                  Text(
+                                    l10n.minutesShort,
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(
+                                          color: theme
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                        ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
