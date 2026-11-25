@@ -3,7 +3,7 @@
 A reference for the UI as it is actually built, so the same language can be
 repeated on a new screen without redesigning it. Every value below comes from
 code in this repository: `lib/core/theme/app_theme.dart` for tokens,
-`lib/screens/` for layout, `lib/widgets/` for the shared parts. When this file
+feature `presentation/` folders for screens and widgets. When this file
 and the code disagree, the code wins — then fix this file.
 
 Screenshots are not committed. To check a change, run the app at 360dp width in
@@ -191,7 +191,7 @@ arrives. Fire and forget; never awaited.
 
 ## 5. Components
 
-Every one of these is a theme default or a widget in `lib/widgets/`. Use them;
+Every one of these is a theme default or a widget in a feature’s `presentation/widgets/`. Use them;
 do not re-style a control locally.
 
 | Component | Specification |
@@ -221,7 +221,7 @@ do not re-style a control locally.
 
 ### 6.1 First run (`onboarding_screen.dart`)
 
-Shown once, gated by `SettingsProvider.onboarded`. Everything the rest of the app
+Shown once, gated by `SettingsCubit.state.onboarded`. Everything the rest of the app
 depends on — language and appearance — is chosen before the tabs appear.
 
 Order, centred, max 420dp wide, scrollable, 24dp padding: logo 120dp → title

@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:maak_metro/domain/domain.dart';
+
+import 'package:maak_metro/features/network/domain/models/models.dart';
 
 String _languageCode(BuildContext context) =>
     Localizations.localeOf(context).languageCode;

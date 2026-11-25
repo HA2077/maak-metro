@@ -7,6 +7,13 @@ Android Development final project. Presentation 11/28/2026.
     flutter pub get
     flutter run
 
+### Device preview
+
+Device Preview is available during a normal debug run with `flutter run` or
+your IDE’s Run command. Open the `device_preview` tab in Flutter DevTools to
+select a phone or tablet, rotate it, or change the text scale. Use the app’s
+Settings to switch between Arabic and English.
+
 ## Toolchain
 
 Everyone uses exactly these versions. `pubspec.lock` is committed and must not be regenerated with a different SDK.

@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:maak_metro/app.dart';
-import 'package:maak_metro/domain/domain.dart';
-import 'package:maak_metro/domain/metro_repository.dart';
-import 'package:maak_metro/providers/library_provider.dart';
-import 'package:maak_metro/providers/route_provider.dart';
-import 'package:maak_metro/providers/settings_provider.dart';
-import 'package:maak_metro/screens/home_shell.dart';
-import 'package:maak_metro/screens/onboarding_screen.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:maak_metro/app.dart';
+import 'package:maak_metro/features/library/presentation/library_cubit.dart';
+import 'package:maak_metro/features/network/domain/models/network_data.dart';
+import 'package:maak_metro/features/network/domain/network_repository.dart';
+import 'package:maak_metro/features/network/presentation/network_cubit.dart';
+import 'package:maak_metro/features/planner/presentation/planner_cubit.dart';
+import 'package:maak_metro/features/planner/presentation/planner_screen.dart';
+import 'package:maak_metro/features/settings/data/preferences_settings_repository.dart';
+import 'package:maak_metro/features/settings/presentation/onboarding_screen.dart';
+import 'package:maak_metro/features/settings/presentation/settings_cubit.dart';
+import 'package:maak_metro/home_shell.dart';
+
+import 'fixtures/fake_library_repository.dart';
 import 'fixtures/fixture_network.dart';
 
-class _FakeRepository implements MetroRepository {
-  _FakeRepository(this.network, {this.failures = 0});
+class _FakeNetworkRepository implements NetworkRepository {
+  _FakeNetworkRepository(this.network, {this.failures = 0});
 
   final NetworkData network;
   int failures;
@@ -27,45 +32,27 @@ class _FakeRepository implements MetroRepository {
     }
     return network;
   }
-
-  @override
-  Future<List<FavoriteRoute>> getFavorites() async => const <FavoriteRoute>[];
-
-  @override
-  Future<bool> isFavorite(String fromId, String toId) async => false;
-
-  @override
-  Future<void> addFavorite(String fromId, String toId) async {}
-
-  @override
-  Future<void> removeFavorite(int id) async {}
-
-  @override
-  Future<void> removeFavoriteByPair(String fromId, String toId) async {}
-
-  @override
-  Future<List<HistoryEntry>> getHistory({int limit = 50}) async =>
-      const <HistoryEntry>[];
-
-  @override
-  Future<void> addHistory(String fromId, String toId) async {}
-
-  @override
-  Future<void> removeHistory(int id) async {}
-  @override
-  Future<void> clearHistory() async {}
 }
 
 Widget _appWith(
-  SettingsProvider settings,
-  LibraryProvider library,
-  RouteProvider route,
-) {
-  return MultiProvider(
+  SettingsCubit settings,
+  LibraryCubit library,
+  NetworkCubit route, {
+  PlannerCubit? planner,
+}) {
+  addTearDown(settings.close);
+  addTearDown(library.close);
+  addTearDown(route.close);
+  if (planner != null) addTearDown(planner.close);
+  return MultiBlocProvider(
     providers: [
-      ChangeNotifierProvider<SettingsProvider>.value(value: settings),
-      ChangeNotifierProvider<LibraryProvider>.value(value: library),
-      ChangeNotifierProvider<RouteProvider>.value(value: route),
+      BlocProvider<SettingsCubit>.value(value: settings),
+      BlocProvider<LibraryCubit>.value(value: library),
+      BlocProvider<NetworkCubit>.value(value: route),
+      if (planner case final planner?)
+        BlocProvider<PlannerCubit>.value(value: planner)
+      else
+        BlocProvider(create: (_) => PlannerCubit()),
     ],
     child: const MaakMetroApp(),
   );
@@ -81,21 +68,30 @@ Directionality _shellDirectionality(WidgetTester tester) =>
           .first,
     );
 
+void _useSmallViewportWithLargeText(WidgetTester tester) {
+  tester.view.physicalSize = const Size(360, 800);
+  tester.view.devicePixelRatio = 1;
+  tester.platformDispatcher.textScaleFactorTestValue = 1.5;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+  addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+}
+
 void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
   });
 
-  testWidgets('locale and direction follow SettingsProvider', (tester) async {
+  testWidgets('locale and direction follow SettingsCubit', (tester) async {
+    _useSmallViewportWithLargeText(tester);
     final prefs = await SharedPreferences.getInstance();
-    final settings = SettingsProvider(prefs);
-    await settings.load();
+    final settings = SettingsCubit(PreferencesSettingsRepository(prefs));
     await settings.completeOnboarding();
-    final repo = _FakeRepository(buildFixtureNetwork());
-    final library = LibraryProvider(repo);
+    final repo = _FakeNetworkRepository(buildFixtureNetwork());
+    final library = LibraryCubit(FakeLibraryRepository());
     await library.refresh();
-    final route = RouteProvider(repo, onLibraryChanged: library.refresh);
-    await route.init();
+    final route = NetworkCubit(repo);
+    await route.load();
 
     await tester.pumpWidget(_appWith(settings, library, route));
 
@@ -119,15 +115,15 @@ void main() {
     tester,
   ) async {
     final prefs = await SharedPreferences.getInstance();
-    final settings = SettingsProvider(prefs);
+    final settings = SettingsCubit(PreferencesSettingsRepository(prefs));
     await settings.setLocale(const Locale('en'));
     await settings.completeOnboarding();
-    final repo = _FakeRepository(buildFixtureNetwork(), failures: 1);
-    final library = LibraryProvider(repo);
+    final repo = _FakeNetworkRepository(buildFixtureNetwork(), failures: 1);
+    final library = LibraryCubit(FakeLibraryRepository());
     await library.refresh();
-    final route = RouteProvider(repo, onLibraryChanged: library.refresh);
-    await route.init();
-    expect(route.initError, isNotNull);
+    final route = NetworkCubit(repo);
+    await route.load();
+    expect(route.state.error, isNotNull);
 
     await tester.pumpWidget(_appWith(settings, library, route));
 
@@ -137,7 +133,7 @@ void main() {
     await tester.tap(find.byType(FilledButton));
     await tester.pumpAndSettle();
 
-    expect(route.initError, isNull);
+    expect(route.state.error, isNull);
     expect(find.byType(HomeShell), findsOneWidget);
   });
 
@@ -145,13 +141,12 @@ void main() {
     tester,
   ) async {
     final prefs = await SharedPreferences.getInstance();
-    final settings = SettingsProvider(prefs);
-    await settings.load();
-    final repo = _FakeRepository(buildFixtureNetwork());
-    final library = LibraryProvider(repo);
+    final settings = SettingsCubit(PreferencesSettingsRepository(prefs));
+    final repo = _FakeNetworkRepository(buildFixtureNetwork());
+    final library = LibraryCubit(FakeLibraryRepository());
     await library.refresh();
-    final route = RouteProvider(repo, onLibraryChanged: library.refresh);
-    await route.init();
+    final route = NetworkCubit(repo);
+    await route.load();
 
     await tester.pumpWidget(_appWith(settings, library, route));
 
@@ -162,14 +157,81 @@ void main() {
 
     await tester.tap(find.text('غامق'));
     await tester.pumpAndSettle();
-    expect(settings.themeMode, ThemeMode.dark);
+    expect(settings.state.themeMode, ThemeMode.dark);
 
     await tester.tap(find.byType(FilledButton));
     await tester.pumpAndSettle();
 
-    expect(settings.onboarded, isTrue);
+    expect(settings.state.onboarded, isTrue);
     expect(find.byType(HomeShell), findsOneWidget);
   });
+
+  testWidgets(
+    'Lines sets the planner endpoint and Saved reopens the starred route',
+    (tester) async {
+      _useSmallViewportWithLargeText(tester);
+      final prefs = await SharedPreferences.getInstance();
+      final settings = SettingsCubit(PreferencesSettingsRepository(prefs));
+      await settings.setLocale(const Locale('en'));
+      await settings.completeOnboarding();
+      final network = buildFixtureNetwork();
+      final networkCubit = NetworkCubit(_FakeNetworkRepository(network));
+      await networkCubit.load();
+      final repository = FakeLibraryRepository();
+      final library = LibraryCubit(repository);
+      await library.refresh();
+      final planner = PlannerCubit();
+      await tester.pumpWidget(
+        _appWith(settings, library, networkCubit, planner: planner),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Lines'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ExpansionTile).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Station s1'));
+      await tester.pumpAndSettle();
+      final start = find.text('Start here');
+      await tester.ensureVisible(start);
+      await tester.tap(start);
+      await tester.pumpAndSettle();
+      expect(planner.state.from?.id, 's1');
+
+      planner.setTo(network.stationById('s4'));
+      await tester.pumpAndSettle();
+      final showRoute = find.text('Show route');
+      await tester.scrollUntilVisible(
+        showRoute,
+        200,
+        scrollable: find.descendant(
+          of: find.byType(PlannerScreen),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      await tester.tap(showRoute);
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Add to favorites'), findsOneWidget);
+      expect(repository.recordedPairs, [('s1', 's4')]);
+
+      // Changing the planner cannot change the trip displayed by this result.
+      planner.setFrom(network.stationById('s5'));
+      await tester.tap(find.byTooltip('Add to favorites'));
+      await tester.pumpAndSettle();
+      expect(library.state.isFavorite('s1', 's4'), isTrue);
+      expect(library.state.isFavorite('s5', 's4'), isFalse);
+      expect(find.byTooltip('Remove from favorites'), findsOneWidget);
+
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Saved'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Station s1'));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Remove from favorites'), findsOneWidget);
+      expect(repository.recordedPairs, [('s1', 's4')]);
+    },
+  );
 
   testWidgets('startup error shows the error screen and fires retry', (
     tester,

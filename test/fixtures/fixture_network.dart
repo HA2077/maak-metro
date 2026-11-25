@@ -1,4 +1,4 @@
-import 'package:maak_metro/domain/models/models.dart';
+import 'package:maak_metro/features/network/domain/models/models.dart';
 
 const _lines = [
   Line(id: 1, nameAr: 'Line 1', nameEn: 'Line 1', colorHex: '#1E63B8'),

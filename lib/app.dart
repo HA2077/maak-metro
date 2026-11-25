@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
-import 'package:maak_metro/providers/route_provider.dart';
-import 'package:maak_metro/providers/settings_provider.dart';
-import 'package:maak_metro/screens/home_shell.dart';
-import 'package:maak_metro/screens/onboarding_screen.dart';
-import 'package:provider/provider.dart';
+import 'package:maak_metro/features/network/presentation/network_cubit.dart';
+import 'package:maak_metro/features/settings/presentation/onboarding_screen.dart';
+import 'package:maak_metro/features/settings/presentation/settings_cubit.dart';
+
+import 'home_shell.dart';
 
 const _delegates = <LocalizationsDelegate<dynamic>>[
   AppLocalizations.delegate,
@@ -29,11 +31,10 @@ class MaakMetroApp extends StatelessWidget {
       return _errorApp(startup, onRetry ?? () async {});
     }
 
-    final settings = context.watch<SettingsProvider>();
-    final route = context.watch<RouteProvider>();
-    final initError = route.initError;
+    final settings = context.watch<SettingsCubit>().state;
+    final initError = context.select((NetworkCubit cubit) => cubit.state.error);
     if (initError != null) {
-      return _errorApp(initError, route.init);
+      return _errorApp(initError, context.read<NetworkCubit>().load);
     }
 
     return MaterialApp(

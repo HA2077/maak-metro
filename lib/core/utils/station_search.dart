@@ -1,5 +1,6 @@
-import 'package:maak_metro/core/utils/arabic_normalize.dart';
-import 'package:maak_metro/domain/domain.dart';
+import 'package:maak_metro/features/network/domain/models/models.dart';
+
+import 'arabic_normalize.dart';
 
 /// Filters the station list for the picker, best match first: exact name, then
 /// prefix, contains, and finally one-typo matches. Both the active-language name

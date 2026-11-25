@@ -1,51 +1,58 @@
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:maak_metro/app.dart';
-import 'package:maak_metro/data/metro_repository.dart';
-import 'package:maak_metro/providers/library_provider.dart';
-import 'package:maak_metro/providers/route_provider.dart';
-import 'package:maak_metro/providers/settings_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:maak_metro/core/data/db_helper.dart';
+import 'package:maak_metro/features/library/data/sqlite_library_repository.dart';
+import 'package:maak_metro/features/library/presentation/library_cubit.dart';
+import 'package:maak_metro/features/network/data/seed_loader.dart';
+import 'package:maak_metro/features/network/data/sqlite_network_repository.dart';
+import 'package:maak_metro/features/network/presentation/network_cubit.dart';
+import 'package:maak_metro/features/planner/presentation/planner_cubit.dart';
+import 'package:maak_metro/features/settings/data/preferences_settings_repository.dart';
+import 'package:maak_metro/features/settings/presentation/settings_cubit.dart';
+
+import 'app.dart';
+
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  if (kDebugMode) {
+    DevicePreview.enable();
+  } else {
+    WidgetsFlutterBinding.ensureInitialized();
+  }
   await _bootstrap();
 }
 
 Future<void> _bootstrap() async {
-  SharedPreferences? prefs;
-  SqliteMetroRepository? repo;
-  Object? startupError;
-  try {
-    prefs = await SharedPreferences.getInstance();
-    repo = await SqliteMetroRepository.create(prefs: prefs);
-  } catch (error) {
-    startupError = error;
-  }
+  final helper = DbHelper();
+  final SettingsCubit settings;
+  final LibraryCubit library;
+  final NetworkCubit network;
 
-  if (prefs == null || repo == null) {
-    runApp(
-      MaakMetroApp(
-        startupError: startupError ?? StateError('Startup failed'),
-        onRetry: _bootstrap,
-      ),
-    );
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final db = await helper.database;
+    await SeedLoader(db, prefs).seedIfNeeded();
+    settings = SettingsCubit(PreferencesSettingsRepository(prefs));
+    library = LibraryCubit(SqliteLibraryRepository(db));
+    network = NetworkCubit(SqliteNetworkRepository(db, prefs));
+  } catch (error) {
+    runApp(MaakMetroApp(startupError: error, onRetry: _bootstrap));
     return;
   }
 
-  final settings = SettingsProvider(prefs);
-  final library = LibraryProvider(repo);
-  final route = RouteProvider(repo, onLibraryChanged: library.refresh);
-  await settings.load();
   await library.refresh();
-  await route.init();
+  await network.load();
 
   runApp(
-    MultiProvider(
+    MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider<SettingsProvider>.value(value: settings),
-        ChangeNotifierProvider<LibraryProvider>.value(value: library),
-        ChangeNotifierProvider<RouteProvider>.value(value: route),
+        BlocProvider(create: (_) => settings, lazy: false),
+        BlocProvider(create: (_) => library, lazy: false),
+        BlocProvider(create: (_) => network, lazy: false),
+        BlocProvider(create: (_) => PlannerCubit()),
       ],
       child: const MaakMetroApp(),
     ),

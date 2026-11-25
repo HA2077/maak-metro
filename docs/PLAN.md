@@ -5,8 +5,9 @@ Android Development final project · Flutter + SQLite · Team of 6 · Plan date 
 ## 0. Locked decisions
 
 - App: **Maak Metro (معاك)**, offline metro planner for Cairo Metro Lines 1, 2 and 3.
-- State management: Provider (`ChangeNotifier` + `MultiProvider`).
-- Database: **SQLite via `sqflite`**. Hive was considered and rejected: our data is relational, the team and the DB owner work in SQL, and there is no visible speed or size gain at this data size. The app only talks to `MetroRepository`, so the storage engine can be swapped later by changing `lib/data/` only.
+- Architecture: feature-first Clean Architecture with dependencies pointing `presentation → domain ← data`.
+- State management: Cubit with `flutter_bloc`.
+- Database: **SQLite via `sqflite`**. Hive was considered and rejected: our data is relational, the team and the DB owner work in SQL, and there is no visible speed or size gain at this data size. The app consumes domain repository interfaces. Bootstrap opens and seeds a single database for the network and library adapters.
 - Default language Arabic (RTL), instant toggle to English.
 - Routing constants: `perStopMinutes = 2.5`, `transferPenaltyMinutes = 7.5` (1 transfer = 3 stops).
 - Fare station count includes the boarding station: `FareCalculator` defaults to `countBoardingStation: true` (D-1 option B).
@@ -76,7 +77,7 @@ Seeding:
 
 ## 3. Dart contract (models and repository)
 
-Owner: Hassan. Put in `lib/domain/models/`. **Pure Dart, no Flutter or sqflite imports**, so the router can be tested without a device.
+Owner: Hassan. Models live in the owning feature’s `domain/models/`. **Pure Dart, no Flutter or sqflite imports**, so the router can be tested without a device.
 
 ```dart
 class Line {
@@ -125,8 +126,11 @@ class RouteResult {
 class FavoriteRoute { final int id; final String fromId, toId; final DateTime createdAt; }
 class HistoryEntry { final int id; final String fromId, toId; final DateTime searchedAt; }
 
-abstract class MetroRepository {
+abstract interface class NetworkRepository {
   Future<NetworkData> loadNetwork();
+}
+
+abstract interface class LibraryRepository {
   Future<List<FavoriteRoute>> getFavorites();
   Future<bool> isFavorite(String fromId, String toId);
   Future<void> addFavorite(String fromId, String toId);
@@ -134,6 +138,7 @@ abstract class MetroRepository {
   Future<void> removeFavoriteByPair(String fromId, String toId);
   Future<List<HistoryEntry>> getHistory({int limit = 50});
   Future<void> addHistory(String fromId, String toId);
+  Future<void> removeHistory(int id);
   Future<void> clearHistory();
 }
 ```
@@ -146,7 +151,7 @@ Router entry point, a pure function:
 RouteResult? findRoute({required String fromId, required String toId, required NetworkData data, required RoutingConfig config});
 ```
 
-It returns `null` when `fromId == toId`, when a station id is unknown, or when no path exists. The provider turns `null` into a friendly message.
+It returns `null` when `fromId == toId`, when a station id is unknown, or when no path exists. The Planner Cubit exposes an error that the screen localizes.
 
 ## 4. Router design
 
@@ -181,7 +186,7 @@ The graph is undirected, so A to B and B to A cost the same.
 7. Fare boundaries: 1, 9, 10, 16, 17, 23, 24, 39 and above 39.
 8. Interchange station as the start or the destination.
 
-## 5. Screens and providers
+## 5. Screens and Cubits
 
 Navigation: bottom bar with four tabs (Planner, Lines, Library, Settings). The Result screen is pushed from the Planner and from Library items. That makes five screens.
 
@@ -195,15 +200,16 @@ Navigation: bottom bar with four tabs (Planner, Lines, Library, Settings). The R
 
 **5. Settings.** Language (AR/EN) toggle, applied instantly. About section with the app name, the data snapshot date and the fare effective date (March 27, 2026).
 
-**Providers.**
+**Cubits.**
 
-1. `SettingsProvider`: locale, text direction, persisted in `shared_preferences`.
-2. `RouteProvider`: network data, selected From/To, swap, `calculate()` (calls `findRoute`), saves to history through the repository.
-3. `LibraryProvider`: favorites and history lists, toggle favorite, clear history.
+1. `NetworkCubit`: shared network snapshot, loading and retry.
+2. `PlannerCubit`: selected endpoints, swap, routing and validation. The result screen receives the computed trip snapshot.
+3. `LibraryCubit`: shared favorites and history, including logging successful Planner searches and refreshing saved trips.
+4. `SettingsCubit`: locale, theme and onboarding. It reads and writes through the pure Dart `SettingsRepository` contract, backed by SharedPreferences.
 
 All UI text goes through the localization files from the first screen. No hardcoded strings. Station and line names come from the database in both languages and are picked by the active locale.
 
-Arabic search helper (`lib/core/arabic_normalize.dart`, Omar): strip diacritics, unify أ/إ/آ to ا, ة to ه, ى to ي. This is the basic version. Abdullah's fuzzy search is the stretch layer on top.
+Arabic search helper (`lib/core/utils/arabic_normalize.dart`, Omar): strip diacritics, unify أ/إ/آ to ا, ة to ه, ى to ي. This is the basic version. Abdullah's fuzzy search is the stretch layer on top.
 
 ## 6. Repo skeleton and rules
 
@@ -211,19 +217,20 @@ Arabic search helper (`lib/core/arabic_normalize.dart`, Omar): strip diacritics,
 maak_metro/
   assets/metro_seed.json                 (Abdullah)
   docs/PLAN.md, docs/ISSUES.md, docs/M0_SETUP.md   (Hassan)
-  lib/main.dart, lib/app.dart            (Hassan)
-  lib/core/  theme, l10n, utils          (Omar)
-  lib/data/  db_helper, seed_loader, metro_repository  (Mahmoud)
-  lib/domain/  models, router_engine, fare_calculator   (Hassan)
-  lib/providers/                         (Hassan)
-  lib/screens/  lib/widgets/             (Omar)
-  test/  fixtures/                       (Youssef)
+  lib/main.dart, lib/app.dart, lib/home_shell.dart
+  lib/core/           shared UI utilities and database setup
+  lib/features/
+    planner/          domain, presentation
+    network/          data, domain, presentation
+    library/          data, domain, presentation
+    settings/         data, domain, presentation
+  test/               mirrors lib, plus fixtures/
   .github/  CODEOWNERS, PULL_REQUEST_TEMPLATE.md, workflows/ci.yml
 ```
 
-- `pubspec.yaml`: provider, sqflite, path, shared_preferences, flutter_localizations, intl, collection. Dev: flutter_test, flutter_lints, sqflite_common_ffi (repository tests without a device).
+- `pubspec.yaml`: flutter_bloc, sqflite, path, shared_preferences, flutter_localizations, intl, collection. Dev: flutter_test, flutter_lints, sqflite_common_ffi (repository tests without a device).
 - Branches: `main` is protected (PR required, 1 review, no direct pushes). Branch names `feature/<area>-<short>`, `fix/<short>`. Small PRs, one issue each, `Closes #n` in the description.
-- `CODEOWNERS` maps each folder to its owner so reviews are requested automatically. Changes to `lib/domain/models/` need Hassan's review, because everyone depends on them.
+- Request review from the relevant area owners when working in the feature folders. Domain model changes need Hassan’s review.
 - PR checklist: `dart format .`, `flutter analyze` clean, `flutter test` green, tested on emulator or device, screenshot for UI changes.
 - CI (GitHub Actions): format check, `flutter analyze` and `flutter test` on every PR.
 - Daily 10-minute sync. Blocked for more than 2 hours means you raise it immediately.
