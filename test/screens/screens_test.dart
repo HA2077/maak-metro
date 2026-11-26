@@ -222,10 +222,7 @@ void main() {
           find.byKey(const Key('plannerGreeting')),
           entry.$2 ? findsNothing : findsOneWidget,
         );
-        expect(
-          find.text(l10n.plannerHint),
-          entry.$2 ? findsNothing : findsOneWidget,
-        );
+        expect(find.text(l10n.plannerHint), findsOneWidget);
         expect(tester.takeException(), isNull);
       });
     }
@@ -262,6 +259,50 @@ void main() {
         tester.widget<FilledButton>(find.byType(FilledButton)).enabled,
         isFalse,
       );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('launches a saved favorite in one tap', (tester) async {
+      await _pumpScreen(
+        tester,
+        const PlannerScreen(),
+        locale: const Locale('en'),
+      );
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(PlannerScreen)),
+      );
+      final library = BlocProvider.of<LibraryCubit>(
+        tester.element(find.byType(PlannerScreen)),
+      );
+      await library.toggleFavorite('s1', 's4');
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.favorites), findsOneWidget);
+      final label = find.text('Station s1 → Station s4');
+      expect(label, findsOneWidget);
+      await tester.tap(label);
+      await tester.pumpAndSettle();
+      expect(find.byType(RouteResultScreen), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('launches a recent search from the grouped card', (
+      tester,
+    ) async {
+      await _pumpScreen(
+        tester,
+        const PlannerScreen(),
+        locale: const Locale('en'),
+      );
+      final library = BlocProvider.of<LibraryCubit>(
+        tester.element(find.byType(PlannerScreen)),
+      );
+      await library.recordSearch('s1', 's4');
+      await tester.pumpAndSettle();
+      final label = find.text('Station s1 → Station s4');
+      expect(label, findsOneWidget);
+      await tester.tap(label);
+      await tester.pumpAndSettle();
+      expect(find.byType(RouteResultScreen), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });

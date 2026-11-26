@@ -12,7 +12,6 @@ import 'package:maak_metro/core/theme/line_colors.dart';
 import 'package:maak_metro/core/utils/dates.dart';
 import 'package:maak_metro/core/utils/greeting.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
-import 'package:maak_metro/features/library/domain/models/history_entry.dart';
 import 'package:maak_metro/features/library/presentation/library_cubit.dart';
 import 'package:maak_metro/features/network/domain/models/models.dart';
 import 'package:maak_metro/features/network/presentation/network_cubit.dart';
@@ -125,6 +124,27 @@ class _PlannerScreenState extends State<PlannerScreen> {
     final recent = context.select(
       (LibraryCubit cubit) => cubit.state.recentSearches,
     );
+    final favorites = context.select(
+      (LibraryCubit cubit) => cubit.state.favorites,
+    );
+    final favoriteItems = <_QuickItem>[
+      for (final favorite in favorites.take(2))
+        if (_pairLabel(context, network, favorite.fromId, favorite.toId)
+            case final label?)
+          _QuickItem(
+            label: label,
+            onTap: () => _launchPair(favorite.fromId, favorite.toId),
+          ),
+    ];
+    final recentItems = <_QuickItem>[
+      for (final entry in recent.take(3))
+        if (_pairLabel(context, network, entry.fromId, entry.toId)
+            case final label?)
+          _QuickItem(
+            label: label,
+            onTap: () => _launchPair(entry.fromId, entry.toId),
+          ),
+    ];
     final errorText = _errorText(l10n, route.error);
     final interchanges = _interchanges(context, network);
     final closed = isMetroClosed(now: widget.now);
@@ -185,25 +205,27 @@ class _PlannerScreenState extends State<PlannerScreen> {
             padding: const EdgeInsetsDirectional.only(bottom: AppSpace.xs),
             child: _Greeting(now: widget.now),
           ),
-          if (!closed)
-            Padding(
-              padding: const EdgeInsetsDirectional.only(bottom: AppSpace.xs),
-              child: Text(
-                l10n.plannerHint,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(bottom: AppSpace.xs),
+            child: Text(
+              l10n.plannerHint,
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-          _TripCard(
-            from: route.from,
-            to: route.to,
-            network: network,
-            l10n: l10n,
-            swapTurns: _swapTurns,
-            onPickFrom: () => _pick(context, from: true),
-            onPickTo: () => _pick(context, from: false),
-            onSwap: () => _swap(planner),
+          ),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(top: AppSpace.md),
+            child: _TripCard(
+              from: route.from,
+              to: route.to,
+              network: network,
+              l10n: l10n,
+              swapTurns: _swapTurns,
+              onPickFrom: () => _pick(context, from: true),
+              onPickTo: () => _pick(context, from: false),
+              onSwap: () => _swap(planner),
+            ),
           ),
           const SizedBox(height: AppSpace.md),
           FilledButton(
@@ -235,27 +257,9 @@ class _PlannerScreenState extends State<PlannerScreen> {
                     child: _ErrorText(text: errorText),
                   ),
           ),
-          if (recent.isNotEmpty) ...[
+          if (favoriteItems.isNotEmpty || recentItems.isNotEmpty) ...[
             const SizedBox(height: AppSpace.xl),
-            Text(l10n.recentSearches, style: theme.textTheme.titleSmall),
-            const SizedBox(height: AppSpace.md),
-            Wrap(
-              spacing: AppSpace.sm,
-              runSpacing: AppSpace.sm,
-              children: [
-                for (var index = 0; index < recent.length; index++)
-                  if (_recentLabel(context, network, recent[index])
-                      case final label?)
-                    FadeSlideIn(
-                      index: index,
-                      child: ActionChip(
-                        label: Text(label),
-                        onPressed: () =>
-                            _openRecent(planner, network, recent[index]),
-                      ),
-                    ),
-              ],
-            ),
+            _QuickLaunchCard(favorites: favoriteItems, recents: recentItems),
           ] else if (interchanges.isNotEmpty) ...[
             const SizedBox(height: AppSpace.xl),
             Text(l10n.interchanges, style: theme.textTheme.titleSmall),
@@ -294,14 +298,15 @@ class _PlannerScreenState extends State<PlannerScreen> {
     return stations.take(4).toList();
   }
 
-  String? _recentLabel(
+  String? _pairLabel(
     BuildContext context,
     NetworkData? network,
-    HistoryEntry entry,
+    String fromId,
+    String toId,
   ) {
     if (network == null) return null;
-    final from = network.stationById(entry.fromId);
-    final to = network.stationById(entry.toId);
+    final from = network.stationById(fromId);
+    final to = network.stationById(toId);
     if (from == null || to == null) return null;
     // The arrow points the way the reader reads: towards the destination.
     final arrow = Localizations.localeOf(context).languageCode == 'ar'
@@ -310,17 +315,14 @@ class _PlannerScreenState extends State<PlannerScreen> {
     return '${stationName(context, from)} $arrow ${stationName(context, to)}';
   }
 
-  Future<void> _openRecent(
-    PlannerCubit route,
-    NetworkData? network,
-    HistoryEntry entry,
-  ) async {
+  Future<void> _launchPair(String fromId, String toId) async {
     if (_searching) return;
+    final network = context.read<NetworkCubit>().state.network;
     if (network == null) return;
-    final from = network.stationById(entry.fromId);
-    final to = network.stationById(entry.toId);
+    final from = network.stationById(fromId);
+    final to = network.stationById(toId);
     if (from == null || to == null) return;
-    route.setPair(from, to);
+    context.read<PlannerCubit>().setPair(from, to);
     await _search(context);
   }
 
@@ -333,6 +335,93 @@ class _PlannerScreenState extends State<PlannerScreen> {
     } else {
       route.setFrom(station);
     }
+  }
+}
+
+class _QuickItem {
+  _QuickItem({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+}
+
+class _QuickLaunchCard extends StatelessWidget {
+  const _QuickLaunchCard({required this.favorites, required this.recents});
+
+  final List<_QuickItem> favorites;
+  final List<_QuickItem> recents;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (favorites.isNotEmpty) ...[
+            _QuickHeader(text: l10n.favorites),
+            for (var index = 0; index < favorites.length; index++) ...[
+              if (index > 0) const Divider(height: 1),
+              _QuickRow(item: favorites[index]),
+            ],
+          ],
+          if (recents.isNotEmpty) ...[
+            if (favorites.isNotEmpty) const Divider(height: 1),
+            _QuickHeader(text: l10n.recentSearches),
+            for (var index = 0; index < recents.length; index++) ...[
+              if (index > 0) const Divider(height: 1),
+              _QuickRow(item: recents[index]),
+            ],
+          ],
+          const SizedBox(height: AppSpace.xs),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickHeader extends StatelessWidget {
+  const _QuickHeader({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        18,
+        AppSpace.md,
+        18,
+        AppSpace.xs,
+      ),
+      child: Text(
+        text,
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickRow extends StatelessWidget {
+  const _QuickRow({required this.item});
+
+  final _QuickItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      minTileHeight: 48,
+      title: Text(item.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+      trailing: Icon(
+        Directionality.of(context) == TextDirection.rtl
+            ? Icons.chevron_left
+            : Icons.chevron_right,
+      ),
+      onTap: item.onTap,
+    );
   }
 }
 
@@ -355,10 +444,13 @@ class _GreetingState extends State<_Greeting> {
     final now = widget.now ?? DateTime.now();
     final options = greetingsFor(l10n, dayPartFor(now.hour), now: now);
     if (options.isEmpty) return const SizedBox.shrink();
-    return Text(
-      options[_variant % options.length],
-      key: const Key('plannerGreeting'),
-      style: Theme.of(context).textTheme.bodyLarge,
+    return Semantics(
+      header: true,
+      child: Text(
+        options[_variant % options.length],
+        key: const Key('plannerGreeting'),
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
     );
   }
 }
