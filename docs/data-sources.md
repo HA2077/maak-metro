@@ -1,6 +1,6 @@
 # Data sources
 
-Snapshot: `2026-11-21` · Seed version: `1` · Scope: Lines 1, 2 and 3.
+Snapshot: `2026-11-21` · Seed version: `3` · Scope: Lines 1, 2 and 3.
 
 Station order and fares come from official sources only. No order or fare was
 copied from a blog, wiki or route-planner site. One English display name,
@@ -105,6 +105,15 @@ Line 3 main sequence: Adly Mansour, El Haykestep, Omar Ibn El Khattab, Qobaa,
 Hesham Barakat, El Nozha, El Shams Club, Alf Maskan, Heliopolis, Haroun, El
 Ahram, Girls' College, Stadium, Ard El Maared, Abbassia, Abdo Pasha, El Geish,
 Bab El Shaaria, Ataba, Nasser, Maspero, Safaa Hegazy, Kit Kat.
+
+### Termini and directions
+
+`lines.terminus_a_ar/en` and `lines.terminus_b_ar/en` come from the official
+line descriptions: Line 1 Helwan ↔ New El-Marg, Line 2 El-Mounib ↔ Shubra
+El-Kheima, and Line 3 Adly Mansour ↔ Rod El-Farag Corridor / Cairo University.
+`line_branches` carries the two Line 3 branch termini from the same source. The
+UI shows these as bidirectional headers and derives the boardable direction per
+leg; no direction string is hardcoded in Dart.
 
 ### Arabic names
 
@@ -240,15 +249,17 @@ values already fixed in `docs/PLAN.md` and the test fixtures:
 Values are copied from the operator's ticket-price image and match the project
 plan:
 
-| Max stations | Price (EGP) |
-|---:|---:|
-| 9 | 10 |
-| 16 | 12 |
-| 23 | 15 |
-| 39 | 20 |
+| Max stations | Price (EGP) | Ticket color |
+|---:|---:|---|
+| 9 | 10 | yellow |
+| 16 | 12 | green |
+| 23 | 15 | pink |
+| 39 | 20 | lightBrown |
 
-The fare count includes the boarding station; that rule is in
-`docs/PLAN.md` and is applied by `FareCalculator`, not by this file.
+The colors describe the physical ticket tiers commuters buy at the window; they
+are seeded in `fares.ticket_color` and never hardcoded in Dart. The fare count
+includes the boarding station; that rule is in `docs/PLAN.md` and is applied by
+`FareCalculator`, not by this file.
 
 ## Verification (2026-11-24)
 
@@ -264,6 +275,6 @@ Line 2 pages:
 - Line colours match the operator's map (see above).
 - Fares: four brackets at 9, 16, 23 and 39 stations for 10, 12, 15 and 20 EGP.
 - `test/data/seed_validation_test.dart` covers the format and
-  `sqlite_metro_repository_test.dart` covers the load; the counts above were
+  `sqlite_network_repository_test.dart` covers the load; the counts above were
   re-counted from the file itself.
 

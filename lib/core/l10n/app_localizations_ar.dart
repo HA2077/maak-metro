@@ -308,4 +308,70 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get minutesShort => 'دقيقة';
+
+  @override
+  String get closedHoursAdvisory =>
+      'المترو قافل دلوقتي.. بتخطط لمشوار بدري ولا إيه؟';
+
+  @override
+  String get metroMap => 'خريطة مترو القاهرة';
+
+  @override
+  String get openMetroMap => 'افتح خريطة مترو القاهرة';
+
+  @override
+  String lineTermini(String a, String b) {
+    return '$a ↔ $b';
+  }
+
+  @override
+  String direction(String terminus) {
+    return 'اتجاه: $terminus';
+  }
+
+  @override
+  String get ticketYellow => 'تذكرة صفراء';
+
+  @override
+  String get ticketGreen => 'تذكرة خضراء';
+
+  @override
+  String get ticketPink => 'تذكرة وردية';
+
+  @override
+  String get ticketLightBrown => 'تذكرة بنّية فاتحة';
+
+  @override
+  String arrivalTime(String time) {
+    return 'وصول ~$time';
+  }
+
+  @override
+  String get amMarker => 'ص';
+
+  @override
+  String get pmMarker => 'م';
+
+  @override
+  String get stopPassed => 'محطة تم تجاوزها';
+
+  @override
+  String get stopUpcoming => 'المحطة التالية';
+
+  @override
+  String get reverseTrip => 'اتجاه العودة';
+
+  @override
+  String get copyTrip => 'انسخ ملخص المسار';
+
+  @override
+  String get routeCopied => 'تم نسخ المسار';
+
+  @override
+  String routeEndpoints(String from, String to) {
+    return '$from ← $to';
+  }
+
+  @override
+  String get nextStop => 'محطة واحدة (المحطة التالية)';
 }

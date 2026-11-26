@@ -201,14 +201,17 @@ void main() {
       planner.setTo(network.stationById('s4'));
       await tester.pumpAndSettle();
       final showRoute = find.text('Show route');
+      final plannerScrollable = find.descendant(
+        of: find.byType(PlannerScreen),
+        matching: find.byType(Scrollable),
+      );
       await tester.scrollUntilVisible(
         showRoute,
         200,
-        scrollable: find.descendant(
-          of: find.byType(PlannerScreen),
-          matching: find.byType(Scrollable),
-        ),
+        scrollable: plannerScrollable,
       );
+      await tester.drag(plannerScrollable, const Offset(0, -80));
+      await tester.pumpAndSettle();
       await tester.tap(showRoute);
       await tester.pumpAndSettle();
       expect(find.byTooltip('Add to favorites'), findsOneWidget);

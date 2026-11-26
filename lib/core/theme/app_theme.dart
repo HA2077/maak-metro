@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:maak_metro/core/motion/app_motion.dart';
+
+import 'line_colors.dart';
 
 /// Spacing scale in logical pixels. Use with directional insets so the same
 /// values work in Arabic (RTL) and English (LTR).
@@ -97,6 +100,24 @@ abstract final class AppTheme {
         onErrorContainer: const Color(0xFFFFDAD6),
         surfaceTint: Colors.transparent,
       );
+
+  /// Physical Cairo Metro ticket tiers. Foreground is chosen for contrast.
+  static const Map<String, ({Color light, Color dark})> ticketFills =
+      <String, ({Color light, Color dark})>{
+        'yellow': (light: Color(0xFFF5C518), dark: Color(0xFFC79A00)),
+        'green': (light: Color(0xFF2E7D32), dark: Color(0xFF1B5E20)),
+        'pink': (light: Color(0xFFC2185B), dark: Color(0xFF880E4F)),
+        'lightBrown': (light: Color(0xFFA1887F), dark: Color(0xFF6D4C41)),
+      };
+
+  static ({Color background, Color foreground}) ticketBadge(
+    String ticketColor,
+    Brightness brightness,
+  ) {
+    final fill = ticketFills[ticketColor] ?? ticketFills['yellow']!;
+    final background = brightness == Brightness.dark ? fill.dark : fill.light;
+    return (background: background, foreground: lineTextColor(background));
+  }
 
   static ThemeData get light => _build(lightScheme, dark: false);
 

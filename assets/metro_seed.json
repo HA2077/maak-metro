@@ -1,24 +1,36 @@
 {
-  "version": 1,
+  "version": 3,
   "snapshot_date": "2026-11-21",
   "lines": [
     {
       "id": 1,
       "name_ar": "الخط الأول",
       "name_en": "Line 1",
-      "color_hex": "#1E63B8"
+      "color_hex": "#1E63B8",
+      "terminus_a_ar": "حلوان",
+      "terminus_a_en": "Helwan",
+      "terminus_b_ar": "المرج الجديدة",
+      "terminus_b_en": "New El-Marg"
     },
     {
       "id": 2,
       "name_ar": "الخط الثاني",
       "name_en": "Line 2",
-      "color_hex": "#D01F2F"
+      "color_hex": "#D01F2F",
+      "terminus_a_ar": "المنيب",
+      "terminus_a_en": "El-Mounib",
+      "terminus_b_ar": "شبرا الخيمة",
+      "terminus_b_en": "Shubra El-Kheima"
     },
     {
       "id": 3,
       "name_ar": "الخط الثالث",
       "name_en": "Line 3",
-      "color_hex": "#3A9E4D"
+      "color_hex": "#3A9E4D",
+      "terminus_a_ar": "عدلي منصور",
+      "terminus_a_en": "Adly Mansour",
+      "terminus_b_ar": "محور روض الفرج / جامعة القاهرة",
+      "terminus_b_en": "Rod El-Farag Corridor / Cairo University"
     }
   ],
   "stations": [
@@ -447,12 +459,16 @@
     {
       "line_id": 3,
       "branch": "rod_el_farag",
-      "starts_after": "kit_kat"
+      "starts_after": "kit_kat",
+      "terminus_ar": "محور روض الفرج",
+      "terminus_en": "Rod El-Farag Corridor"
     },
     {
       "line_id": 3,
       "branch": "cairo_uni",
-      "starts_after": "kit_kat"
+      "starts_after": "kit_kat",
+      "terminus_ar": "جامعة القاهرة",
+      "terminus_en": "Cairo University"
     }
   ],
   "line_stations": [
@@ -994,19 +1010,23 @@
   "fares": [
     {
       "max_stations": 9,
-      "price_egp": 10
+      "price_egp": 10,
+      "ticket_color": "yellow"
     },
     {
       "max_stations": 16,
-      "price_egp": 12
+      "price_egp": 12,
+      "ticket_color": "green"
     },
     {
       "max_stations": 23,
-      "price_egp": 15
+      "price_egp": 15,
+      "ticket_color": "pink"
     },
     {
       "max_stations": 39,
-      "price_egp": 20
+      "price_egp": 20,
+      "ticket_color": "lightBrown"
     }
   ]
 }

@@ -8,19 +8,23 @@ import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
+import 'package:maak_metro/core/theme/line_colors.dart';
+import 'package:maak_metro/core/utils/dates.dart';
 import 'package:maak_metro/core/utils/greeting.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
-import 'package:maak_metro/features/library/domain/models/history_entry.dart';
 import 'package:maak_metro/features/library/presentation/library_cubit.dart';
 import 'package:maak_metro/features/network/domain/models/models.dart';
 import 'package:maak_metro/features/network/presentation/network_cubit.dart';
+import 'package:maak_metro/features/network/presentation/widgets/metro_map_sheet.dart';
 import 'package:maak_metro/features/planner/presentation/widgets/station_picker.dart';
 
 import 'planner_cubit.dart';
 import 'route_result_screen.dart';
 
 class PlannerScreen extends StatefulWidget {
-  const PlannerScreen({super.key});
+  const PlannerScreen({super.key, this.now});
+
+  final DateTime? now;
 
   @override
   State<PlannerScreen> createState() => _PlannerScreenState();
@@ -41,8 +45,10 @@ class _PlannerScreenState extends State<PlannerScreen> {
   }
 
   Future<void> _pick(BuildContext context, {required bool from}) async {
+    final state = context.read<NetworkCubit>().state;
+    final network = state.network;
+    if (state.loading || state.error != null || network == null) return;
     final route = context.read<PlannerCubit>();
-    final network = context.read<NetworkCubit>().state.network;
     final l10n = AppLocalizations.of(context);
     final station = await showStationPicker(
       context,
@@ -59,6 +65,10 @@ class _PlannerScreenState extends State<PlannerScreen> {
     // A trip needs both ends, so go straight on to the destination.
     if (route.state.to != null) return;
 
+    final pause = AppMotion.of(context, AppMotion.page);
+    if (pause > Duration.zero) await Future<void>.delayed(pause);
+    if (!context.mounted) return;
+
     final to = await showStationPicker(
       context,
       stations: _pickable(network),
@@ -69,9 +79,11 @@ class _PlannerScreenState extends State<PlannerScreen> {
 
   Future<void> _search(BuildContext context) async {
     if (_searching) return;
-    final network = context.read<NetworkCubit>().state.network;
+    final state = context.read<NetworkCubit>().state;
+    final network = state.network;
+    if (state.loading || state.error != null || network == null) return;
     final result = context.read<PlannerCubit>().calculate(network);
-    if (result == null || network == null) return;
+    if (result == null) return;
 
     setState(() => _searching = true);
     try {
@@ -92,6 +104,8 @@ class _PlannerScreenState extends State<PlannerScreen> {
   }
 
   void _swap(PlannerCubit route) {
+    final state = context.read<NetworkCubit>().state;
+    if (state.loading || state.error != null || state.network == null) return;
     route.swap();
     AppHaptics.action();
     if (!AppMotion.reduced(context)) {
@@ -112,15 +126,50 @@ class _PlannerScreenState extends State<PlannerScreen> {
     final theme = Theme.of(context);
     final planner = context.read<PlannerCubit>();
     final route = context.watch<PlannerCubit>().state;
-    final network = context.select((NetworkCubit cubit) => cubit.state.network);
+    final networkState = context.select((NetworkCubit cubit) => cubit.state);
+    final network = networkState.network;
+    final ready =
+        network != null && !networkState.loading && networkState.error == null;
     final recent = context.select(
       (LibraryCubit cubit) => cubit.state.recentSearches,
     );
+    final favorites = context.select(
+      (LibraryCubit cubit) => cubit.state.favorites,
+    );
+    final favoriteItems = <_QuickItem>[
+      for (final favorite in favorites.take(2))
+        if (_pairLabel(context, network, favorite.fromId, favorite.toId)
+            case final label?)
+          _QuickItem(
+            label: label,
+            onTap: () => _launchPair(favorite.fromId, favorite.toId),
+          ),
+    ];
+    final recentItems = <_QuickItem>[
+      for (final entry in recent.take(3))
+        if (_pairLabel(context, network, entry.fromId, entry.toId)
+            case final label?)
+          _QuickItem(
+            label: label,
+            onTap: () => _launchPair(entry.fromId, entry.toId),
+          ),
+    ];
     final errorText = _errorText(l10n, route.error);
     final interchanges = _interchanges(context, network);
+    final closed = isMetroClosed(now: widget.now);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.plannerTitle)),
+      appBar: AppBar(
+        title: Text(l10n.plannerTitle),
+        actions: [
+          IconButton(
+            onPressed: () => showMetroMap(context),
+            tooltip: l10n.openMetroMap,
+            constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+            icon: const Icon(Icons.map_outlined),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsetsDirectional.fromSTEB(
           18,
@@ -129,31 +178,67 @@ class _PlannerScreenState extends State<PlannerScreen> {
           AppSpace.xl,
         ),
         children: [
-          const Padding(
-            padding: EdgeInsetsDirectional.only(bottom: AppSpace.sm),
-            child: _Greeting(),
+          if (closed) ...[
+            FadeSlideIn(
+              child: Card(
+                color: theme.colorScheme.secondaryContainer,
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.symmetric(
+                    horizontal: AppSpace.md,
+                    vertical: AppSpace.sm,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 20,
+                        color: theme.colorScheme.onSecondaryContainer,
+                      ),
+                      const SizedBox(width: AppSpace.sm),
+                      Expanded(
+                        child: Text(
+                          l10n.closedHoursAdvisory,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSecondaryContainer,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpace.sm),
+          ],
+          Padding(
+            padding: const EdgeInsetsDirectional.only(bottom: AppSpace.xs),
+            child: _Greeting(now: widget.now),
           ),
           Padding(
-            padding: const EdgeInsetsDirectional.only(bottom: 20),
+            padding: const EdgeInsetsDirectional.only(bottom: AppSpace.xs),
             child: Text(
               l10n.plannerHint,
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.labelLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
           ),
-          _TripCard(
-            from: route.from,
-            to: route.to,
-            l10n: l10n,
-            swapTurns: _swapTurns,
-            onPickFrom: () => _pick(context, from: true),
-            onPickTo: () => _pick(context, from: false),
-            onSwap: () => _swap(planner),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(top: AppSpace.md),
+            child: _TripCard(
+              from: route.from,
+              to: route.to,
+              network: network,
+              l10n: l10n,
+              swapTurns: _swapTurns,
+              onPickFrom: ready ? () => _pick(context, from: true) : null,
+              onPickTo: ready ? () => _pick(context, from: false) : null,
+              onSwap: ready ? () => _swap(planner) : null,
+            ),
           ),
-          const SizedBox(height: AppSpace.lg),
+          const SizedBox(height: AppSpace.md),
           FilledButton(
-            onPressed: route.canSearch && !_searching
+            onPressed: ready && route.canSearch && !_searching
                 ? () => _search(context)
                 : null,
             child: AnimatedSwitcher(
@@ -181,27 +266,9 @@ class _PlannerScreenState extends State<PlannerScreen> {
                     child: _ErrorText(text: errorText),
                   ),
           ),
-          if (recent.isNotEmpty) ...[
+          if (favoriteItems.isNotEmpty || recentItems.isNotEmpty) ...[
             const SizedBox(height: AppSpace.xl),
-            Text(l10n.recentSearches, style: theme.textTheme.titleSmall),
-            const SizedBox(height: AppSpace.md),
-            Wrap(
-              spacing: AppSpace.sm,
-              runSpacing: AppSpace.sm,
-              children: [
-                for (var index = 0; index < recent.length; index++)
-                  if (_recentLabel(context, network, recent[index])
-                      case final label?)
-                    FadeSlideIn(
-                      index: index,
-                      child: ActionChip(
-                        label: Text(label),
-                        onPressed: () =>
-                            _openRecent(planner, network, recent[index]),
-                      ),
-                    ),
-              ],
-            ),
+            _QuickLaunchCard(favorites: favoriteItems, recents: recentItems),
           ] else if (interchanges.isNotEmpty) ...[
             const SizedBox(height: AppSpace.xl),
             Text(l10n.interchanges, style: theme.textTheme.titleSmall),
@@ -240,14 +307,15 @@ class _PlannerScreenState extends State<PlannerScreen> {
     return stations.take(4).toList();
   }
 
-  String? _recentLabel(
+  String? _pairLabel(
     BuildContext context,
     NetworkData? network,
-    HistoryEntry entry,
+    String fromId,
+    String toId,
   ) {
     if (network == null) return null;
-    final from = network.stationById(entry.fromId);
-    final to = network.stationById(entry.toId);
+    final from = network.stationById(fromId);
+    final to = network.stationById(toId);
     if (from == null || to == null) return null;
     // The arrow points the way the reader reads: towards the destination.
     final arrow = Localizations.localeOf(context).languageCode == 'ar'
@@ -256,17 +324,14 @@ class _PlannerScreenState extends State<PlannerScreen> {
     return '${stationName(context, from)} $arrow ${stationName(context, to)}';
   }
 
-  Future<void> _openRecent(
-    PlannerCubit route,
-    NetworkData? network,
-    HistoryEntry entry,
-  ) async {
+  Future<void> _launchPair(String fromId, String toId) async {
     if (_searching) return;
+    final network = context.read<NetworkCubit>().state.network;
     if (network == null) return;
-    final from = network.stationById(entry.fromId);
-    final to = network.stationById(entry.toId);
+    final from = network.stationById(fromId);
+    final to = network.stationById(toId);
     if (from == null || to == null) return;
-    route.setPair(from, to);
+    context.read<PlannerCubit>().setPair(from, to);
     await _search(context);
   }
 
@@ -282,9 +347,98 @@ class _PlannerScreenState extends State<PlannerScreen> {
   }
 }
 
+class _QuickItem {
+  _QuickItem({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+}
+
+class _QuickLaunchCard extends StatelessWidget {
+  const _QuickLaunchCard({required this.favorites, required this.recents});
+
+  final List<_QuickItem> favorites;
+  final List<_QuickItem> recents;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (favorites.isNotEmpty) ...[
+            _QuickHeader(text: l10n.favorites),
+            for (var index = 0; index < favorites.length; index++) ...[
+              if (index > 0) const Divider(height: 1),
+              _QuickRow(item: favorites[index]),
+            ],
+          ],
+          if (recents.isNotEmpty) ...[
+            if (favorites.isNotEmpty) const Divider(height: 1),
+            _QuickHeader(text: l10n.recentSearches),
+            for (var index = 0; index < recents.length; index++) ...[
+              if (index > 0) const Divider(height: 1),
+              _QuickRow(item: recents[index]),
+            ],
+          ],
+          const SizedBox(height: AppSpace.xs),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickHeader extends StatelessWidget {
+  const _QuickHeader({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        18,
+        AppSpace.md,
+        18,
+        AppSpace.xs,
+      ),
+      child: Text(
+        text,
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickRow extends StatelessWidget {
+  const _QuickRow({required this.item});
+
+  final _QuickItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      minTileHeight: 48,
+      title: Text(item.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+      trailing: Icon(
+        Directionality.of(context) == TextDirection.rtl
+            ? Icons.chevron_left
+            : Icons.chevron_right,
+      ),
+      onTap: item.onTap,
+    );
+  }
+}
+
 /// Greets by time of day, in one of four wordings picked at random per launch.
 class _Greeting extends StatefulWidget {
-  const _Greeting();
+  const _Greeting({required this.now});
+
+  final DateTime? now;
 
   @override
   State<_Greeting> createState() => _GreetingState();
@@ -296,11 +450,16 @@ class _GreetingState extends State<_Greeting> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final options = greetingsFor(l10n, dayPartFor(DateTime.now().hour));
-    return Text(
-      options[_variant % options.length],
-      key: const Key('plannerGreeting'),
-      style: Theme.of(context).textTheme.titleLarge,
+    final now = widget.now ?? DateTime.now();
+    final options = greetingsFor(l10n, dayPartFor(now.hour), now: now);
+    if (options.isEmpty) return const SizedBox.shrink();
+    return Semantics(
+      header: true,
+      child: Text(
+        options[_variant % options.length],
+        key: const Key('plannerGreeting'),
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
     );
   }
 }
@@ -335,6 +494,7 @@ class _TripCard extends StatelessWidget {
   const _TripCard({
     required this.from,
     required this.to,
+    required this.network,
     required this.l10n,
     required this.swapTurns,
     required this.onPickFrom,
@@ -344,15 +504,24 @@ class _TripCard extends StatelessWidget {
 
   final Station? from;
   final Station? to;
+  final NetworkData? network;
   final AppLocalizations l10n;
   final double swapTurns;
-  final VoidCallback onPickFrom;
-  final VoidCallback onPickTo;
-  final VoidCallback onSwap;
+  final VoidCallback? onPickFrom;
+  final VoidCallback? onPickTo;
+  final VoidCallback? onSwap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fromStation = from;
+    final toStation = to;
+    final fromLines = fromStation == null
+        ? const <Line>[]
+        : network?.linesServing(fromStation.id) ?? const <Line>[];
+    final toLines = toStation == null
+        ? const <Line>[]
+        : network?.linesServing(toStation.id) ?? const <Line>[];
     return Card(
       child: Padding(
         padding: const EdgeInsetsDirectional.all(18),
@@ -383,13 +552,22 @@ class _TripCard extends StatelessWidget {
                   _StationField(
                     label: l10n.fromLabel,
                     value: from == null ? null : stationName(context, from!),
+                    lines: fromLines,
                     placeholder: l10n.selectStation,
                     onTap: onPickFrom,
                   ),
-                  const SizedBox(height: AppSpace.sm),
+                  const SizedBox(height: AppSpace.xs),
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: theme.colorScheme.outlineVariant,
+                    endIndent: AppSpace.sm,
+                  ),
+                  const SizedBox(height: AppSpace.xs),
                   _StationField(
                     label: l10n.toLabel,
                     value: to == null ? null : stationName(context, to!),
+                    lines: toLines,
                     placeholder: l10n.selectStation,
                     onTap: onPickTo,
                   ),
@@ -422,14 +600,16 @@ class _StationField extends StatelessWidget {
   const _StationField({
     required this.label,
     required this.value,
+    required this.lines,
     required this.placeholder,
     required this.onTap,
   });
 
   final String label;
   final String? value;
+  final List<Line> lines;
   final String placeholder;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -480,6 +660,22 @@ class _StationField extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (lines.isNotEmpty)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final line in lines)
+                        Container(
+                          width: 8,
+                          height: 8,
+                          margin: const EdgeInsetsDirectional.only(end: 3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: parseHexColor(line.colorHex),
+                          ),
+                        ),
+                    ],
+                  ),
                 const SizedBox(width: AppSpace.sm),
                 Icon(
                   Icons.expand_more,

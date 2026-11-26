@@ -85,7 +85,7 @@ class _StationPickerSheetState extends State<_StationPickerSheet> {
             const SizedBox(height: AppSpace.xs),
             TextField(
               controller: _query,
-              autofocus: true,
+              autofocus: false,
               textInputAction: TextInputAction.search,
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(

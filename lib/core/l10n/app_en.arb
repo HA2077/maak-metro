@@ -151,5 +151,46 @@
   "themeDark": "Dark",
   "removeFromHistory": "Remove from history",
   "estimatedLabel": "Estimated time",
-  "minutesShort": "min"
+  "minutesShort": "min",
+  "closedHoursAdvisory": "The metro is closed now — trying to plan something early!?",
+  "metroMap": "Cairo Metro map",
+  "openMetroMap": "Open Cairo Metro map",
+  "lineTermini": "{a} ↔ {b}",
+  "@lineTermini": {
+    "placeholders": {
+      "a": { "type": "String" },
+      "b": { "type": "String" }
+    }
+  },
+  "direction": "Direction: {terminus}",
+  "@direction": {
+    "placeholders": {
+      "terminus": { "type": "String" }
+    }
+  },
+  "ticketYellow": "Yellow ticket",
+  "ticketGreen": "Green ticket",
+  "ticketPink": "Pink ticket",
+  "ticketLightBrown": "Light brown ticket",
+  "arrivalTime": "Arrive ~{time}",
+  "@arrivalTime": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "amMarker": "AM",
+  "pmMarker": "PM",
+  "stopPassed": "Passed stop",
+  "stopUpcoming": "Next stop",
+  "reverseTrip": "Reverse trip",
+  "copyTrip": "Copy trip summary",
+  "routeCopied": "Route copied",
+  "routeEndpoints": "{from} → {to}",
+  "@routeEndpoints": {
+    "placeholders": {
+      "from": { "type": "String" },
+      "to": { "type": "String" }
+    }
+  },
+  "nextStop": "1 stop (next station)"
 }

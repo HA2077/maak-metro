@@ -158,5 +158,46 @@
   "themeDark": "غامق",
   "removeFromHistory": "إزالة من السجل",
   "estimatedLabel": "الوقت التقديري",
-  "minutesShort": "دقيقة"
+  "minutesShort": "دقيقة",
+  "closedHoursAdvisory": "المترو قافل دلوقتي.. بتخطط لمشوار بدري ولا إيه؟",
+  "metroMap": "خريطة مترو القاهرة",
+  "openMetroMap": "افتح خريطة مترو القاهرة",
+  "lineTermini": "{a} ↔ {b}",
+  "@lineTermini": {
+    "placeholders": {
+      "a": { "type": "String" },
+      "b": { "type": "String" }
+    }
+  },
+  "direction": "اتجاه: {terminus}",
+  "@direction": {
+    "placeholders": {
+      "terminus": { "type": "String" }
+    }
+  },
+  "ticketYellow": "تذكرة صفراء",
+  "ticketGreen": "تذكرة خضراء",
+  "ticketPink": "تذكرة وردية",
+  "ticketLightBrown": "تذكرة بنّية فاتحة",
+  "arrivalTime": "وصول ~{time}",
+  "@arrivalTime": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "amMarker": "ص",
+  "pmMarker": "م",
+  "stopPassed": "محطة تم تجاوزها",
+  "stopUpcoming": "المحطة التالية",
+  "reverseTrip": "اتجاه العودة",
+  "copyTrip": "انسخ ملخص المسار",
+  "routeCopied": "تم نسخ المسار",
+  "routeEndpoints": "{from} ← {to}",
+  "@routeEndpoints": {
+    "placeholders": {
+      "from": { "type": "String" },
+      "to": { "type": "String" }
+    }
+  },
+  "nextStop": "محطة واحدة (المحطة التالية)"
 }

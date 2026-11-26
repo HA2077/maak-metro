@@ -303,4 +303,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get minutesShort => 'min';
+
+  @override
+  String get closedHoursAdvisory =>
+      'The metro is closed now — trying to plan something early!?';
+
+  @override
+  String get metroMap => 'Cairo Metro map';
+
+  @override
+  String get openMetroMap => 'Open Cairo Metro map';
+
+  @override
+  String lineTermini(String a, String b) {
+    return '$a ↔ $b';
+  }
+
+  @override
+  String direction(String terminus) {
+    return 'Direction: $terminus';
+  }
+
+  @override
+  String get ticketYellow => 'Yellow ticket';
+
+  @override
+  String get ticketGreen => 'Green ticket';
+
+  @override
+  String get ticketPink => 'Pink ticket';
+
+  @override
+  String get ticketLightBrown => 'Light brown ticket';
+
+  @override
+  String arrivalTime(String time) {
+    return 'Arrive ~$time';
+  }
+
+  @override
+  String get amMarker => 'AM';
+
+  @override
+  String get pmMarker => 'PM';
+
+  @override
+  String get stopPassed => 'Passed stop';
+
+  @override
+  String get stopUpcoming => 'Next stop';
+
+  @override
+  String get reverseTrip => 'Reverse trip';
+
+  @override
+  String get copyTrip => 'Copy trip summary';
+
+  @override
+  String get routeCopied => 'Route copied';
+
+  @override
+  String routeEndpoints(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get nextStop => '1 stop (next station)';
 }

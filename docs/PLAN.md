@@ -1,6 +1,6 @@
 # Maak Metro (معاك): Project Plan
 
-Android Development final project · Flutter + SQLite · Team of 6 · Plan date 11/17/2026 · Feature freeze 11/25 · Presentation 11/28/2026
+Android Development final project · Flutter + SQLite · Team of 6 · Plan date 11/17/2026 · Feature freeze 11/26 · Presentation 11/28/2026
 
 ## 0. Locked decisions
 
@@ -12,7 +12,7 @@ Android Development final project · Flutter + SQLite · Team of 6 · Plan date 
 - Routing constants: `perStopMinutes = 2.5`, `transferPenaltyMinutes = 7.5` (1 transfer = 3 stops).
 - Fare station count includes the boarding station: `FareCalculator` defaults to `countBoardingStation: true` (D-1 option B).
 - Single source of truth: `assets/metro_seed.json`, loaded into SQLite on first run.
-- Scope is final: no monorail, GPS, maps, online APIs, accounts or backend. Stretch (only after everything else works): fuzzy Arabic station search, discounted fares, line diagram.
+- Scope is final: no monorail, GPS, online maps, online APIs, accounts or backend. The bundled offline schematic is in; fuzzy Arabic aliases, discounted fares and new line diagrams are out.
 - Data source: the official Cairo Metro website. Snapshot rule: open stations only, as of the snapshot date written into the seed file (confirmation tracked in D-4).
 
 ## 1. Seed file format (`assets/metro_seed.json`)
@@ -21,26 +21,26 @@ Owner: Abdullah. Reviewers: Hassan and Youssef. The format below is frozen once 
 
 ```json
 {
-  "version": 1,
-  "snapshot_date": "2026-11-18",
+  "version": 3,
+  "snapshot_date": "2026-11-21",
   "lines": [
-    { "id": 1, "name_ar": "الخط الأول", "name_en": "Line 1", "color_hex": "#1E63B8" }
+    { "id": 1, "name_ar": "الخط الأول", "name_en": "Line 1", "color_hex": "#1E63B8", "terminus_a_ar": "حلوان", "terminus_a_en": "Helwan", "terminus_b_ar": "المرج الجديدة", "terminus_b_en": "New El-Marg" }
   ],
   "stations": [
     { "id": "sadat", "name_ar": "السادات", "name_en": "Sadat" }
   ],
   "line_branches": [
-    { "line_id": 3, "branch": "rod_el_farag", "starts_after": "kit_kat" },
-    { "line_id": 3, "branch": "cairo_uni", "starts_after": "kit_kat" }
+    { "line_id": 3, "branch": "rod_el_farag", "starts_after": "kit_kat", "terminus_ar": "محور روض الفرج", "terminus_en": "Rod El-Farag Corridor" },
+    { "line_id": 3, "branch": "cairo_uni", "starts_after": "kit_kat", "terminus_ar": "جامعة القاهرة", "terminus_en": "Cairo University" }
   ],
   "line_stations": [
     { "line_id": 1, "station_id": "sadat", "branch": "main", "seq": 18 }
   ],
   "fares": [
-    { "max_stations": 9, "price_egp": 10 },
-    { "max_stations": 16, "price_egp": 12 },
-    { "max_stations": 23, "price_egp": 15 },
-    { "max_stations": 39, "price_egp": 20 }
+    { "max_stations": 9, "price_egp": 10, "ticket_color": "yellow" },
+    { "max_stations": 16, "price_egp": 12, "ticket_color": "green" },
+    { "max_stations": 23, "price_egp": 15, "ticket_color": "pink" },
+    { "max_stations": 39, "price_egp": 20, "ticket_color": "lightBrown" }
   ]
 }
 ```
@@ -51,28 +51,31 @@ Rules:
 2. An interchange is the same `station_id` appearing in `line_stations` once per line. No special flag. Expected interchanges to verify: Sadat, Al-Shohadaa (Lines 1 and 2), Attaba (Lines 2 and 3), Nasser (Lines 1 and 3). The data decides, not this list.
 3. `seq` starts at 1 and is contiguous **per (line_id, branch)**. Stations on Lines 1 and 2 use branch `main` (see D-6).
 4. Line 3: `main` runs from Adly Mansour to Kit Kat. Each branch (`rod_el_farag`, `cairo_uni`) starts its own `seq` at 1, and its first station is adjacent to the `starts_after` station. Branch names and station membership are confirmed in D-3.
-5. Fares are copied from the official fares page and re-verified before the demo. Never hardcoded in Dart.
+5. Fares are copied from the official fares page and re-verified before the demo. Never hardcoded in Dart. `ticket_color` is one of `yellow`, `green`, `pink`, `lightBrown` and describes the physical ticket tier, not the price.
+6. Lines carry `terminus_a_ar/en` and `terminus_b_ar/en`; line branches carry `terminus_ar/en`. These are the boardable directions shown in the UI and come from the official line descriptions, never from a Dart constant.
 
 ## 2. SQLite schema
 
 Owner: Mahmoud. Foreign keys on (`PRAGMA foreign_keys = ON` in `onConfigure`).
 
 ```sql
-CREATE TABLE lines (id INTEGER PRIMARY KEY, name_ar TEXT NOT NULL, name_en TEXT NOT NULL, color_hex TEXT NOT NULL);
+CREATE TABLE lines (id INTEGER PRIMARY KEY, name_ar TEXT NOT NULL, name_en TEXT NOT NULL, color_hex TEXT NOT NULL, terminus_a_ar TEXT, terminus_a_en TEXT, terminus_b_ar TEXT, terminus_b_en TEXT);
 CREATE TABLE stations (id TEXT PRIMARY KEY, name_ar TEXT NOT NULL, name_en TEXT NOT NULL);
-CREATE TABLE line_branches (line_id INTEGER NOT NULL REFERENCES lines(id), branch TEXT NOT NULL, starts_after TEXT NOT NULL REFERENCES stations(id), PRIMARY KEY (line_id, branch));
+CREATE TABLE line_branches (line_id INTEGER NOT NULL REFERENCES lines(id), branch TEXT NOT NULL, starts_after TEXT NOT NULL REFERENCES stations(id), terminus_ar TEXT, terminus_en TEXT, PRIMARY KEY (line_id, branch));
 CREATE TABLE line_stations (line_id INTEGER NOT NULL REFERENCES lines(id), station_id TEXT NOT NULL REFERENCES stations(id), branch TEXT NOT NULL, seq INTEGER NOT NULL, PRIMARY KEY (line_id, branch, seq), UNIQUE (line_id, station_id));
-CREATE TABLE fares (max_stations INTEGER PRIMARY KEY, price_egp INTEGER NOT NULL);
+CREATE TABLE fares (max_stations INTEGER PRIMARY KEY, price_egp INTEGER NOT NULL, ticket_color TEXT);
 CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT, from_id TEXT NOT NULL REFERENCES stations(id), to_id TEXT NOT NULL REFERENCES stations(id), created_at TEXT NOT NULL, UNIQUE (from_id, to_id));
 CREATE TABLE history (id INTEGER PRIMARY KEY AUTOINCREMENT, from_id TEXT NOT NULL REFERENCES stations(id), to_id TEXT NOT NULL REFERENCES stations(id), searched_at TEXT NOT NULL);
 ```
 
-Changes from the first plan: `line_stations` gains `branch` and `seq`, and `line_branches` is new.
+Changes from the first plan: `line_stations` gains `branch` and `seq`, and `line_branches` is new. Schema version 2 adds the terminus columns and `fares.ticket_color` through `onUpgrade`; the columns are nullable so old rows remain readable until the version 2 seed replaces them.
 
 Seeding:
 
+Bootstrap awaits only `SharedPreferences.getInstance()` and `DbHelper.database`, then calls `runApp()`. Seeding runs inside `SqliteNetworkRepository.loadNetwork()`; a failure reaches `NetworkCubit`'s error state and the retry screen in `lib/app.dart`, never a blank app. `library.refresh()` runs after the first frame and logs its error with `debugPrint` so a saved-trip failure does not replace the UI.
+
 1. On first run, read the JSON asset and insert everything in one transaction. If it fails, roll back and show a clear error screen, not a blank app.
-2. Store `seed_version` in `shared_preferences`. If the JSON version is higher than the stored one, re-seed the reference tables (`lines`, `stations`, `line_branches`, `line_stations`, `fares`) and leave `favorites` and `history` untouched.
+2. Store `seed_version` in `shared_preferences`. If the JSON version is higher than the stored one, re-seed the reference tables (`lines`, `stations`, `line_branches`, `line_stations`, `fares`) and leave `favorites` and `history` untouched. A seed version bump that adds columns must ship with the matching `databaseVersion` bump and `onUpgrade` migration.
 3. History keeps the latest 50 rows; older ones are deleted on insert. Saving the same pair twice as a favorite is a no-op.
 
 ## 3. Dart contract (models and repository)
@@ -83,6 +86,7 @@ Owner: Hassan. Models live in the owning feature’s `domain/models/`. **Pure Da
 class Line {
   final int id;
   final String nameAr, nameEn, colorHex;
+  final String terminusAAr, terminusAEn, terminusBAr, terminusBEn;
   String localizedName(String languageCode);
 }
 class Station {
@@ -90,8 +94,8 @@ class Station {
   String localizedName(String languageCode);
 }
 class LineStation { final int lineId; final String stationId, branch; final int seq; }
-class LineBranch { final int lineId; final String branch, startsAfter; }
-class FareBracket { final int maxStations, priceEgp; }
+class LineBranch { final int lineId; final String branch, startsAfter, terminusAr, terminusEn; }
+class FareBracket { final int maxStations, priceEgp, ticketColor; }
 
 class NetworkData {
   final List<Line> lines;
@@ -190,11 +194,11 @@ The graph is undirected, so A to B and B to A cost the same.
 
 Navigation: bottom bar with four tabs (Planner, Lines, Library, Settings). The Result screen is pushed from the Planner and from Library items. That makes five screens.
 
-**1. Planner (home).** From field, To field, swap button, "Find route" button (disabled until both are set and different). Tapping a field opens a searchable station picker (type to filter, shows the active-language name, other language as subtitle). Below: last 3 searches as chips. Errors: same station, no route.
+**1. Planner (home).** Greeting, closed-hours advisory (12:15–05:15) and a 48dp map action above the From/To/swap card. Tapping From or To opens a searchable station picker (active-language name, other language as subtitle). Below the button: favorites (up to 2) and recent searches (up to 3) in one grouped card. "Find route" is disabled until both stations are set, different, and the network is ready; all station and swap actions are also disabled while loading or after an error. Errors: same station, no route.
 
-**2. Route Result.** Summary header with time (marked as an estimate), station count, transfers and fare. Then one card per leg: line color chip and name, boarding and alighting station, collapsible list of stations in between. Transfer markers between cards ("Change to Line 2 at Sadat"). Star button adds or removes the favorite. The search is saved to history when the result opens.
+**2. Route Result.** Summary header with estimated time, estimated arrival, station count, transfers, fare and a ticket-color badge. The app bar shows the origin → destination subtitle, a star to toggle the favorite, a reverse-trip action and a copy-summary action. Each leg card shows the line chip, boarding/alighting nodes, the boardable terminus direction, a next-stop subtitle on two-station legs, and tappable intermediate stops that mark passed stops up to the tap. Transfer rows join legs with a continuous connector. The search is saved to history when the result opens, not when reversing or reopening a saved trip.
 
-**3. Lines and Stations.** List of the three lines with color. Tap a line to see its stations in order (Line 3 grouped by branch). Tap a station for a bottom sheet with both names and the lines it serves. "Set as From" and "Set as To" buttons feed the Planner.
+**3. Lines and Stations.** List of the three lines with color and bidirectional terminus headers; a map action opens the bundled schematic (`assets/images/metro_map.png`) in a zoomable modal sheet. Tap a line to see its stations in order (Line 3 grouped by branch). Tap a station for a bottom sheet with both names and the lines it serves. "Set as From" and "Set as To" buttons feed the Planner.
 
 **4. Favorites and History.** Two tabs. Tap an item to open its result. Swipe to delete a favorite. "Clear history" with a confirmation.
 
@@ -216,7 +220,7 @@ Arabic search helper (`lib/core/utils/arabic_normalize.dart`, Omar): strip diacr
 ```
 maak_metro/
   assets/metro_seed.json                 (Abdullah)
-  docs/PLAN.md, docs/ISSUES.md, docs/M0_SETUP.md   (Hassan)
+  docs/PLAN.md, docs/design.md, docs/data-sources.md (Hassan)
   lib/main.dart, lib/app.dart, lib/home_shell.dart
   lib/core/           shared UI utilities and database setup
   lib/features/

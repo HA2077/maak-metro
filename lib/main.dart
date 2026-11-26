@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:maak_metro/core/data/db_helper.dart';
 import 'package:maak_metro/features/library/data/sqlite_library_repository.dart';
 import 'package:maak_metro/features/library/presentation/library_cubit.dart';
-import 'package:maak_metro/features/network/data/seed_loader.dart';
 import 'package:maak_metro/features/network/data/sqlite_network_repository.dart';
 import 'package:maak_metro/features/network/presentation/network_cubit.dart';
 import 'package:maak_metro/features/planner/presentation/planner_cubit.dart';
@@ -17,10 +18,9 @@ import 'package:maak_metro/features/settings/presentation/settings_cubit.dart';
 import 'app.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   if (kDebugMode) {
     DevicePreview.enable();
-  } else {
-    WidgetsFlutterBinding.ensureInitialized();
   }
   await _bootstrap();
 }
@@ -34,7 +34,6 @@ Future<void> _bootstrap() async {
   try {
     final prefs = await SharedPreferences.getInstance();
     final db = await helper.database;
-    await SeedLoader(db, prefs).seedIfNeeded();
     settings = SettingsCubit(PreferencesSettingsRepository(prefs));
     library = LibraryCubit(SqliteLibraryRepository(db));
     network = NetworkCubit(SqliteNetworkRepository(db, prefs));
@@ -42,9 +41,6 @@ Future<void> _bootstrap() async {
     runApp(MaakMetroApp(startupError: error, onRetry: _bootstrap));
     return;
   }
-
-  await library.refresh();
-  await network.load();
 
   runApp(
     MultiBlocProvider(
@@ -55,6 +51,13 @@ Future<void> _bootstrap() async {
         BlocProvider(create: (_) => PlannerCubit()),
       ],
       child: const MaakMetroApp(),
+    ),
+  );
+
+  unawaited(network.load());
+  unawaited(
+    library.refresh().catchError(
+      (Object error) => debugPrint('Library refresh failed: $error'),
     ),
   );
 }

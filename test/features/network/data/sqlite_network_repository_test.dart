@@ -57,6 +57,18 @@ void main() {
       expect(line!.nameAr, firstLine['name_ar']);
       expect(line.nameEn, firstLine['name_en']);
       expect(line.colorHex, firstLine['color_hex']);
+      expect(line.terminusAEn, firstLine['terminus_a_en']);
+      expect(line.terminusBAr, firstLine['terminus_b_ar']);
+
+      final firstBranch =
+          _list(seed['line_branches']).first as Map<String, Object?>;
+      final branch = network.branches.firstWhere(
+        (item) => item.branch == firstBranch['branch'],
+      );
+      expect(branch.terminusEn, firstBranch['terminus_en']);
+
+      final firstFare = _list(seed['fares']).first as Map<String, Object?>;
+      expect(network.fares.first.ticketColor, firstFare['ticket_color']);
     });
 
     test('orders lines and stations by id', () async {

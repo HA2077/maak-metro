@@ -315,6 +315,27 @@ void main() {
         : false,
   );
 
+  test('v2 terminus and ticket color fields are present', () {
+    for (final row in _array(seed['lines'], 'lines')) {
+      final line = _object(row, 'line');
+      _text(line['terminus_a_ar'], 'line.terminus_a_ar');
+      _text(line['terminus_a_en'], 'line.terminus_a_en');
+      _text(line['terminus_b_ar'], 'line.terminus_b_ar');
+      _text(line['terminus_b_en'], 'line.terminus_b_en');
+    }
+    for (final row in _array(seed['line_branches'], 'line_branches')) {
+      final branch = _object(row, 'line_branch');
+      _text(branch['terminus_ar'], 'line_branch.terminus_ar');
+      _text(branch['terminus_en'], 'line_branch.terminus_en');
+    }
+    const colors = <String>{'yellow', 'green', 'pink', 'lightBrown'};
+    for (final row in _array(seed['fares'], 'fares')) {
+      final fare = _object(row, 'fare');
+      final color = _text(fare['ticket_color'], 'fare.ticket_color');
+      _check(colors.contains(color), 'unknown ticket_color "$color"');
+    }
+  });
+
   group('seed validator', () {
     test('reports a seq gap with the exact group', () {
       final seed = _fixtureSeed();
