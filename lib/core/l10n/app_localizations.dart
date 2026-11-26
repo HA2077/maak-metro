@@ -601,6 +601,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'المترو قافل دلوقتي.. بتخطط لمشوار بدري ولا إيه؟'**
   String get closedHoursAdvisory;
+
+  /// No description provided for @metroMap.
+  ///
+  /// In ar, this message translates to:
+  /// **'خريطة مترو القاهرة'**
+  String get metroMap;
+
+  /// No description provided for @openMetroMap.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح خريطة مترو القاهرة'**
+  String get openMetroMap;
 }
 
 class _AppLocalizationsDelegate

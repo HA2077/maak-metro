@@ -152,5 +152,7 @@
   "removeFromHistory": "Remove from history",
   "estimatedLabel": "Estimated time",
   "minutesShort": "min",
-  "closedHoursAdvisory": "The metro is closed now — trying to plan something early!?"
+  "closedHoursAdvisory": "The metro is closed now — trying to plan something early!?",
+  "metroMap": "Cairo Metro map",
+  "openMetroMap": "Open Cairo Metro map"
 }

@@ -312,4 +312,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get closedHoursAdvisory =>
       'المترو قافل دلوقتي.. بتخطط لمشوار بدري ولا إيه؟';
+
+  @override
+  String get metroMap => 'خريطة مترو القاهرة';
+
+  @override
+  String get openMetroMap => 'افتح خريطة مترو القاهرة';
 }

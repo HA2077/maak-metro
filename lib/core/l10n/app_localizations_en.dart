@@ -307,4 +307,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get closedHoursAdvisory =>
       'The metro is closed now — trying to plan something early!?';
+
+  @override
+  String get metroMap => 'Cairo Metro map';
+
+  @override
+  String get openMetroMap => 'Open Cairo Metro map';
 }

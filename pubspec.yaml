@@ -70,6 +70,7 @@ flutter:
   assets:
     - assets/metro_seed.json
     - assets/images/logo.png
+    - assets/images/metro_map.png
   fonts:
     - family: Noto Sans Arabic
       fonts:

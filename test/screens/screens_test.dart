@@ -191,6 +191,21 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('opens the zoomable metro map', (tester) async {
+      await _pumpScreen(
+        tester,
+        LinesScreen(onStationSelected: (_, {required from}) {}),
+      );
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(LinesScreen)),
+      );
+      expect(find.text(l10n.metroMap), findsOneWidget);
+      await tester.tap(find.text(l10n.metroMap));
+      await tester.pumpAndSettle();
+      expect(find.byType(InteractiveViewer), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   });
 
   group('LibraryScreen', () {

@@ -13,6 +13,8 @@ import 'package:maak_metro/features/network/presentation/widgets/line_chip.dart'
 
 import 'network_cubit.dart';
 
+const String _mapAsset = 'assets/images/metro_map.png';
+
 class LinesScreen extends StatelessWidget {
   const LinesScreen({super.key, required this.onStationSelected});
 
@@ -23,6 +25,69 @@ class LinesScreen extends StatelessWidget {
       .where((word) => word.isNotEmpty)
       .map((word) => '${word[0].toUpperCase()}${word.substring(1)}')
       .join(' ');
+
+  void _showMap(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      constraints: const BoxConstraints(maxWidth: AppLayout.maxContentWidth),
+      backgroundColor: AppTheme.light.colorScheme.surface,
+      builder: (sheetContext) {
+        final l10n = AppLocalizations.of(sheetContext);
+        return Theme(
+          data: AppTheme.light,
+          child: FractionallySizedBox(
+            heightFactor: 0.9,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AppSpace.lg,
+                AppSpace.md,
+                AppSpace.lg,
+                AppSpace.md,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Semantics(
+                          header: true,
+                          child: Text(
+                            l10n.metroMap,
+                            style: AppTheme.light.textTheme.titleLarge,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        tooltip: l10n.close,
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpace.sm),
+                  Expanded(
+                    child: Semantics(
+                      label: l10n.metroMap,
+                      child: InteractiveViewer(
+                        minScale: 1.0,
+                        maxScale: 4.0,
+                        child: Center(
+                          child: Image.asset(_mapAsset, fit: BoxFit.contain),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   void _showStation(BuildContext context, Station station) {
     final network = context.read<NetworkCubit>().state.network;
@@ -142,7 +207,12 @@ class LinesScreen extends StatelessWidget {
       appBar: AppBar(title: Text(l10n.linesTitle)),
       body: network == null || network.lines.isEmpty
           ? const SizedBox.shrink()
-          : _lineList(context, network, theme),
+          : Column(
+              children: [
+                _MapPreviewCard(onTap: () => _showMap(context)),
+                Expanded(child: _lineList(context, network, theme)),
+              ],
+            ),
     );
   }
 
@@ -267,6 +337,65 @@ class _StopDot extends StatelessWidget {
             decoration: BoxDecoration(shape: BoxShape.circle, color: color),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MapPreviewCard extends StatelessWidget {
+  const _MapPreviewCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return FadeSlideIn(
+      child: Semantics(
+        button: true,
+        label: l10n.openMetroMap,
+        onTap: onTap,
+        child: ExcludeSemantics(
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppRadius.card),
+            child: Theme(
+              data: AppTheme.light,
+              child: Builder(
+                builder: (context) {
+                  final theme = Theme.of(context);
+                  return Card(
+                    color: theme.colorScheme.surface,
+                    margin: const EdgeInsetsDirectional.only(
+                      start: 18,
+                      top: 18,
+                      end: 18,
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 88,
+                          height: 72,
+                          child: Image.asset(_mapAsset, fit: BoxFit.cover),
+                        ),
+                        const SizedBox(width: AppSpace.md),
+                        Expanded(
+                          child: Text(
+                            l10n.metroMap,
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                        Icon(Icons.zoom_in, color: theme.colorScheme.primary),
+                        const SizedBox(width: AppSpace.lg),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
