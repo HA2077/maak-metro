@@ -82,12 +82,10 @@ class _LegCardState extends State<LegCard> {
               children: [
                 if (line != null) LineChip(line: line),
                 const SizedBox(height: AppSpace.sm),
-                Text(
-                  l10n.legFromTo(
-                    stationNameById(context, network, ids.first),
-                    stationNameById(context, network, ids.last),
-                  ),
-                  style: theme.textTheme.titleMedium,
+                _LegNode(
+                  name: stationNameById(context, network, ids.first),
+                  color: color,
+                  tracked: true,
                 ),
                 if (terminus.isNotEmpty)
                   Text(
@@ -127,11 +125,86 @@ class _LegCardState extends State<LegCard> {
                       ],
                     ),
                   ),
+                if (middle.isEmpty)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      start: 28,
+                      bottom: AppSpace.xs,
+                    ),
+                    child: Text(
+                      l10n.nextStop,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                _LegNode(
+                  name: stationNameById(context, network, ids.last),
+                  color: color,
+                  tracked: false,
+                ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _LegNode extends StatelessWidget {
+  const _LegNode({
+    required this.name,
+    required this.color,
+    required this.tracked,
+  });
+
+  final String name;
+  final Color color;
+  final bool tracked;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        SizedBox(
+          width: 20,
+          height: 32,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              if (tracked)
+                Container(
+                  width: 2,
+                  height: 32,
+                  color: color.withValues(alpha: 0.35),
+                ),
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color,
+                  border: Border.all(
+                    color: theme.colorScheme.surface,
+                    width: 2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: AppSpace.sm),
+        Expanded(
+          child: Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.titleMedium,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -182,10 +255,7 @@ class _CheckableStop extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Container(
-                        width: 2,
-                        color: theme.colorScheme.outlineVariant,
-                      ),
+                      Container(width: 2, color: color.withValues(alpha: 0.35)),
                       Container(
                         width: upcoming ? 12 : 8,
                         height: upcoming ? 12 : 8,

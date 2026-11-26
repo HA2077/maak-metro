@@ -12,7 +12,6 @@ import 'package:maak_metro/core/utils/directions.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/features/library/presentation/library_cubit.dart';
 import 'package:maak_metro/features/network/domain/models/models.dart';
-import 'package:maak_metro/features/network/presentation/widgets/line_chip.dart';
 import 'package:maak_metro/features/planner/domain/domain.dart';
 import 'package:maak_metro/features/planner/presentation/planner_cubit.dart';
 import 'package:maak_metro/features/planner/presentation/widgets/count_up.dart';
@@ -167,7 +166,24 @@ class _RouteResultScreenState extends State<RouteResultScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.routeTitle),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.routeTitle),
+            Text(
+              l10n.routeEndpoints(
+                stationNameById(context, network, result.fromId),
+                stationNameById(context, network, result.toId),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
         actions: [
           _CopyButton(result: result, network: network),
           _FavoriteButton(fromId: result.fromId, toId: result.toId),
@@ -335,6 +351,7 @@ class _RouteResultScreenState extends State<RouteResultScreen> {
                               Expanded(
                                 child: SummaryStat(
                                   icon: Icons.payments_outlined,
+                                  iconColor: badge?.background,
                                   text: localizedDigits(
                                     context,
                                     l10n.fareEgp(result.fareEgp.toString()),
@@ -356,7 +373,6 @@ class _RouteResultScreenState extends State<RouteResultScreen> {
                       child: _TransferRow(
                         network: network,
                         previous: result.legs[index - 1],
-                        next: result.legs[index],
                       ),
                     ),
                   FadeSlideIn(
@@ -450,21 +466,15 @@ class _FavoriteButton extends StatelessWidget {
 }
 
 class _TransferRow extends StatelessWidget {
-  const _TransferRow({
-    required this.network,
-    required this.previous,
-    required this.next,
-  });
+  const _TransferRow({required this.network, required this.previous});
 
   final NetworkData network;
   final RouteLeg previous;
-  final RouteLeg next;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final line = network.lineById(next.lineId);
     final previousStops = previous.stationIds;
     final station = previousStops.isEmpty
         ? ''
@@ -474,12 +484,25 @@ class _TransferRow extends StatelessWidget {
       padding: const EdgeInsetsDirectional.symmetric(vertical: AppSpace.sm),
       child: Row(
         children: [
-          Icon(Icons.alt_route, size: 18, color: theme.colorScheme.primary),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 24),
+            child: SizedBox(
+              width: 20,
+              height: 28,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(width: 2, color: theme.colorScheme.outlineVariant),
+                  Icon(
+                    Icons.alt_route,
+                    size: 18,
+                    color: theme.colorScheme.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(width: AppSpace.sm),
-          if (line != null) ...[
-            LineChip(line: line),
-            const SizedBox(width: AppSpace.sm),
-          ],
           Expanded(
             child: Text(
               l10n.changeAt(station),

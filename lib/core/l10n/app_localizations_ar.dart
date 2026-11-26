@@ -366,4 +366,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get routeCopied => 'تم نسخ المسار';
+
+  @override
+  String routeEndpoints(String from, String to) {
+    return '$from ← $to';
+  }
+
+  @override
+  String get nextStop => 'محطة واحدة (المحطة التالية)';
 }

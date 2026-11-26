@@ -361,4 +361,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get routeCopied => 'Route copied';
+
+  @override
+  String routeEndpoints(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get nextStop => '1 stop (next station)';
 }

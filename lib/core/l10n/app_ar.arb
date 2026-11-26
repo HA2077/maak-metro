@@ -191,5 +191,13 @@
   "stopUpcoming": "المحطة التالية",
   "reverseTrip": "اتجاه العودة",
   "copyTrip": "انسخ ملخص المسار",
-  "routeCopied": "تم نسخ المسار"
+  "routeCopied": "تم نسخ المسار",
+  "routeEndpoints": "{from} ← {to}",
+  "@routeEndpoints": {
+    "placeholders": {
+      "from": { "type": "String" },
+      "to": { "type": "String" }
+    }
+  },
+  "nextStop": "محطة واحدة (المحطة التالية)"
 }

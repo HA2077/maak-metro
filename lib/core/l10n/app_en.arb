@@ -184,5 +184,13 @@
   "stopUpcoming": "Next stop",
   "reverseTrip": "Reverse trip",
   "copyTrip": "Copy trip summary",
-  "routeCopied": "Route copied"
+  "routeCopied": "Route copied",
+  "routeEndpoints": "{from} → {to}",
+  "@routeEndpoints": {
+    "placeholders": {
+      "from": { "type": "String" },
+      "to": { "type": "String" }
+    }
+  },
+  "nextStop": "1 stop (next station)"
 }

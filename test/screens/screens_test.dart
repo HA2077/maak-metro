@@ -12,6 +12,7 @@ import 'package:maak_metro/features/network/domain/models/models.dart';
 import 'package:maak_metro/features/network/domain/network_repository.dart';
 import 'package:maak_metro/features/network/presentation/lines_screen.dart';
 import 'package:maak_metro/features/network/presentation/network_cubit.dart';
+import 'package:maak_metro/features/network/presentation/widgets/line_chip.dart';
 import 'package:maak_metro/features/planner/domain/domain.dart';
 import 'package:maak_metro/features/planner/presentation/planner_cubit.dart';
 import 'package:maak_metro/features/planner/presentation/planner_screen.dart';
@@ -329,6 +330,16 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('shows route context, next-stop cue and one chip per leg', (
+      tester,
+    ) async {
+      await _pumpScreen(tester, screen, locale: const Locale('en'));
+      expect(find.text('Station t1 → Station s4'), findsOneWidget);
+      expect(find.text('1 stop (next station)'), findsOneWidget);
+      expect(find.byType(LineChip), findsNWidgets(result.legs.length));
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('shows a deterministic estimated arrival', (tester) async {
       await _pumpScreen(
         tester,
@@ -372,6 +383,8 @@ void main() {
       final l10n = AppLocalizations.of(
         tester.element(find.byType(RouteResultScreen)),
       );
+      await tester.drag(find.byType(ListView), const Offset(0, -1000));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(l10n.reverseTrip));
       await tester.pumpAndSettle();
       await tester.tap(find.byTooltip(l10n.copyTrip));

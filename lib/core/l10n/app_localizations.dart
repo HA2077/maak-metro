@@ -697,6 +697,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تم نسخ المسار'**
   String get routeCopied;
+
+  /// No description provided for @routeEndpoints.
+  ///
+  /// In ar, this message translates to:
+  /// **'{from} ← {to}'**
+  String routeEndpoints(String from, String to);
+
+  /// No description provided for @nextStop.
+  ///
+  /// In ar, this message translates to:
+  /// **'محطة واحدة (المحطة التالية)'**
+  String get nextStop;
 }
 
 class _AppLocalizationsDelegate
