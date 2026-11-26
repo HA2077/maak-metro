@@ -1,6 +1,6 @@
 # Maak Metro (معاك): Project Plan
 
-Android Development final project · Flutter + SQLite · Team of 6 · Plan date 11/17/2026 · Feature freeze 11/25 · Presentation 11/28/2026
+Android Development final project · Flutter + SQLite · Team of 6 · Plan date 11/17/2026 · Feature freeze 11/26 · Presentation 11/28/2026
 
 ## 0. Locked decisions
 
@@ -12,7 +12,7 @@ Android Development final project · Flutter + SQLite · Team of 6 · Plan date 
 - Routing constants: `perStopMinutes = 2.5`, `transferPenaltyMinutes = 7.5` (1 transfer = 3 stops).
 - Fare station count includes the boarding station: `FareCalculator` defaults to `countBoardingStation: true` (D-1 option B).
 - Single source of truth: `assets/metro_seed.json`, loaded into SQLite on first run.
-- Scope is final: no monorail, GPS, maps, online APIs, accounts or backend. Stretch (only after everything else works): fuzzy Arabic station search, discounted fares, line diagram.
+- Scope is final: no monorail, GPS, online maps, online APIs, accounts or backend. The bundled offline schematic is in; fuzzy Arabic aliases, discounted fares and new line diagrams are out.
 - Data source: the official Cairo Metro website. Snapshot rule: open stations only, as of the snapshot date written into the seed file (confirmation tracked in D-4).
 
 ## 1. Seed file format (`assets/metro_seed.json`)
@@ -22,7 +22,7 @@ Owner: Abdullah. Reviewers: Hassan and Youssef. The format below is frozen once 
 ```json
 {
   "version": 3,
-  "snapshot_date": "2026-11-18",
+  "snapshot_date": "2026-11-21",
   "lines": [
     { "id": 1, "name_ar": "الخط الأول", "name_en": "Line 1", "color_hex": "#1E63B8", "terminus_a_ar": "حلوان", "terminus_a_en": "Helwan", "terminus_b_ar": "المرج الجديدة", "terminus_b_en": "New El-Marg" }
   ],
@@ -71,6 +71,8 @@ CREATE TABLE history (id INTEGER PRIMARY KEY AUTOINCREMENT, from_id TEXT NOT NUL
 Changes from the first plan: `line_stations` gains `branch` and `seq`, and `line_branches` is new. Schema version 2 adds the terminus columns and `fares.ticket_color` through `onUpgrade`; the columns are nullable so old rows remain readable until the version 2 seed replaces them.
 
 Seeding:
+
+Bootstrap awaits only `SharedPreferences.getInstance()` and `DbHelper.database`, then calls `runApp()`. Seeding runs inside `SqliteNetworkRepository.loadNetwork()`; a failure reaches `NetworkCubit`'s error state and the retry screen in `lib/app.dart`, never a blank app. `library.refresh()` runs after the first frame and logs its error with `debugPrint` so a saved-trip failure does not replace the UI.
 
 1. On first run, read the JSON asset and insert everything in one transaction. If it fails, roll back and show a clear error screen, not a blank app.
 2. Store `seed_version` in `shared_preferences`. If the JSON version is higher than the stored one, re-seed the reference tables (`lines`, `stations`, `line_branches`, `line_stations`, `fares`) and leave `favorites` and `history` untouched. A seed version bump that adds columns must ship with the matching `databaseVersion` bump and `onUpgrade` migration.
@@ -192,11 +194,11 @@ The graph is undirected, so A to B and B to A cost the same.
 
 Navigation: bottom bar with four tabs (Planner, Lines, Library, Settings). The Result screen is pushed from the Planner and from Library items. That makes five screens.
 
-**1. Planner (home).** From field, To field, swap button, "Find route" button (disabled until both are set and different). Tapping a field opens a searchable station picker (type to filter, shows the active-language name, other language as subtitle). Below: last 3 searches as chips. Errors: same station, no route.
+**1. Planner (home).** Greeting, closed-hours advisory (12:15–05:15) and a 48dp map action above the From/To/swap card. Tapping From or To opens a searchable station picker (active-language name, other language as subtitle). Below the button: favorites (up to 2) and recent searches (up to 3) in one grouped card. "Find route" is disabled until both stations are set, different, and the network is ready; all station and swap actions are also disabled while loading or after an error. Errors: same station, no route.
 
-**2. Route Result.** Summary header with time (marked as an estimate), station count, transfers and fare. Then one card per leg: line color chip and name, boarding and alighting station, collapsible list of stations in between. Transfer markers between cards ("Change to Line 2 at Sadat"). Star button adds or removes the favorite. The search is saved to history when the result opens.
+**2. Route Result.** Summary header with estimated time, estimated arrival, station count, transfers, fare and a ticket-color badge. The app bar shows the origin → destination subtitle, a star to toggle the favorite, a reverse-trip action and a copy-summary action. Each leg card shows the line chip, boarding/alighting nodes, the boardable terminus direction, a next-stop subtitle on two-station legs, and tappable intermediate stops that mark passed stops up to the tap. Transfer rows join legs with a continuous connector. The search is saved to history when the result opens, not when reversing or reopening a saved trip.
 
-**3. Lines and Stations.** List of the three lines with color. Tap a line to see its stations in order (Line 3 grouped by branch). Tap a station for a bottom sheet with both names and the lines it serves. "Set as From" and "Set as To" buttons feed the Planner.
+**3. Lines and Stations.** List of the three lines with color and bidirectional terminus headers; a map action opens the bundled schematic (`assets/images/metro_map.png`) in a zoomable modal sheet. Tap a line to see its stations in order (Line 3 grouped by branch). Tap a station for a bottom sheet with both names and the lines it serves. "Set as From" and "Set as To" buttons feed the Planner.
 
 **4. Favorites and History.** Two tabs. Tap an item to open its result. Swipe to delete a favorite. "Clear history" with a confirmation.
 
@@ -218,7 +220,7 @@ Arabic search helper (`lib/core/utils/arabic_normalize.dart`, Omar): strip diacr
 ```
 maak_metro/
   assets/metro_seed.json                 (Abdullah)
-  docs/PLAN.md, docs/ISSUES.md, docs/M0_SETUP.md   (Hassan)
+  docs/PLAN.md, docs/design.md, docs/data-sources.md (Hassan)
   lib/main.dart, lib/app.dart, lib/home_shell.dart
   lib/core/           shared UI utilities and database setup
   lib/features/
