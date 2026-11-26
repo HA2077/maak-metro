@@ -4,6 +4,7 @@ import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/theme/line_colors.dart';
 import 'package:maak_metro/core/utils/digits.dart';
+import 'package:maak_metro/core/utils/directions.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/features/network/domain/models/models.dart';
 import 'package:maak_metro/features/network/presentation/widgets/line_chip.dart';
@@ -31,6 +32,11 @@ class LegCard extends StatelessWidget {
     final middle = ids.length > 2
         ? ids.sublist(1, ids.length - 1)
         : const <String>[];
+    final terminus = legTerminus(
+      leg,
+      network,
+      Localizations.localeOf(context).languageCode,
+    );
 
     // The strip sits in a Stack instead of a stretched Row: a stretched Row
     // needs IntrinsicHeight, which cannot measure an ExpansionTile and
@@ -66,6 +72,13 @@ class LegCard extends StatelessWidget {
                   ),
                   style: theme.textTheme.titleMedium,
                 ),
+                if (terminus.isNotEmpty)
+                  Text(
+                    l10n.direction(terminus),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 if (middle.isNotEmpty)
                   Theme(
                     data: theme.copyWith(dividerColor: Colors.transparent),

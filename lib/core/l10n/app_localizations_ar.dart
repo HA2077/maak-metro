@@ -318,4 +318,26 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get openMetroMap => 'افتح خريطة مترو القاهرة';
+
+  @override
+  String lineTermini(String a, String b) {
+    return '$a ↔ $b';
+  }
+
+  @override
+  String direction(String terminus) {
+    return 'اتجاه: $terminus';
+  }
+
+  @override
+  String get ticketYellow => 'تذكرة صفراء';
+
+  @override
+  String get ticketGreen => 'تذكرة خضراء';
+
+  @override
+  String get ticketPink => 'تذكرة وردية';
+
+  @override
+  String get ticketLightBrown => 'تذكرة بنّية فاتحة';
 }

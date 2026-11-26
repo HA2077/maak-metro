@@ -313,4 +313,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openMetroMap => 'Open Cairo Metro map';
+
+  @override
+  String lineTermini(String a, String b) {
+    return '$a ↔ $b';
+  }
+
+  @override
+  String direction(String terminus) {
+    return 'Direction: $terminus';
+  }
+
+  @override
+  String get ticketYellow => 'Yellow ticket';
+
+  @override
+  String get ticketGreen => 'Green ticket';
+
+  @override
+  String get ticketPink => 'Pink ticket';
+
+  @override
+  String get ticketLightBrown => 'Light brown ticket';
 }

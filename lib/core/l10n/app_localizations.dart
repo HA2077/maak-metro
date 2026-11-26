@@ -613,6 +613,42 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'افتح خريطة مترو القاهرة'**
   String get openMetroMap;
+
+  /// No description provided for @lineTermini.
+  ///
+  /// In ar, this message translates to:
+  /// **'{a} ↔ {b}'**
+  String lineTermini(String a, String b);
+
+  /// No description provided for @direction.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجاه: {terminus}'**
+  String direction(String terminus);
+
+  /// No description provided for @ticketYellow.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكرة صفراء'**
+  String get ticketYellow;
+
+  /// No description provided for @ticketGreen.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكرة خضراء'**
+  String get ticketGreen;
+
+  /// No description provided for @ticketPink.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكرة وردية'**
+  String get ticketPink;
+
+  /// No description provided for @ticketLightBrown.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكرة بنّية فاتحة'**
+  String get ticketLightBrown;
 }
 
 class _AppLocalizationsDelegate

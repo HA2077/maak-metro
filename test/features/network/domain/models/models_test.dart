@@ -138,6 +138,51 @@ void main() {
       expect(fare.maxStations, 9);
       expect(fare.priceEgp, 10);
     });
+
+    test('v2 terminus and ticket color fields', () {
+      final line = Line.fromJson({
+        'id': 1,
+        'name_ar': 'الخط الأول',
+        'name_en': 'Line 1',
+        'color_hex': '#1E63B8',
+        'terminus_a_ar': 'حلوان',
+        'terminus_a_en': 'Helwan',
+        'terminus_b_ar': 'المرج الجديدة',
+        'terminus_b_en': 'New El-Marg',
+      });
+      expect(line.terminusAEn, 'Helwan');
+      expect(line.terminusBAr, 'المرج الجديدة');
+
+      final branch = LineBranch.fromJson({
+        'line_id': 3,
+        'branch': 'cairo_uni',
+        'starts_after': 'kit_kat',
+        'terminus_ar': 'جامعة القاهرة',
+        'terminus_en': 'Cairo University',
+      });
+      expect(branch.terminusEn, 'Cairo University');
+
+      final fare = FareBracket.fromJson({
+        'max_stations': 9,
+        'price_egp': 10,
+        'ticket_color': 'yellow',
+      });
+      expect(fare.ticketColor, 'yellow');
+
+      expect(
+        Line.fromJson({
+          'id': 1,
+          'name_ar': 'الخط الأول',
+          'name_en': 'Line 1',
+          'color_hex': '#1E63B8',
+        }).terminusAEn,
+        '',
+      );
+      expect(
+        FareBracket.fromJson({'max_stations': 9, 'price_egp': 10}).ticketColor,
+        '',
+      );
+    });
   });
 
   group('localizedName', () {

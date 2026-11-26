@@ -30,10 +30,31 @@ class RouteResultScreen extends StatelessWidget {
       ? value.round().toString()
       : value.toStringAsFixed(1);
 
+  static String _ticketColorName(AppLocalizations l10n, String ticketColor) =>
+      switch (ticketColor) {
+        'green' => l10n.ticketGreen,
+        'pink' => l10n.ticketPink,
+        'lightBrown' => l10n.ticketLightBrown,
+        _ => l10n.ticketYellow,
+      };
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    FareBracket? fareBracket;
+    for (final bracket in network.fares) {
+      if (bracket.priceEgp == result.fareEgp) {
+        fareBracket = bracket;
+        break;
+      }
+    }
+    final badge = fareBracket == null
+        ? null
+        : AppTheme.ticketBadge(
+            fareBracket.ticketColor,
+            theme.colorScheme.brightness,
+          );
 
     return Scaffold(
       appBar: AppBar(
@@ -102,6 +123,25 @@ class RouteResultScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (fareBracket != null && badge != null) ...[
+                      const SizedBox(height: AppSpace.md),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: badge.background,
+                          borderRadius: BorderRadius.circular(AppRadius.field),
+                        ),
+                        padding: const EdgeInsetsDirectional.symmetric(
+                          horizontal: AppSpace.md,
+                          vertical: AppSpace.sm,
+                        ),
+                        child: Text(
+                          '${_ticketColorName(l10n, fareBracket.ticketColor)} · ${localizedDigits(context, l10n.fareEgp(result.fareEgp.toString()))}',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: badge.foreground,
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: AppSpace.lg),
                     Row(
                       children: [

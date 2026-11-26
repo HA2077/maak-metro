@@ -7,6 +7,7 @@ import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/theme/line_colors.dart';
 import 'package:maak_metro/core/utils/digits.dart';
+import 'package:maak_metro/core/utils/directions.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/features/network/domain/models/models.dart';
 import 'package:maak_metro/features/network/presentation/widgets/line_chip.dart';
@@ -231,6 +232,11 @@ class LinesScreen extends StatelessWidget {
           if (!branches.contains(row.branch)) branches.add(row.branch);
         }
         final stationCount = {for (final row in rows) row.stationId}.length;
+        final termini = lineTerminusNames(
+          line,
+          Localizations.localeOf(context).languageCode,
+        );
+        final terminusText = l10n.lineTermini(termini.a, termini.b);
 
         return FadeSlideIn(
           index: index,
@@ -246,11 +252,31 @@ class LinesScreen extends StatelessWidget {
                 lineName(context, line),
                 style: theme.textTheme.titleMedium,
               ),
-              subtitle: Text(
-                localizedDigits(context, l10n.stationsCount(stationCount)),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    localizedDigits(context, l10n.stationsCount(stationCount)),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  if (termini.a.isNotEmpty)
+                    Semantics(
+                      label: terminusText,
+                      child: ExcludeSemantics(
+                        child: Text(
+                          terminusText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
               children: [
                 for (final branch in branches) ...[

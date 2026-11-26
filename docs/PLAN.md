@@ -21,26 +21,26 @@ Owner: Abdullah. Reviewers: Hassan and Youssef. The format below is frozen once 
 
 ```json
 {
-  "version": 1,
+  "version": 3,
   "snapshot_date": "2026-11-18",
   "lines": [
-    { "id": 1, "name_ar": "الخط الأول", "name_en": "Line 1", "color_hex": "#1E63B8" }
+    { "id": 1, "name_ar": "الخط الأول", "name_en": "Line 1", "color_hex": "#1E63B8", "terminus_a_ar": "حلوان", "terminus_a_en": "Helwan", "terminus_b_ar": "المرج الجديدة", "terminus_b_en": "New El-Marg" }
   ],
   "stations": [
     { "id": "sadat", "name_ar": "السادات", "name_en": "Sadat" }
   ],
   "line_branches": [
-    { "line_id": 3, "branch": "rod_el_farag", "starts_after": "kit_kat" },
-    { "line_id": 3, "branch": "cairo_uni", "starts_after": "kit_kat" }
+    { "line_id": 3, "branch": "rod_el_farag", "starts_after": "kit_kat", "terminus_ar": "محور روض الفرج", "terminus_en": "Rod El-Farag Corridor" },
+    { "line_id": 3, "branch": "cairo_uni", "starts_after": "kit_kat", "terminus_ar": "جامعة القاهرة", "terminus_en": "Cairo University" }
   ],
   "line_stations": [
     { "line_id": 1, "station_id": "sadat", "branch": "main", "seq": 18 }
   ],
   "fares": [
-    { "max_stations": 9, "price_egp": 10 },
-    { "max_stations": 16, "price_egp": 12 },
-    { "max_stations": 23, "price_egp": 15 },
-    { "max_stations": 39, "price_egp": 20 }
+    { "max_stations": 9, "price_egp": 10, "ticket_color": "yellow" },
+    { "max_stations": 16, "price_egp": 12, "ticket_color": "green" },
+    { "max_stations": 23, "price_egp": 15, "ticket_color": "pink" },
+    { "max_stations": 39, "price_egp": 20, "ticket_color": "lightBrown" }
   ]
 }
 ```
@@ -51,28 +51,29 @@ Rules:
 2. An interchange is the same `station_id` appearing in `line_stations` once per line. No special flag. Expected interchanges to verify: Sadat, Al-Shohadaa (Lines 1 and 2), Attaba (Lines 2 and 3), Nasser (Lines 1 and 3). The data decides, not this list.
 3. `seq` starts at 1 and is contiguous **per (line_id, branch)**. Stations on Lines 1 and 2 use branch `main` (see D-6).
 4. Line 3: `main` runs from Adly Mansour to Kit Kat. Each branch (`rod_el_farag`, `cairo_uni`) starts its own `seq` at 1, and its first station is adjacent to the `starts_after` station. Branch names and station membership are confirmed in D-3.
-5. Fares are copied from the official fares page and re-verified before the demo. Never hardcoded in Dart.
+5. Fares are copied from the official fares page and re-verified before the demo. Never hardcoded in Dart. `ticket_color` is one of `yellow`, `green`, `pink`, `lightBrown` and describes the physical ticket tier, not the price.
+6. Lines carry `terminus_a_ar/en` and `terminus_b_ar/en`; line branches carry `terminus_ar/en`. These are the boardable directions shown in the UI and come from the official line descriptions, never from a Dart constant.
 
 ## 2. SQLite schema
 
 Owner: Mahmoud. Foreign keys on (`PRAGMA foreign_keys = ON` in `onConfigure`).
 
 ```sql
-CREATE TABLE lines (id INTEGER PRIMARY KEY, name_ar TEXT NOT NULL, name_en TEXT NOT NULL, color_hex TEXT NOT NULL);
+CREATE TABLE lines (id INTEGER PRIMARY KEY, name_ar TEXT NOT NULL, name_en TEXT NOT NULL, color_hex TEXT NOT NULL, terminus_a_ar TEXT, terminus_a_en TEXT, terminus_b_ar TEXT, terminus_b_en TEXT);
 CREATE TABLE stations (id TEXT PRIMARY KEY, name_ar TEXT NOT NULL, name_en TEXT NOT NULL);
-CREATE TABLE line_branches (line_id INTEGER NOT NULL REFERENCES lines(id), branch TEXT NOT NULL, starts_after TEXT NOT NULL REFERENCES stations(id), PRIMARY KEY (line_id, branch));
+CREATE TABLE line_branches (line_id INTEGER NOT NULL REFERENCES lines(id), branch TEXT NOT NULL, starts_after TEXT NOT NULL REFERENCES stations(id), terminus_ar TEXT, terminus_en TEXT, PRIMARY KEY (line_id, branch));
 CREATE TABLE line_stations (line_id INTEGER NOT NULL REFERENCES lines(id), station_id TEXT NOT NULL REFERENCES stations(id), branch TEXT NOT NULL, seq INTEGER NOT NULL, PRIMARY KEY (line_id, branch, seq), UNIQUE (line_id, station_id));
-CREATE TABLE fares (max_stations INTEGER PRIMARY KEY, price_egp INTEGER NOT NULL);
+CREATE TABLE fares (max_stations INTEGER PRIMARY KEY, price_egp INTEGER NOT NULL, ticket_color TEXT);
 CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT, from_id TEXT NOT NULL REFERENCES stations(id), to_id TEXT NOT NULL REFERENCES stations(id), created_at TEXT NOT NULL, UNIQUE (from_id, to_id));
 CREATE TABLE history (id INTEGER PRIMARY KEY AUTOINCREMENT, from_id TEXT NOT NULL REFERENCES stations(id), to_id TEXT NOT NULL REFERENCES stations(id), searched_at TEXT NOT NULL);
 ```
 
-Changes from the first plan: `line_stations` gains `branch` and `seq`, and `line_branches` is new.
+Changes from the first plan: `line_stations` gains `branch` and `seq`, and `line_branches` is new. Schema version 2 adds the terminus columns and `fares.ticket_color` through `onUpgrade`; the columns are nullable so old rows remain readable until the version 2 seed replaces them.
 
 Seeding:
 
 1. On first run, read the JSON asset and insert everything in one transaction. If it fails, roll back and show a clear error screen, not a blank app.
-2. Store `seed_version` in `shared_preferences`. If the JSON version is higher than the stored one, re-seed the reference tables (`lines`, `stations`, `line_branches`, `line_stations`, `fares`) and leave `favorites` and `history` untouched.
+2. Store `seed_version` in `shared_preferences`. If the JSON version is higher than the stored one, re-seed the reference tables (`lines`, `stations`, `line_branches`, `line_stations`, `fares`) and leave `favorites` and `history` untouched. A seed version bump that adds columns must ship with the matching `databaseVersion` bump and `onUpgrade` migration.
 3. History keeps the latest 50 rows; older ones are deleted on insert. Saving the same pair twice as a favorite is a no-op.
 
 ## 3. Dart contract (models and repository)
@@ -83,6 +84,7 @@ Owner: Hassan. Models live in the owning feature’s `domain/models/`. **Pure Da
 class Line {
   final int id;
   final String nameAr, nameEn, colorHex;
+  final String terminusAAr, terminusAEn, terminusBAr, terminusBEn;
   String localizedName(String languageCode);
 }
 class Station {
@@ -90,8 +92,8 @@ class Station {
   String localizedName(String languageCode);
 }
 class LineStation { final int lineId; final String stationId, branch; final int seq; }
-class LineBranch { final int lineId; final String branch, startsAfter; }
-class FareBracket { final int maxStations, priceEgp; }
+class LineBranch { final int lineId; final String branch, startsAfter, terminusAr, terminusEn; }
+class FareBracket { final int maxStations, priceEgp, ticketColor; }
 
 class NetworkData {
   final List<Line> lines;

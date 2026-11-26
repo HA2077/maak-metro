@@ -7,7 +7,7 @@ import 'package:maak_metro/core/l10n/app_localizations.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/features/library/presentation/library_cubit.dart';
 import 'package:maak_metro/features/library/presentation/library_screen.dart';
-import 'package:maak_metro/features/network/domain/models/network_data.dart';
+import 'package:maak_metro/features/network/domain/models/models.dart';
 import 'package:maak_metro/features/network/domain/network_repository.dart';
 import 'package:maak_metro/features/network/presentation/lines_screen.dart';
 import 'package:maak_metro/features/network/presentation/network_cubit.dart';
@@ -34,6 +34,43 @@ class _FakeNetworkRepository implements NetworkRepository {
   Future<NetworkData> loadNetwork() async => network;
 }
 
+NetworkData _withTermini(NetworkData base) => NetworkData(
+  lines: [
+    for (final line in base.lines)
+      Line(
+        id: line.id,
+        nameAr: line.nameAr,
+        nameEn: line.nameEn,
+        colorHex: line.colorHex,
+        terminusAAr: 'طرف أ',
+        terminusAEn: 'Terminus A',
+        terminusBAr: 'طرف ب',
+        terminusBEn: 'Terminus B',
+      ),
+  ],
+  stations: base.stations,
+  branches: [
+    for (final branch in base.branches)
+      LineBranch(
+        lineId: branch.lineId,
+        branch: branch.branch,
+        startsAfter: branch.startsAfter,
+        terminusAr: 'طرف فرع',
+        terminusEn: 'Branch terminus',
+      ),
+  ],
+  lineStations: base.lineStations,
+  fares: [
+    for (final fare in base.fares)
+      FareBracket(
+        maxStations: fare.maxStations,
+        priceEgp: fare.priceEgp,
+        ticketColor: 'green',
+      ),
+  ],
+  snapshotDate: base.snapshotDate,
+);
+
 /// Wraps a screen with its Cubits and an Arabic MaterialApp by default.
 Future<void> _pumpScreen(
   WidgetTester tester,
@@ -41,6 +78,7 @@ Future<void> _pumpScreen(
   Locale locale = const Locale('ar'),
   Size size = const Size(360, 800),
   double textScale = 1,
+  NetworkData? network,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -52,7 +90,7 @@ Future<void> _pumpScreen(
   final settings = SettingsCubit(PreferencesSettingsRepository(prefs));
   await settings.setLocale(locale);
 
-  final repo = _FakeNetworkRepository(buildFixtureNetwork());
+  final repo = _FakeNetworkRepository(network ?? buildFixtureNetwork());
   final library = LibraryCubit(FakeLibraryRepository());
   await library.refresh();
   final route = NetworkCubit(repo);
@@ -206,6 +244,20 @@ void main() {
       expect(find.byType(InteractiveViewer), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('shows bidirectional terminus headers', (tester) async {
+      await _pumpScreen(
+        tester,
+        LinesScreen(onStationSelected: (_, {required from}) {}),
+        locale: const Locale('en'),
+        network: _withTermini(network),
+      );
+      expect(
+        find.text('Terminus A ↔ Terminus B'),
+        findsNWidgets(network.lines.length),
+      );
+      expect(tester.takeException(), isNull);
+    });
   });
 
   group('LibraryScreen', () {
@@ -246,6 +298,17 @@ void main() {
     testWidgets('shows the summary and one card per leg', (tester) async {
       await _pumpScreen(tester, screen);
       expect(find.byType(LegCard), findsNWidgets(result.legs.length));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('shows direction and ticket color badge', (tester) async {
+      await _pumpScreen(
+        tester,
+        RouteResultScreen(result: result, network: _withTermini(network)),
+        locale: const Locale('en'),
+      );
+      expect(find.textContaining('Direction: Terminus'), findsWidgets);
+      expect(find.textContaining('Green ticket'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 

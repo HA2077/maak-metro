@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -62,6 +64,69 @@ void main() {
         }),
         throwsA(isA<DatabaseException>()),
       );
+    });
+
+    test('upgrades a version 1 database and keeps user tables', () async {
+      final path =
+          '${Directory.systemTemp.path}/maak_upgrade_${DateTime.now().microsecondsSinceEpoch}.db';
+      final old = await openDatabase(
+        path,
+        version: 1,
+        onCreate: (db, _) async {
+          await db.execute(
+            'CREATE TABLE lines (id INTEGER PRIMARY KEY, name_ar TEXT NOT NULL, name_en TEXT NOT NULL, color_hex TEXT NOT NULL)',
+          );
+          await db.execute(
+            'CREATE TABLE stations (id TEXT PRIMARY KEY, name_ar TEXT NOT NULL, name_en TEXT NOT NULL)',
+          );
+          await db.execute(
+            'CREATE TABLE line_branches (line_id INTEGER NOT NULL REFERENCES lines(id), branch TEXT NOT NULL, starts_after TEXT NOT NULL REFERENCES stations(id), PRIMARY KEY (line_id, branch))',
+          );
+          await db.execute(
+            'CREATE TABLE line_stations (line_id INTEGER NOT NULL REFERENCES lines(id), station_id TEXT NOT NULL REFERENCES stations(id), branch TEXT NOT NULL, seq INTEGER NOT NULL, PRIMARY KEY (line_id, branch, seq), UNIQUE (line_id, station_id))',
+          );
+          await db.execute(
+            'CREATE TABLE fares (max_stations INTEGER PRIMARY KEY, price_egp INTEGER NOT NULL)',
+          );
+          await db.execute(
+            'CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT, from_id TEXT NOT NULL REFERENCES stations(id), to_id TEXT NOT NULL REFERENCES stations(id), created_at TEXT NOT NULL, UNIQUE (from_id, to_id))',
+          );
+          await db.execute(
+            'CREATE TABLE history (id INTEGER PRIMARY KEY AUTOINCREMENT, from_id TEXT NOT NULL REFERENCES stations(id), to_id TEXT NOT NULL REFERENCES stations(id), searched_at TEXT NOT NULL)',
+          );
+        },
+      );
+      await old.insert('stations', {
+        'id': 's1',
+        'name_ar': 'واحدة',
+        'name_en': 'One',
+      });
+      await old.insert('stations', {
+        'id': 's2',
+        'name_ar': 'اثنتان',
+        'name_en': 'Two',
+      });
+      await old.insert('favorites', {
+        'from_id': 's1',
+        'to_id': 's2',
+        'created_at': '2026-01-01',
+      });
+      await old.close();
+
+      final upgraded = DbHelper(path: path);
+      final db = await upgraded.database;
+      final lineColumns = await db.rawQuery('PRAGMA table_info(lines)');
+      final fareColumns = await db.rawQuery('PRAGMA table_info(fares)');
+      expect(
+        lineColumns.map((row) => row['name']),
+        containsAll(<String>['terminus_a_en', 'terminus_b_ar']),
+      );
+      expect(fareColumns.map((row) => row['name']), contains('ticket_color'));
+      expect(await db.query('favorites'), hasLength(1));
+
+      await upgraded.close();
+      final file = File(path);
+      if (await file.exists()) await file.delete();
     });
 
     test('opens once and can be closed and used again', () async {
