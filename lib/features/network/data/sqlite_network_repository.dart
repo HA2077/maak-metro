@@ -14,6 +14,7 @@ class SqliteNetworkRepository implements NetworkRepository {
 
   @override
   Future<NetworkData> loadNetwork() async {
+    await SeedLoader(_db, _prefs).seedIfNeeded();
     final lineRows = await _db.query('lines', orderBy: 'id');
     final stationRows = await _db.query('stations', orderBy: 'id');
     final branchRows = await _db.query(

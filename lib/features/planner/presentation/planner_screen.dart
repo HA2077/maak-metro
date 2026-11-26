@@ -45,8 +45,10 @@ class _PlannerScreenState extends State<PlannerScreen> {
   }
 
   Future<void> _pick(BuildContext context, {required bool from}) async {
+    final state = context.read<NetworkCubit>().state;
+    final network = state.network;
+    if (state.loading || state.error != null || network == null) return;
     final route = context.read<PlannerCubit>();
-    final network = context.read<NetworkCubit>().state.network;
     final l10n = AppLocalizations.of(context);
     final station = await showStationPicker(
       context,
@@ -77,9 +79,11 @@ class _PlannerScreenState extends State<PlannerScreen> {
 
   Future<void> _search(BuildContext context) async {
     if (_searching) return;
-    final network = context.read<NetworkCubit>().state.network;
+    final state = context.read<NetworkCubit>().state;
+    final network = state.network;
+    if (state.loading || state.error != null || network == null) return;
     final result = context.read<PlannerCubit>().calculate(network);
-    if (result == null || network == null) return;
+    if (result == null) return;
 
     setState(() => _searching = true);
     try {
@@ -100,6 +104,8 @@ class _PlannerScreenState extends State<PlannerScreen> {
   }
 
   void _swap(PlannerCubit route) {
+    final state = context.read<NetworkCubit>().state;
+    if (state.loading || state.error != null || state.network == null) return;
     route.swap();
     AppHaptics.action();
     if (!AppMotion.reduced(context)) {
@@ -120,7 +126,10 @@ class _PlannerScreenState extends State<PlannerScreen> {
     final theme = Theme.of(context);
     final planner = context.read<PlannerCubit>();
     final route = context.watch<PlannerCubit>().state;
-    final network = context.select((NetworkCubit cubit) => cubit.state.network);
+    final networkState = context.select((NetworkCubit cubit) => cubit.state);
+    final network = networkState.network;
+    final ready =
+        network != null && !networkState.loading && networkState.error == null;
     final recent = context.select(
       (LibraryCubit cubit) => cubit.state.recentSearches,
     );
@@ -222,14 +231,14 @@ class _PlannerScreenState extends State<PlannerScreen> {
               network: network,
               l10n: l10n,
               swapTurns: _swapTurns,
-              onPickFrom: () => _pick(context, from: true),
-              onPickTo: () => _pick(context, from: false),
-              onSwap: () => _swap(planner),
+              onPickFrom: ready ? () => _pick(context, from: true) : null,
+              onPickTo: ready ? () => _pick(context, from: false) : null,
+              onSwap: ready ? () => _swap(planner) : null,
             ),
           ),
           const SizedBox(height: AppSpace.md),
           FilledButton(
-            onPressed: route.canSearch && !_searching
+            onPressed: ready && route.canSearch && !_searching
                 ? () => _search(context)
                 : null,
             child: AnimatedSwitcher(
@@ -498,9 +507,9 @@ class _TripCard extends StatelessWidget {
   final NetworkData? network;
   final AppLocalizations l10n;
   final double swapTurns;
-  final VoidCallback onPickFrom;
-  final VoidCallback onPickTo;
-  final VoidCallback onSwap;
+  final VoidCallback? onPickFrom;
+  final VoidCallback? onPickTo;
+  final VoidCallback? onSwap;
 
   @override
   Widget build(BuildContext context) {
@@ -600,7 +609,7 @@ class _StationField extends StatelessWidget {
   final String? value;
   final List<Line> lines;
   final String placeholder;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

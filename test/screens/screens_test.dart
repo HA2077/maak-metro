@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,6 +36,15 @@ class _FakeNetworkRepository implements NetworkRepository {
 
   @override
   Future<NetworkData> loadNetwork() async => network;
+}
+
+class _PendingNetworkRepository implements NetworkRepository {
+  _PendingNetworkRepository(this.pending);
+
+  final Future<NetworkData> pending;
+
+  @override
+  Future<NetworkData> loadNetwork() => pending;
 }
 
 NetworkData _withTermini(NetworkData base) => NetworkData(
@@ -97,6 +108,7 @@ Future<void> _pumpScreen(
   Size size = const Size(360, 800),
   double textScale = 1,
   NetworkData? network,
+  NetworkCubit? networkCubit,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -111,8 +123,8 @@ Future<void> _pumpScreen(
   final repo = _FakeNetworkRepository(network ?? buildFixtureNetwork());
   final library = LibraryCubit(FakeLibraryRepository());
   await library.refresh();
-  final route = NetworkCubit(repo);
-  await route.load();
+  final route = networkCubit ?? NetworkCubit(repo);
+  if (networkCubit == null) await route.load();
   addTearDown(settings.close);
   addTearDown(library.close);
   addTearDown(route.close);
@@ -303,6 +315,32 @@ void main() {
       await tester.tap(label);
       await tester.pumpAndSettle();
       expect(find.byType(RouteResultScreen), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('disables station taps while the network is loading', (
+      tester,
+    ) async {
+      final completer = Completer<NetworkData>();
+      final pending = NetworkCubit(_PendingNetworkRepository(completer.future));
+      unawaited(pending.load());
+      await _pumpScreen(tester, const PlannerScreen(), networkCubit: pending);
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(PlannerScreen)),
+      );
+      final field = find.ancestor(
+        of: find.text(l10n.fromLabel),
+        matching: find.byType(InkWell),
+      );
+      expect(tester.widget<InkWell>(field).onTap, isNull);
+      expect(
+        tester.widget<FilledButton>(find.byType(FilledButton)).enabled,
+        isFalse,
+      );
+
+      completer.complete(network);
+      await tester.pumpAndSettle();
+      expect(tester.widget<InkWell>(field).onTap, isNotNull);
       expect(tester.takeException(), isNull);
     });
   });
