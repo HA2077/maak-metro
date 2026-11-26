@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,6 +71,22 @@ NetworkData _withTermini(NetworkData base) => NetworkData(
   ],
   snapshotDate: base.snapshotDate,
 );
+
+Future<String? Function()> _mockClipboard() async {
+  String? copied;
+  final messenger =
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+  messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+    if (call.method == 'Clipboard.setData') {
+      copied = (call.arguments as Map)['text'] as String?;
+    }
+    return null;
+  });
+  addTearDown(
+    () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+  );
+  return () => copied;
+}
 
 /// Wraps a screen with its Cubits and an Arabic MaterialApp by default.
 Future<void> _pumpScreen(
@@ -309,6 +326,87 @@ void main() {
       );
       expect(find.textContaining('Direction: Terminus'), findsWidgets);
       expect(find.textContaining('Green ticket'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('shows a deterministic estimated arrival', (tester) async {
+      await _pumpScreen(
+        tester,
+        RouteResultScreen(
+          result: result,
+          network: network,
+          now: DateTime(2026, 1, 1, 15, 2),
+        ),
+        locale: const Locale('en'),
+      );
+      expect(find.textContaining('Arrive ~3:17 PM'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('copies a localized trip summary', (tester) async {
+      final copied = await _mockClipboard();
+      await _pumpScreen(
+        tester,
+        RouteResultScreen(
+          result: result,
+          network: _withTermini(network),
+          now: DateTime(2026, 1, 1, 15, 2),
+        ),
+        locale: const Locale('en'),
+      );
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(RouteResultScreen)),
+      );
+      await tester.tap(find.byTooltip(l10n.copyTrip));
+      await tester.pumpAndSettle();
+      expect(copied(), contains('Station t1 → Station s4'));
+      expect(copied(), contains('Terminus B'));
+      expect(copied(), contains('Green ticket'));
+      expect(find.text(l10n.routeCopied), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('reverse trip swaps the displayed endpoints', (tester) async {
+      final copied = await _mockClipboard();
+      await _pumpScreen(tester, screen, locale: const Locale('en'));
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(RouteResultScreen)),
+      );
+      await tester.tap(find.text(l10n.reverseTrip));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip(l10n.copyTrip));
+      await tester.pumpAndSettle();
+      expect(copied(), startsWith('Station s4 → Station t1'));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('checks off an intermediate stop and toggles it back', (
+      tester,
+    ) async {
+      await _pumpScreen(tester, screen, locale: const Locale('en'));
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(RouteResultScreen)),
+      );
+      final semantics = tester.ensureSemantics();
+      await tester.tap(find.byType(ExpansionTile).first);
+      await tester.pumpAndSettle();
+      expect(find.bySemanticsLabel(l10n.stopUpcoming), findsOneWidget);
+      await tester.tap(find.bySemanticsLabel(l10n.stopUpcoming));
+      await tester.pumpAndSettle();
+      expect(find.bySemanticsLabel(l10n.stopPassed), findsOneWidget);
+      await tester.tap(find.bySemanticsLabel(l10n.stopPassed));
+      await tester.pumpAndSettle();
+      expect(find.bySemanticsLabel(l10n.stopUpcoming), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      semantics.dispose();
+    });
+
+    testWidgets('leaves gesture-bar clearance below the list', (tester) async {
+      await _pumpScreen(tester, screen);
+      final padding =
+          tester.widget<ListView>(find.byType(ListView)).padding
+              as EdgeInsetsDirectional;
+      expect(padding.bottom, greaterThanOrEqualTo(16));
       expect(tester.takeException(), isNull);
     });
 

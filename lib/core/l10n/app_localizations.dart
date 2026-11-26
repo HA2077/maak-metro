@@ -649,6 +649,54 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تذكرة بنّية فاتحة'**
   String get ticketLightBrown;
+
+  /// No description provided for @arrivalTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصول ~{time}'**
+  String arrivalTime(String time);
+
+  /// No description provided for @amMarker.
+  ///
+  /// In ar, this message translates to:
+  /// **'ص'**
+  String get amMarker;
+
+  /// No description provided for @pmMarker.
+  ///
+  /// In ar, this message translates to:
+  /// **'م'**
+  String get pmMarker;
+
+  /// No description provided for @stopPassed.
+  ///
+  /// In ar, this message translates to:
+  /// **'محطة تم تجاوزها'**
+  String get stopPassed;
+
+  /// No description provided for @stopUpcoming.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحطة التالية'**
+  String get stopUpcoming;
+
+  /// No description provided for @reverseTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجاه العودة'**
+  String get reverseTrip;
+
+  /// No description provided for @copyTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'انسخ ملخص المسار'**
+  String get copyTrip;
+
+  /// No description provided for @routeCopied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم نسخ المسار'**
+  String get routeCopied;
 }
 
 class _AppLocalizationsDelegate

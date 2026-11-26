@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:maak_metro/core/l10n/app_localizations.dart';
+import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
 import 'package:maak_metro/core/theme/line_colors.dart';
 import 'package:maak_metro/core/utils/digits.dart';
@@ -12,14 +13,30 @@ import 'package:maak_metro/features/planner/domain/models/route_leg.dart';
 
 /// One leg of the route: colour strip on the line colour, boarding and
 /// alighting station, and the stops in between behind a tap.
-class LegCard extends StatelessWidget {
+class LegCard extends StatefulWidget {
   const LegCard({super.key, required this.leg, required this.network});
 
   final RouteLeg leg;
   final NetworkData network;
 
   @override
+  State<LegCard> createState() => _LegCardState();
+}
+
+class _LegCardState extends State<LegCard> {
+  int _passed = 0;
+
+  void _toggleStop(int index) {
+    AppHaptics.action();
+    setState(() {
+      _passed = index < _passed ? index : index + 1;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final leg = widget.leg;
+    final network = widget.network;
     final ids = leg.stationIds;
     if (ids.isEmpty) return const SizedBox.shrink();
 
@@ -98,11 +115,14 @@ class LegCard extends StatelessWidget {
                         ),
                       ),
                       children: [
-                        for (final id in middle)
-                          _StationDot(
-                            stationId: id,
+                        for (var index = 0; index < middle.length; index++)
+                          _CheckableStop(
+                            stationId: middle[index],
                             color: color,
                             network: network,
+                            passed: index < _passed,
+                            upcoming: index == _passed,
+                            onTap: () => _toggleStop(index),
                           ),
                       ],
                     ),
@@ -116,50 +136,90 @@ class LegCard extends StatelessWidget {
   }
 }
 
-class _StationDot extends StatelessWidget {
-  const _StationDot({
+class _CheckableStop extends StatelessWidget {
+  const _CheckableStop({
     required this.stationId,
     required this.color,
     required this.network,
+    required this.passed,
+    required this.upcoming,
+    required this.onTap,
   });
 
   final String stationId;
   final Color color;
   final NetworkData network;
+  final bool passed;
+  final bool upcoming;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(bottom: AppSpace.sm),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 20,
-            height: 28,
-            child: Stack(
-              alignment: Alignment.center,
+    final l10n = AppLocalizations.of(context);
+    final name = stationNameById(context, network, stationId);
+    final label = passed
+        ? l10n.stopPassed
+        : upcoming
+        ? l10n.stopUpcoming
+        : name;
+    return Semantics(
+      button: true,
+      label: label,
+      value: name,
+      onTap: onTap,
+      child: ExcludeSemantics(
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 48),
+            padding: const EdgeInsetsDirectional.only(bottom: AppSpace.sm),
+            child: Row(
               children: [
-                Container(width: 2, color: theme.colorScheme.outlineVariant),
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: color,
+                SizedBox(
+                  width: 20,
+                  height: 28,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 2,
+                        color: theme.colorScheme.outlineVariant,
+                      ),
+                      Container(
+                        width: upcoming ? 12 : 8,
+                        height: upcoming ? 12 : 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: passed
+                              ? theme.colorScheme.outlineVariant
+                              : color,
+                          border: upcoming
+                              ? Border.all(color: color, width: 2)
+                              : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpace.sm),
+                Expanded(
+                  child: Text(
+                    name,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: passed
+                          ? theme.colorScheme.onSurfaceVariant.withValues(
+                              alpha: 0.6,
+                            )
+                          : null,
+                      fontWeight: upcoming ? FontWeight.w600 : null,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: AppSpace.sm),
-          Expanded(
-            child: Text(
-              stationNameById(context, network, stationId),
-              style: theme.textTheme.bodyMedium,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

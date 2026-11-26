@@ -171,5 +171,18 @@
   "ticketYellow": "Yellow ticket",
   "ticketGreen": "Green ticket",
   "ticketPink": "Pink ticket",
-  "ticketLightBrown": "Light brown ticket"
+  "ticketLightBrown": "Light brown ticket",
+  "arrivalTime": "Arrive ~{time}",
+  "@arrivalTime": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "amMarker": "AM",
+  "pmMarker": "PM",
+  "stopPassed": "Passed stop",
+  "stopUpcoming": "Next stop",
+  "reverseTrip": "Reverse trip",
+  "copyTrip": "Copy trip summary",
+  "routeCopied": "Route copied"
 }

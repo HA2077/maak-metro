@@ -335,4 +335,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ticketLightBrown => 'Light brown ticket';
+
+  @override
+  String arrivalTime(String time) {
+    return 'Arrive ~$time';
+  }
+
+  @override
+  String get amMarker => 'AM';
+
+  @override
+  String get pmMarker => 'PM';
+
+  @override
+  String get stopPassed => 'Passed stop';
+
+  @override
+  String get stopUpcoming => 'Next stop';
+
+  @override
+  String get reverseTrip => 'Reverse trip';
+
+  @override
+  String get copyTrip => 'Copy trip summary';
+
+  @override
+  String get routeCopied => 'Route copied';
 }

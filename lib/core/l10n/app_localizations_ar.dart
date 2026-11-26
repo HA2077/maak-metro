@@ -340,4 +340,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ticketLightBrown => 'تذكرة بنّية فاتحة';
+
+  @override
+  String arrivalTime(String time) {
+    return 'وصول ~$time';
+  }
+
+  @override
+  String get amMarker => 'ص';
+
+  @override
+  String get pmMarker => 'م';
+
+  @override
+  String get stopPassed => 'محطة تم تجاوزها';
+
+  @override
+  String get stopUpcoming => 'المحطة التالية';
+
+  @override
+  String get reverseTrip => 'اتجاه العودة';
+
+  @override
+  String get copyTrip => 'انسخ ملخص المسار';
+
+  @override
+  String get routeCopied => 'تم نسخ المسار';
 }
