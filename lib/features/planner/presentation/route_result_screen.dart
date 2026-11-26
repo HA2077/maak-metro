@@ -320,7 +320,10 @@ class _RouteResultScreenState extends State<RouteResultScreen> {
                                 vertical: AppSpace.sm,
                               ),
                               child: Text(
-                                '${RouteResultScreen._ticketColorName(l10n, fareBracket.ticketColor)} · ${localizedDigits(context, l10n.fareEgp(result.fareEgp.toString()))}',
+                                RouteResultScreen._ticketColorName(
+                                  l10n,
+                                  fareBracket.ticketColor,
+                                ),
                                 style: theme.textTheme.labelLarge?.copyWith(
                                   color: badge.foreground,
                                 ),

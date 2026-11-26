@@ -285,6 +285,26 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('keeps the clear-history action slightly inset', (
+      tester,
+    ) async {
+      await _pumpScreen(tester, LibraryScreen(onOpenPlanner: () {}));
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(LibraryScreen)),
+      );
+      final inset = find.ancestor(
+        of: find.byTooltip(l10n.clearHistory),
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Padding &&
+              widget.padding is EdgeInsetsDirectional &&
+              (widget.padding as EdgeInsetsDirectional).end == AppSpace.sm,
+        ),
+      );
+      expect(inset, findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     _testLargeTextLayouts(LibraryScreen(onOpenPlanner: () {}));
   });
 
@@ -298,6 +318,16 @@ void main() {
       // row may sit below the fold, hence findsWidgets.
       expect(find.byType(DateText), findsWidgets);
       expect(find.text('٢٠٢٦'), findsWidgets);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('shows version 1.0.7 in English', (tester) async {
+      await _pumpScreen(
+        tester,
+        const SettingsScreen(),
+        locale: const Locale('en'),
+      );
+      expect(find.textContaining('1.0.7'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 

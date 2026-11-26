@@ -7,5 +7,5 @@ abstract final class AppConstants {
   static const String fareEffectiveFrom = '2026-03-27';
 
   /// Shown in the About card. Keep in step with `version:` in pubspec.yaml.
-  static const String appVersion = '1.0.0';
+  static const String appVersion = '1.0.7';
 }

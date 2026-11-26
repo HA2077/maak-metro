@@ -90,13 +90,16 @@ class LibraryScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(l10n.libraryTitle),
           actions: [
-            IconButton(
-              onPressed: history.isEmpty
-                  ? null
-                  : () => _confirmClear(context, library, l10n),
-              tooltip: l10n.clearHistory,
-              iconSize: 30,
-              icon: const Icon(Icons.delete_sweep),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: AppSpace.sm),
+              child: IconButton(
+                onPressed: history.isEmpty
+                    ? null
+                    : () => _confirmClear(context, library, l10n),
+                tooltip: l10n.clearHistory,
+                iconSize: 30,
+                icon: const Icon(Icons.delete_sweep),
+              ),
             ),
           ],
           bottom: TabBar(
