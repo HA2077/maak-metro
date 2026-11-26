@@ -11,10 +11,9 @@ import 'package:maak_metro/core/utils/directions.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
 import 'package:maak_metro/features/network/domain/models/models.dart';
 import 'package:maak_metro/features/network/presentation/widgets/line_chip.dart';
+import 'package:maak_metro/features/network/presentation/widgets/metro_map_sheet.dart';
 
 import 'network_cubit.dart';
-
-const String _mapAsset = 'assets/images/metro_map.png';
 
 class LinesScreen extends StatelessWidget {
   const LinesScreen({super.key, required this.onStationSelected});
@@ -26,69 +25,6 @@ class LinesScreen extends StatelessWidget {
       .where((word) => word.isNotEmpty)
       .map((word) => '${word[0].toUpperCase()}${word.substring(1)}')
       .join(' ');
-
-  void _showMap(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      constraints: const BoxConstraints(maxWidth: AppLayout.maxContentWidth),
-      backgroundColor: AppTheme.light.colorScheme.surface,
-      builder: (sheetContext) {
-        final l10n = AppLocalizations.of(sheetContext);
-        return Theme(
-          data: AppTheme.light,
-          child: FractionallySizedBox(
-            heightFactor: 0.9,
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(
-                AppSpace.lg,
-                AppSpace.md,
-                AppSpace.lg,
-                AppSpace.md,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Semantics(
-                          header: true,
-                          child: Text(
-                            l10n.metroMap,
-                            style: AppTheme.light.textTheme.titleLarge,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.of(sheetContext).pop(),
-                        tooltip: l10n.close,
-                        icon: const Icon(Icons.close),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpace.sm),
-                  Expanded(
-                    child: Semantics(
-                      label: l10n.metroMap,
-                      child: InteractiveViewer(
-                        minScale: 1.0,
-                        maxScale: 4.0,
-                        child: Center(
-                          child: Image.asset(_mapAsset, fit: BoxFit.contain),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   void _showStation(BuildContext context, Station station) {
     final network = context.read<NetworkCubit>().state.network;
@@ -210,7 +146,7 @@ class LinesScreen extends StatelessWidget {
           ? const SizedBox.shrink()
           : Column(
               children: [
-                _MapPreviewCard(onTap: () => _showMap(context)),
+                _MapPreviewCard(onTap: () => showMetroMap(context)),
                 Expanded(child: _lineList(context, network, theme)),
               ],
             ),
@@ -403,7 +339,7 @@ class _MapPreviewCard extends StatelessWidget {
                         SizedBox(
                           width: 88,
                           height: 72,
-                          child: Image.asset(_mapAsset, fit: BoxFit.cover),
+                          child: Image.asset(metroMapAsset, fit: BoxFit.cover),
                         ),
                         const SizedBox(width: AppSpace.md),
                         Expanded(

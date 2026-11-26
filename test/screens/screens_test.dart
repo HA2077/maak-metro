@@ -218,9 +218,52 @@ void main() {
           find.text(l10n.closedHoursAdvisory),
           entry.$2 ? findsOneWidget : findsNothing,
         );
+        expect(
+          find.byKey(const Key('plannerGreeting')),
+          entry.$2 ? findsNothing : findsOneWidget,
+        );
+        expect(
+          find.text(l10n.plannerHint),
+          entry.$2 ? findsNothing : findsOneWidget,
+        );
         expect(tester.takeException(), isNull);
       });
     }
+
+    testWidgets('opens the metro map from the header', (tester) async {
+      await _pumpScreen(tester, const PlannerScreen());
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(PlannerScreen)),
+      );
+      await tester.tap(find.byTooltip(l10n.openMetroMap));
+      await tester.pumpAndSettle();
+      expect(find.byType(InteractiveViewer), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('separates the From and To fields with a divider', (
+      tester,
+    ) async {
+      await _pumpScreen(tester, const PlannerScreen());
+      expect(find.byType(Divider), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('keeps Show route disabled for identical stations', (
+      tester,
+    ) async {
+      await _pumpScreen(tester, const PlannerScreen());
+      final cubit = BlocProvider.of<PlannerCubit>(
+        tester.element(find.byType(PlannerScreen)),
+      );
+      cubit.setPair(network.stationById('s1'), network.stationById('s1'));
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<FilledButton>(find.byType(FilledButton)).enabled,
+        isFalse,
+      );
+      expect(tester.takeException(), isNull);
+    });
   });
 
   group('LinesScreen', () {

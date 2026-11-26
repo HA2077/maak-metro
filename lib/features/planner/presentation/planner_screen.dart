@@ -8,6 +8,7 @@ import 'package:maak_metro/core/motion/app_haptics.dart';
 import 'package:maak_metro/core/motion/app_motion.dart';
 import 'package:maak_metro/core/motion/fade_slide_in.dart';
 import 'package:maak_metro/core/theme/app_theme.dart';
+import 'package:maak_metro/core/theme/line_colors.dart';
 import 'package:maak_metro/core/utils/dates.dart';
 import 'package:maak_metro/core/utils/greeting.dart';
 import 'package:maak_metro/core/utils/localized_names.dart';
@@ -15,6 +16,7 @@ import 'package:maak_metro/features/library/domain/models/history_entry.dart';
 import 'package:maak_metro/features/library/presentation/library_cubit.dart';
 import 'package:maak_metro/features/network/domain/models/models.dart';
 import 'package:maak_metro/features/network/presentation/network_cubit.dart';
+import 'package:maak_metro/features/network/presentation/widgets/metro_map_sheet.dart';
 import 'package:maak_metro/features/planner/presentation/widgets/station_picker.dart';
 
 import 'planner_cubit.dart';
@@ -125,9 +127,20 @@ class _PlannerScreenState extends State<PlannerScreen> {
     );
     final errorText = _errorText(l10n, route.error);
     final interchanges = _interchanges(context, network);
+    final closed = isMetroClosed(now: widget.now);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.plannerTitle)),
+      appBar: AppBar(
+        title: Text(l10n.plannerTitle),
+        actions: [
+          IconButton(
+            onPressed: () => showMetroMap(context),
+            tooltip: l10n.openMetroMap,
+            constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+            icon: const Icon(Icons.map_outlined),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsetsDirectional.fromSTEB(
           18,
@@ -136,7 +149,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
           AppSpace.xl,
         ),
         children: [
-          if (isMetroClosed(now: widget.now)) ...[
+          if (closed) ...[
             FadeSlideIn(
               child: Card(
                 color: theme.colorScheme.secondaryContainer,
@@ -168,29 +181,31 @@ class _PlannerScreenState extends State<PlannerScreen> {
             ),
             const SizedBox(height: AppSpace.sm),
           ],
-          const Padding(
-            padding: EdgeInsetsDirectional.only(bottom: AppSpace.sm),
-            child: _Greeting(),
-          ),
           Padding(
-            padding: const EdgeInsetsDirectional.only(bottom: 20),
-            child: Text(
-              l10n.plannerHint,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+            padding: const EdgeInsetsDirectional.only(bottom: AppSpace.xs),
+            child: _Greeting(now: widget.now),
+          ),
+          if (!closed)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(bottom: AppSpace.xs),
+              child: Text(
+                l10n.plannerHint,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
-          ),
           _TripCard(
             from: route.from,
             to: route.to,
+            network: network,
             l10n: l10n,
             swapTurns: _swapTurns,
             onPickFrom: () => _pick(context, from: true),
             onPickTo: () => _pick(context, from: false),
             onSwap: () => _swap(planner),
           ),
-          const SizedBox(height: AppSpace.lg),
+          const SizedBox(height: AppSpace.md),
           FilledButton(
             onPressed: route.canSearch && !_searching
                 ? () => _search(context)
@@ -323,7 +338,9 @@ class _PlannerScreenState extends State<PlannerScreen> {
 
 /// Greets by time of day, in one of four wordings picked at random per launch.
 class _Greeting extends StatefulWidget {
-  const _Greeting();
+  const _Greeting({required this.now});
+
+  final DateTime? now;
 
   @override
   State<_Greeting> createState() => _GreetingState();
@@ -335,11 +352,13 @@ class _GreetingState extends State<_Greeting> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final options = greetingsFor(l10n, dayPartFor(DateTime.now().hour));
+    final now = widget.now ?? DateTime.now();
+    final options = greetingsFor(l10n, dayPartFor(now.hour), now: now);
+    if (options.isEmpty) return const SizedBox.shrink();
     return Text(
       options[_variant % options.length],
       key: const Key('plannerGreeting'),
-      style: Theme.of(context).textTheme.titleLarge,
+      style: Theme.of(context).textTheme.bodyLarge,
     );
   }
 }
@@ -374,6 +393,7 @@ class _TripCard extends StatelessWidget {
   const _TripCard({
     required this.from,
     required this.to,
+    required this.network,
     required this.l10n,
     required this.swapTurns,
     required this.onPickFrom,
@@ -383,6 +403,7 @@ class _TripCard extends StatelessWidget {
 
   final Station? from;
   final Station? to;
+  final NetworkData? network;
   final AppLocalizations l10n;
   final double swapTurns;
   final VoidCallback onPickFrom;
@@ -392,6 +413,14 @@ class _TripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fromStation = from;
+    final toStation = to;
+    final fromLines = fromStation == null
+        ? const <Line>[]
+        : network?.linesServing(fromStation.id) ?? const <Line>[];
+    final toLines = toStation == null
+        ? const <Line>[]
+        : network?.linesServing(toStation.id) ?? const <Line>[];
     return Card(
       child: Padding(
         padding: const EdgeInsetsDirectional.all(18),
@@ -422,13 +451,22 @@ class _TripCard extends StatelessWidget {
                   _StationField(
                     label: l10n.fromLabel,
                     value: from == null ? null : stationName(context, from!),
+                    lines: fromLines,
                     placeholder: l10n.selectStation,
                     onTap: onPickFrom,
                   ),
-                  const SizedBox(height: AppSpace.sm),
+                  const SizedBox(height: AppSpace.xs),
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: theme.colorScheme.outlineVariant,
+                    endIndent: AppSpace.sm,
+                  ),
+                  const SizedBox(height: AppSpace.xs),
                   _StationField(
                     label: l10n.toLabel,
                     value: to == null ? null : stationName(context, to!),
+                    lines: toLines,
                     placeholder: l10n.selectStation,
                     onTap: onPickTo,
                   ),
@@ -461,12 +499,14 @@ class _StationField extends StatelessWidget {
   const _StationField({
     required this.label,
     required this.value,
+    required this.lines,
     required this.placeholder,
     required this.onTap,
   });
 
   final String label;
   final String? value;
+  final List<Line> lines;
   final String placeholder;
   final VoidCallback onTap;
 
@@ -519,6 +559,22 @@ class _StationField extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (lines.isNotEmpty)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final line in lines)
+                        Container(
+                          width: 8,
+                          height: 8,
+                          margin: const EdgeInsetsDirectional.only(end: 3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: parseHexColor(line.colorHex),
+                          ),
+                        ),
+                    ],
+                  ),
                 const SizedBox(width: AppSpace.sm),
                 Icon(
                   Icons.expand_more,
